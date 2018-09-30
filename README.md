@@ -22,3 +22,5 @@ npm start
 
 ## TODO
 - [ ] Add Desktop Notification Support
+- [ ] Add auto-update feature for AppImage
+- [ ] Add custom title bar
