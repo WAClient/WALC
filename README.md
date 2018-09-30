@@ -1,6 +1,9 @@
 # whatsapp-linux
 A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.
 
+## Releases
+To download an AppImage, please goto [Releases](https://github.com/cstayyab/whatsapp-linux/releases)
+
 ## Compilation and Usage
 
 ```
