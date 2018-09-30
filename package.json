@@ -1,0 +1,28 @@
+{
+  "name": "whatsapp-linux",
+  "version": "0.0.1",
+  "description": "A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cstayyab/whatsapp-linux.git"
+  },
+  "keywords": [
+    "whatsapp",
+    "whatsapp-linux",
+    "whatsapp-web"
+  ],
+  "author": "cstayyab",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/cstayyab/whatsapp-linux/issues"
+  },
+  "devDependencies": {
+    "electron-prebuilt": "^1.4.13"
+  },
+  "homepage": "https://github.com/cstayyab/whatsapp-linux#readme",
+  "dependencies": {}
+}
