@@ -4,7 +4,11 @@
   "description": "A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "postinstall": "npm run webpack && electron-builder install-app-deps",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "release-linux": "electron-builder --linux"
   },
   "repository": {
     "type": "git",
@@ -20,8 +24,28 @@
   "bugs": {
     "url": "https://github.com/cstayyab/whatsapp-linux/issues"
   },
+  "build": {
+    "appId": "cstayyab.linux.unofficial.whatsapp",
+    "productName": "WhatsApp Linux",
+    "files": [
+      "!dist",
+      "!release-builds"
+    ],
+    "linux": {
+      "category": "Internet",
+      "target": [
+        "AppImage"
+      ]
+    },
+    "appImage": {
+      "systemIntegration": "ask"
+    }
+  },
   "devDependencies": {
-    "electron-prebuilt": "^1.4.13"
+    "electron-builder": "^20.28.4",
+    "electron-packager": "^12.1.2",
+    "electron-prebuilt": "^1.4.13",
+    "webpack": "^3.12.0"
   },
   "homepage": "https://github.com/cstayyab/whatsapp-linux#readme",
   "dependencies": {}
