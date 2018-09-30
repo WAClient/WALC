@@ -19,3 +19,6 @@ npm install
 npm start
 
 ```
+
+## TODO
+- [ ] Add Desktop Notification Support
