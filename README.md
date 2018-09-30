@@ -4,7 +4,10 @@ A WhatsApp Desktop client for linux systems. This is an unofficial client. Use h
 ## Compilation and Usage
 
 ```
-# You must have npm and node installed
+# You must have git, npm and node installed
+
+# clone the repo
+git clone https://github.com/cstayyab/whatsapp-linux.git
 
 # install dependencies
 npm install
