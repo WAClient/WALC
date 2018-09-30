@@ -5,7 +5,6 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "postinstall": "npm run webpack && electron-builder install-app-deps",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "release-linux": "electron-builder --linux"
@@ -19,7 +18,7 @@
     "whatsapp-linux",
     "whatsapp-web"
   ],
-  "author": "cstayyab",
+  "author": "cstayyab <cstayyab@gmail.com>",
   "license": "LGPL-3.0",
   "bugs": {
     "url": "https://github.com/cstayyab/whatsapp-linux/issues"
@@ -32,7 +31,9 @@
       "!release-builds"
     ],
     "linux": {
-      "category": "Internet",
+      "category": "Network",
+      "synopsis": "WhatsApp Client for Linux",
+      "description": "An unofficial WhatsApp Desktop client for linux",
       "target": [
         "AppImage"
       ]
