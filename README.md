@@ -24,3 +24,7 @@ npm start
 - [x] Add Desktop Notification Support
 - [ ] Add auto-update feature for AppImage
 - [ ] Add custom title bar
+- [ ] Show Error if no network connectivity
+
+## Contributions
+Contributions for the listed TODOs are welcomed.
