@@ -1,4 +1,4 @@
-# whatsapp-linux
+# WALC - WhatsApp Linux Client (unofficial)
 A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.
 
 ## Releases
