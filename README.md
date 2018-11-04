@@ -29,3 +29,6 @@ npm start
 
 ## Contributions
 Contributions for the listed TODOs are welcomed.
+
+ # Join the team 
+ Do you want to collaborate? Join the project at https://crowdforge.io/projects/510
