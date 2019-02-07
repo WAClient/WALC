@@ -32,3 +32,6 @@ Contributions for the listed TODOs are welcomed.
 
  # Join the team 
  Do you want to collaborate? Join the project at https://crowdforge.io/projects/510
+ 
+ # Support by Donation
+ You may donate bitcoin:16mfbh788wx7HW2hzpA3CNfMZnzoFuvqP9
