@@ -36,8 +36,9 @@ function createWindow() {
         event.preventDefault()
         app.shell.openExternal(url);
     })
-
 }
+
+
 
 
 // This method will be called when Electron has finished
