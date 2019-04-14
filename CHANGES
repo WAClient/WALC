@@ -4,3 +4,4 @@
 - Replaced electron-prebuild with electron
 - External URLs now open in Default Browser instead of a new Electron Window
 - Fixed a Bug in which WhatsApp was unable to recognozied the version of Chrome (pull request #7) (contributor: Carpediem94)
+- Removed Default Menubar

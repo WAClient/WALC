@@ -11,7 +11,7 @@ function createWindow() {
 
     // Create the browser window.
     win = new BrowserWindow({ width: 800, height: 600, title: 'WhatsApp Linux (unofficial)', icon: path.join(__dirname, 'icons/logo256x256.png') })
-
+    win.setMenuBarVisibility(false);
     //Prevent windows title from changing
     win.on('page-title-updated', (evt) => {
         evt.preventDefault();
@@ -22,7 +22,7 @@ function createWindow() {
 
     // and load the index.html of the app.
     win.loadURL('https://web.whatsapp.com', { 'userAgent': userAgent })
-
+    win.webContents.executeJavaScript("navigator.serviceWorker.getRegistration().then(function (r) { document.body.style.display='none'; r.unregister(); document.location.reload() });");
     win.setTitle('WhatsApp Linux (unofficial)')
 
     // Emitted when the window is closed.
@@ -34,8 +34,10 @@ function createWindow() {
     })
     win.webContents.on('new-window', (event, url) => {
         event.preventDefault()
-        app.shell.openExternal(url);
+        require('electron').shell.openExternal(url);
     })
+
+
 }
 
 
