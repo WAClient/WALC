@@ -1,53 +1,53 @@
 {
-  "name": "whatsapp-linux",
-  "version": "0.1.0",
-  "description": "A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder",
-    "release-linux": "electron-builder --linux"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cstayyab/whatsapp-linux.git"
-  },
-  "keywords": [
-    "whatsapp",
-    "whatsapp-linux",
-    "whatsapp-web"
-  ],
-  "author": "cstayyab <cstayyab@gmail.com>",
-  "license": "LGPL-3.0",
-  "bugs": {
-    "url": "https://github.com/cstayyab/whatsapp-linux/issues"
-  },
-  "build": {
-    "appId": "cstayyab.linux.unofficial.whatsapp",
-    "productName": "WhatsApp Linux",
-    "files": [
-      "!dist",
-      "!release-builds"
-    ],
-    "linux": {
-      "category": "Network",
-      "synopsis": "WhatsApp Client for Linux",
-      "description": "An unofficial WhatsApp Desktop client for linux",
-      "target": [
-        "AppImage"
-      ]
+    "name": "whatsapp-linux",
+    "version": "0.1.1",
+    "description": "A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "pack": "electron-builder --dir",
+        "dist": "electron-builder",
+        "release-linux": "electron-builder --linux"
     },
-    "appImage": {
-      "systemIntegration": "ask"
-    }
-  },
-  "devDependencies": {
-    "electron-builder": "^20.28.4",
-    "electron-packager": "^12.1.2",
-    "electron-prebuilt": "^1.4.13",
-    "webpack": "^3.12.0"
-  },
-  "homepage": "https://github.com/cstayyab/whatsapp-linux#readme",
-  "dependencies": {}
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cstayyab/whatsapp-linux.git"
+    },
+    "keywords": [
+        "whatsapp",
+        "whatsapp-linux",
+        "whatsapp-web"
+    ],
+    "author": "cstayyab <cstayyab@gmail.com>",
+    "license": "LGPL-3.0",
+    "bugs": {
+        "url": "https://github.com/cstayyab/whatsapp-linux/issues"
+    },
+    "build": {
+        "appId": "cstayyab.linux.unofficial.whatsapp",
+        "productName": "WhatsApp Linux",
+        "files": [
+            "!dist",
+            "!release-builds"
+        ],
+        "linux": {
+            "category": "Network",
+            "synopsis": "WhatsApp Client for Linux",
+            "description": "An unofficial WhatsApp Desktop client for linux",
+            "target": [
+                "AppImage"
+            ]
+        },
+        "appImage": {
+            "systemIntegration": "ask"
+        }
+    },
+    "devDependencies": {
+        "electron": "^4.1.4",
+        "electron-builder": "^20.28.4",
+        "electron-packager": "^12.1.2",
+        "webpack": "^3.12.0"
+    },
+    "homepage": "https://github.com/cstayyab/whatsapp-linux#readme",
+    "dependencies": {}
 }
