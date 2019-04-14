@@ -25,7 +25,7 @@ npm start
 - [ ] Add auto-update feature for AppImage
 - [ ] Add custom title bar
 - [ ] Show Error if no network connectivity
-- [ ] Open links in Default Web Browser
+- [X] Open links in Default Web Browser
 
 ## Contributions
 Contributions for the listed TODOs are welcomed.
