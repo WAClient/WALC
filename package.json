@@ -1,6 +1,6 @@
 {
-    "name": "whatsapp-linux",
-    "version": "0.1.1",
+    "name": "WALC",
+    "version": "0.1.2",
     "description": "A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.",
     "main": "main.js",
     "scripts": {
@@ -11,7 +11,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/cstayyab/whatsapp-linux.git"
+        "url": "https://github.com/cstayyab/WALC.git"
     },
     "keywords": [
         "whatsapp",
@@ -21,18 +21,18 @@
     "author": "cstayyab <cstayyab@gmail.com>",
     "license": "LGPL-3.0",
     "bugs": {
-        "url": "https://github.com/cstayyab/whatsapp-linux/issues"
+        "url": "https://github.com/cstayyab/WALC/issues"
     },
     "build": {
         "appId": "cstayyab.linux.unofficial.whatsapp",
-        "productName": "WhatsApp Linux",
+        "productName": "WALC",
         "files": [
             "!dist",
             "!release-builds"
         ],
         "linux": {
             "category": "Network",
-            "synopsis": "WhatsApp Client for Linux",
+            "synopsis": "WhatsApp Client for Linux (Unofficial)",
             "description": "An unofficial WhatsApp Desktop client for linux",
             "target": [
                 "AppImage"
@@ -48,6 +48,6 @@
         "electron-packager": "^12.1.2",
         "webpack": "^3.12.0"
     },
-    "homepage": "https://github.com/cstayyab/whatsapp-linux#readme",
+    "homepage": "https://github.com/cstayyab/WALC#readme",
     "dependencies": {}
 }
