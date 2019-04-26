@@ -9,48 +9,66 @@ const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, li
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
+findID = null;
+emptyBody = null;
 
 function loadWA() {
     win.loadURL('https://web.whatsapp.com', { 'userAgent': userAgent })
-    win.webContents.executeJavaScript("navigator.serviceWorker.getRegistration().then(function (r) { document.body.style.display='none'; r.unregister().then(function (success){document.location.reload();})});");
     win.webContents.executeJavaScript("Notification.requestPermission(function(p){if(p=='granted'){new Notification('WALC Desktop Notifications', {body:'Desktop Notifications are enabled.', icon:'https://web.whatsapp.com/favicon.ico'});};});")
+    win.on('page-title-updated', (evt) => {
+        evt.preventDefault();
+    });
+    win.webContents.on('found-in-page', function (evt, result) {
+        if (result.requestId == findID) {
+            if (result.matches > 0) {
+                win.webContents.executeJavaScript("navigator.serviceWorker.getRegistration().then(function (r) { console.log(r); document.body.style.display='none'; r.unregister().then(function(success){if(success){window.location.reload();}}); });");
+            }
+        }
+
+    });
+    win.webContents.on('did-finish-load', (evt) => {
+        findID = win.webContents.findInPage('Update Google Chrome')
+    });
 }
 function liveCheck() {
     dns.resolve("web.whatsapp.com", function (err, addr) {
-        if (err && isConnected) {
-            win.loadFile('offline.html');
-            isConnected = false;
-        } else {
-            if(!err && !isConnected) {
-                loadWA()
-                isConnected = true;
+        if (err) {
+            if (isConnected) {
+                win.loadURL('file://' + __dirname + '/offline.html');
             }
+            isConnected = false;
+
+        } else {
+            if (isConnected) {
+
+            }
+            else {
+                loadWA()
+            }
+
+            isConnected = true;
         }
     });
 }
 
+
 function createWindow() {
 
     // Create the browser window.
-    win = new BrowserWindow({ width: 800, height: 600, title: 'WhatsApp Linux (unofficial)', icon: path.join(__dirname, 'icons/logo256x256.png') })
+    win = new BrowserWindow({ width: 800, height: 600, title: 'WALC', icon: path.join(__dirname, 'icons/logo256x256.png') })
     win.setMenuBarVisibility(false);
     //Prevent windows title from changing
-    win.on('page-title-updated', (evt) => {
-        evt.preventDefault();
-    });
+
 
     //Hide Default menubar
     win.setMenu(null);
 
-    // and load the index.html of the app.
-
-    //win.loadURL('https://web.whatsapp.com', { 'userAgent': userAgent })
-    //liveCheck()
+    // and load the Main Page of the app.
     setInterval(function () {
         liveCheck();
     }, 1000);
     loadWA()
-    win.setTitle('WhatsApp Linux (unofficial)')
+    win.setTitle('WALC')
 
     // Emitted when the window is closed.
     win.on('closed', () => {
