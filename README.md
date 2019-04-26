@@ -24,7 +24,7 @@ npm start
 - [x] Add Desktop Notification Support
 - [ ] Add auto-update feature for AppImage
 - [ ] Add custom title bar
-- [ ] Show Error if no network connectivity
+- [X] Show Error if no network connectivity
 - [X] Open links in Default Web Browser
 
 ## Contributions

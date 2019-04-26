@@ -1,11 +1,33 @@
 const { app, BrowserWindow, session } = require('electron')
 var path = require('path')
+const dns = require("dns");
+let isConnected = true;
+let firstCall = true;
 
 // set user agent manually
 const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
-    // Keep a global reference of the window object, if you don't, the window will
-    // be closed automatically when the JavaScript object is garbage collected.
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
 let win
+
+function loadWA() {
+    win.loadURL('https://web.whatsapp.com', { 'userAgent': userAgent })
+    win.webContents.executeJavaScript("navigator.serviceWorker.getRegistration().then(function (r) { document.body.style.display='none'; r.unregister().then(function (success){document.location.reload();})});");
+    win.webContents.executeJavaScript("Notification.requestPermission(function(p){if(p=='granted'){new Notification('WALC Desktop Notifications', {body:'Desktop Notifications are enabled.', icon:'https://web.whatsapp.com/favicon.ico'});};});")
+}
+function liveCheck() {
+    dns.resolve("web.whatsapp.com", function (err, addr) {
+        if (err && isConnected) {
+            win.loadFile('offline.html');
+            isConnected = false;
+        } else {
+            if(!err && !isConnected) {
+                loadWA()
+                isConnected = true;
+            }
+        }
+    });
+}
 
 function createWindow() {
 
@@ -21,8 +43,13 @@ function createWindow() {
     win.setMenu(null);
 
     // and load the index.html of the app.
-    win.loadURL('https://web.whatsapp.com', { 'userAgent': userAgent })
-    win.webContents.executeJavaScript("navigator.serviceWorker.getRegistration().then(function (r) { document.body.style.display='none'; r.unregister(); document.location.reload() });");
+
+    //win.loadURL('https://web.whatsapp.com', { 'userAgent': userAgent })
+    //liveCheck()
+    setInterval(function () {
+        liveCheck();
+    }, 1000);
+    loadWA()
     win.setTitle('WhatsApp Linux (unofficial)')
 
     // Emitted when the window is closed.
