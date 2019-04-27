@@ -19,6 +19,10 @@ npm install
 npm start
 
 ```
+## Feature Requests
+[![Feature Requests](http://feathub.com/cstayyab/WALC?format=svg)](http://feathub.com/cstayyab/WALC)
+
+Request new features or vote for existing feature requests at https://feathub.com/cstayyab/WALC/
 
 ## TODO
 - [x] Add Desktop Notification Support
