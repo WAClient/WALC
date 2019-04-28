@@ -10,3 +10,5 @@
 - Added Confirmation Notification for "Desktop Notification Enabled"
 - Added Network Connectivity Checker
 - Ready to release v0.1.2
+0.1.3-beta
+- Reverted electron version to v4.1.5 due to a bug in electron v5.0.0
