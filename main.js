@@ -12,6 +12,19 @@ let win
 findID = null;
 emptyBody = null;
 
+//Make Single Instance
+const singleLock = app.requestSingleInstanceLock()
+if(!singleLock) {
+    app.quit()
+} else {
+    app.on('second-instance', (event, cmdLine, workingDir) => {
+        if(win) {
+            if(win.isMinimized()) win.restore()
+            win.focus()
+        }
+    })
+}
+
 function loadWA() {
     win.loadURL('https://web.whatsapp.com', { 'userAgent': userAgent })
     win.webContents.executeJavaScript("Notification.requestPermission(function(p){if(p=='granted'){new Notification('WALC Desktop Notifications', {body:'Desktop Notifications are enabled.', icon:'https://web.whatsapp.com/favicon.ico'});};});")
