@@ -42,7 +42,8 @@ Request new features or vote for existing feature requests at https://feathub.co
 - [X] Open links in Default Web Browser
 
 ## Contributions
-Contributions for the listed TODOs are welcomed.
+* You may check the issues section to solve an issue and submit a PR.
+* Contributions for the listed TODOs are welcomed.
 
- # Join the team 
+ ## Join the team 
  Do you want to collaborate? Join the project at https://crowdforge.io/projects/510
