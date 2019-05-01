@@ -49,5 +49,7 @@
         "webpack": "^4.30.0"
     },
     "homepage": "https://github.com/cstayyab/WALC#readme",
-    "dependencies": {}
+    "dependencies": {
+        "electron-store": "^3.2.0"
+    }
 }

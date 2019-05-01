@@ -1,8 +1,12 @@
-const { app, BrowserWindow, session } = require('electron')
+const { app, BrowserWindow, session, Menu, dialog } = require('electron')
 var path = require('path')
 const dns = require("dns");
+const Store = require('electron-store')
+const fs = require('fs')
+
 let isConnected = true;
 let firstCall = true;
+let preventExit = true;
 
 // set user agent manually
 const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
@@ -12,20 +16,87 @@ let win
 findID = null;
 emptyBody = null;
 
-//Make Single Instance
-const singleLock = app.requestSingleInstanceLock()
-if(!singleLock) {
-    app.quit()
-} else {
-    app.on('second-instance', (event, cmdLine, workingDir) => {
-        if(win) {
-            if(win.isMinimized()) win.restore()
-            win.focus()
+//Default Settings
+var settings = new Store({
+    name: 'settings',
+    defaults: {
+        askOnExit: {
+            value: true,
+            name: 'Ask on Exit',
+            description: 'If enabled, WALC will confirm everytime you want to close it. Default is true.'
+        },
+        multiInstance: {
+            value: false,
+            name: 'Allow Multiple Instances',
+            description: "It allows you open multiple instances of WALC so you can login to more than one WhatsApp account. It is disabled by default."
+        },
+        alwaysOnTop: {
+            value: false,
+            name: 'Always On Top',
+            description: 'Allow WALC to always be shown in front of other apps'
         }
-    })
-}
+    }
+})
+const settingsMenu = [{
+    label: settings.get('askOnExit.name'),
+    type: 'checkbox',
+    checked: settings.get('askOnExit.value'),
+    click: (menuItem, window, e) => {
+        settings.set('askOnExit.value', menuItem.checked)
+        preventExit = true;
+    },
+}]
+const windowMenu = [{
+    label: 'Debug Tools',
+    role: 'toggleDevTools'
+},{
+    label: 'Always On Top',
+    type: 'checkbox',
+    checked: settings.get('alwaysOnTop.value'),
+    click: ()=> {
+        settings.set('alwaysOnTop.value', !windowMenu[1].checked)
+        win.setAlwaysOnTop(settings.get('alwaysOnTop.value'))
+    }
 
+},{
+    label: 'Zoom',
+    type: 'submenu',
+    submenu: [{
+        label: 'Zoom In',
+        role: 'zoomIn',
+    },{
+        label: 'Zoom Out',
+        role: 'zoomOut',
+    }, {
+        label: 'Reset Zoom',
+        role: 'resetZoom',
+    }]
+}]
+const mainmenu = [{
+    label: 'Settings',
+    submenu: settingsMenu,
+},{
+    label: 'Window',
+    submenu: windowMenu,
+}]
 function loadWA() {
+    //Close second instance if multiInstance is disabled
+    const multiInst = settings.get('multiInstance.value')
+    const singleLock = app.requestSingleInstanceLock()
+    if (!singleLock && !multiInst) {
+        app.quit()
+    } else {
+        app.on('second-instance', (event, cmdLine, workingDir) => {
+            if (!multiInstance && win) {
+                if (win.isMinimized()) win.restore()
+                win.focus()
+            }
+        })
+    }
+    const menubar = Menu.buildFromTemplate(mainmenu)
+    Menu.setApplicationMenu(menubar)
+    win.setMenuBarVisibility(true);
+
     win.loadURL('https://web.whatsapp.com', { 'userAgent': userAgent })
     win.webContents.executeJavaScript("Notification.requestPermission(function(p){if(p=='granted'){new Notification('WALC Desktop Notifications', {body:'Desktop Notifications are enabled.', icon:'https://web.whatsapp.com/favicon.ico'});};});")
     win.on('page-title-updated', (evt) => {
@@ -64,14 +135,12 @@ function liveCheck() {
     });
 }
 
-
 function createWindow() {
 
     // Create the browser window.
     win = new BrowserWindow({ width: 800, height: 600, title: 'WALC', icon: path.join(__dirname, 'icons/logo256x256.png') })
     win.setMenuBarVisibility(false);
-    //Prevent windows title from changing
-
+    win.setAlwaysOnTop(settings.get('alwaysOnTop.value'))
 
     //Hide Default menubar
     win.setMenu(null);
@@ -82,6 +151,24 @@ function createWindow() {
     }, 1000);
     loadWA()
     win.setTitle('WALC')
+    
+    win.on('close', e => {
+        if(settings.get('askOnExit.value') && preventExit) {
+            e.preventDefault();
+            dialog.showMessageBox(win, {
+                type:'question',
+                buttons:['Yes', 'No'],
+                title: 'Exit?',
+                message: "Are you sure you want to exit WALC?"
+            }, (res)=> {
+                if(res==0) {
+                    preventExit = false
+                    win.close()
+                }
+            })
+        }
+    });
+
 
     // Emitted when the window is closed.
     win.on('closed', () => {
