@@ -1,4 +1,6 @@
 const { app, BrowserWindow, session, Menu, dialog } = require('electron')
+const { autoUpdater } = require("electron-updater")
+autoUpdater.checkForUpdatesAndNotify()
 var path = require('path')
 const dns = require("dns");
 const Store = require('electron-store')

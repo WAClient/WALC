@@ -1,6 +1,6 @@
 {
     "name": "WALC",
-    "version": "0.1.4",
+    "version": "0.14",
     "description": "A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.",
     "main": "main.js",
     "scripts": {
@@ -36,7 +36,12 @@
             "description": "An unofficial WhatsApp Desktop client for linux",
             "target": [
                 "AppImage"
-            ]
+            ],
+            "publish": {
+                "provider": "github",
+                "owner": "cstayyab",
+                "host":"github.com"
+            }
         },
         "appImage": {
             "systemIntegration": "ask"
@@ -50,6 +55,7 @@
     },
     "homepage": "https://github.com/cstayyab/WALC#readme",
     "dependencies": {
-        "electron-store": "^3.2.0"
+        "electron-store": "^3.2.0",
+        "electron-updater": "^4.0.6"
     }
 }
