@@ -1,5 +1,6 @@
 const { app, BrowserWindow, session, Menu, dialog } = require('electron')
 const { autoUpdater } = require("electron-updater")
+const { Client } = require('whatsapp-web.js');
 autoUpdater.checkForUpdatesAndNotify()
 var path = require('path')
 const dns = require("dns");
@@ -47,26 +48,36 @@ const settingsMenu = [{
         settings.set('askOnExit.value', menuItem.checked)
         preventExit = true;
     },
-}]
+},
+{
+    label: settings.get('multiInstance.name'),
+    type: 'checkbox',
+    checked: settings.get('multiInstance.value'),
+    click: (menuItem, window, e) => {
+        settings.set('multiInstance.value', menuItem.checked)
+        preventExit = true;
+    },
+}
+]
 const windowMenu = [{
     label: 'Debug Tools',
     role: 'toggleDevTools'
-},{
+}, {
     label: 'Always On Top',
     type: 'checkbox',
     checked: settings.get('alwaysOnTop.value'),
-    click: ()=> {
+    click: () => {
         settings.set('alwaysOnTop.value', !windowMenu[1].checked)
         win.setAlwaysOnTop(settings.get('alwaysOnTop.value'))
     }
 
-},{
+}, {
     label: 'Zoom',
     type: 'submenu',
     submenu: [{
         label: 'Zoom In',
         role: 'zoomIn',
-    },{
+    }, {
         label: 'Zoom Out',
         role: 'zoomOut',
     }, {
@@ -77,15 +88,15 @@ const windowMenu = [{
 const mainmenu = [{
     label: 'Settings',
     submenu: settingsMenu,
-},{
+}, {
     label: 'Window',
     submenu: windowMenu,
 }]
 function loadWA() {
     //Close second instance if multiInstance is disabled
-    const multiInst = settings.get('multiInstance.value')
+    const multiInstance = settings.get('multiInstance.value')
     const singleLock = app.requestSingleInstanceLock()
-    if (!singleLock && !multiInst) {
+    if (!singleLock && !multiInstance) {
         app.quit()
     } else {
         app.on('second-instance', (event, cmdLine, workingDir) => {
@@ -153,17 +164,17 @@ function createWindow() {
     }, 1000);
     loadWA()
     win.setTitle('WALC')
-    
+
     win.on('close', e => {
-        if(settings.get('askOnExit.value') && preventExit) {
+        if (settings.get('askOnExit.value') && preventExit) {
             e.preventDefault();
             dialog.showMessageBox(win, {
-                type:'question',
-                buttons:['Yes', 'No'],
+                type: 'question',
+                buttons: ['Yes', 'No'],
                 title: 'Exit?',
                 message: "Are you sure you want to exit WALC?"
-            }, (res)=> {
-                if(res==0) {
+            }, (res) => {
+                if (res == 0) {
                     preventExit = false
                     win.close()
                 }
