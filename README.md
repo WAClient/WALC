@@ -4,7 +4,14 @@
 A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.
 
 ## Releases
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/walc)
+
 To download an AppImage, please goto [Latest Release](https://github.com/cstayyab/WALC/releases/latest) Page
+
+## From SnapStore
+```
+sudo snap install walc
+```
 
 ## Using  WALC - Prebuilt AppImage 
 * Download the latest AppImage in ~/.local/bin which is a recommended location for AppImages
