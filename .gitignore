@@ -47,3 +47,4 @@ public
 release-builds
 dist
 /package-lock.json
+*.tgz

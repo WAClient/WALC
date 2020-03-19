@@ -1,15 +1,28 @@
-const { app, BrowserWindow, session, Menu, dialog } = require('electron')
+const { app, BrowserWindow, session, Menu, dialog, Tray, remote } = require('electron')
 const { autoUpdater } = require("electron-updater")
-const { Client } = require('whatsapp-web.js');
+const { Client } = require('./WhatsBot/index');
+const pie = require("puppeteer-in-electron")
+const puppeteer = require("puppeteer-core");
 autoUpdater.checkForUpdatesAndNotify()
 var path = require('path')
 const dns = require("dns");
 const Store = require('electron-store')
 const fs = require('fs')
+const getPortSync = require('get-port-sync');
 
+
+var trayIcon;
 let isConnected = true;
 let firstCall = true;
 let preventExit = true;
+
+let pieBrowser;
+let botClient;
+
+let customeTitle = "WALC"
+
+let preventTitleChange = true
+
 
 // set user agent manually
 const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
@@ -18,6 +31,16 @@ const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, li
 let win
 findID = null;
 emptyBody = null;
+
+let freePort = null;
+try {
+    freePort = getPortSync()
+    pie.initialize(app, freePort)
+}
+catch (e) { console.log(e) }
+
+
+
 
 //Default Settings
 var settings = new Store({
@@ -40,6 +63,7 @@ var settings = new Store({
         }
     }
 })
+
 const settingsMenu = [{
     label: settings.get('askOnExit.name'),
     type: 'checkbox',
@@ -92,12 +116,50 @@ const mainmenu = [{
     label: 'Window',
     submenu: windowMenu,
 }]
+
+
+const showMenu = [
+    {
+        label: 'Show WALC', click: function () {
+            win.show();
+            trayIcon.setContextMenu(Menu.buildFromTemplate(hideMenu))
+        }
+    },
+    {
+        label: 'Quit', click: function () {
+            preventExit = false
+            app.isQuiting = true;
+            app.quit();
+        }
+    }
+]
+
+const hideMenu = [
+    {
+        label: 'Hide WALC', click: function () {
+            win.hide();
+            trayIcon.setContextMenu(Menu.buildFromTemplate(showMenu))
+        }
+    },
+    {
+        label: 'Quit', click: function () {
+            preventExit = false
+            app.isQuiting = true;
+            app.quit();
+        }
+    }
+]
+
+
 function loadWA() {
     //Close second instance if multiInstance is disabled
     const multiInstance = settings.get('multiInstance.value')
     const singleLock = app.requestSingleInstanceLock()
     if (!singleLock && !multiInstance) {
+        win = null
         app.quit()
+        process.exit(0)
+        return
     } else {
         app.on('second-instance', (event, cmdLine, workingDir) => {
             if (!multiInstance && win) {
@@ -109,29 +171,75 @@ function loadWA() {
     const menubar = Menu.buildFromTemplate(mainmenu)
     Menu.setApplicationMenu(menubar)
     win.setMenuBarVisibility(true);
+    win.loadURL('https://web.whatsapp.com', { 'userAgent': userAgent }).then(async () => {
+        pie.connect(app, puppeteer).then(async (b) => {
+            pieBrowser = b
+            let page;
+            try {
+                page = await pie.getPage(pieBrowser, win)
+            }
+            catch (e) {
+                // return
+                console.log(e)
+            }
+            const KEEP_PHONE_CONNECTED_IMG_SELECTOR = '[data-asset-intro-image="true"]';
+            await page.waitForSelector(KEEP_PHONE_CONNECTED_IMG_SELECTOR, { timeout: 0 });
+            botClient = new Client()
+            botClient.initialize(page, win)
+            if (firstCall) {
+                firstCall = false
+                win.webContents.executeJavaScript("Notification.requestPermission(function(p){if(p=='granted'){new Notification('WALC Desktop Notifications', {body:'Desktop Notifications are enabled.', icon:'https://web.whatsapp.com/favicon.ico'});};});")
+                botClient.on('message', (msg) => {
+                    console.log(msg.body)
+                })
+                botClient.on('ready', () => {
+                    customeTitle = `${botClient.info.me.user} - WALC`
+                    preventTitleChange = false
+                    win.setTitle(customeTitle)
+                    preventTitleChange = true
+                })
 
-    win.loadURL('https://web.whatsapp.com', { 'userAgent': userAgent })
-    win.webContents.executeJavaScript("Notification.requestPermission(function(p){if(p=='granted'){new Notification('WALC Desktop Notifications', {body:'Desktop Notifications are enabled.', icon:'https://web.whatsapp.com/favicon.ico'});};});")
+            }
+        }).catch((err) => {
+
+        });
+
+    })
+
     win.on('page-title-updated', (evt) => {
-        evt.preventDefault();
+        if (preventTitleChange) {
+            evt.preventDefault();
+            preventTitleChange = false
+            win.setTitle(customeTitle)
+            preventTitleChange = true
+        }
+
     });
     win.webContents.on('found-in-page', function (evt, result) {
         if (result.requestId == findID) {
             if (result.matches > 0) {
-                win.webContents.executeJavaScript("navigator.serviceWorker.getRegistration().then(function (r) { console.log(r); document.body.style.display='none'; r.unregister().then(function(success){if(success){window.location.reload();}}); });");
+                //win.webContents.executeJavaScript("navigator.serviceWorker.getRegistration().then(function (r) { console.log(r); document.body.style.display='none'; r.unregister().then(function(success){if(success){window.location.reload();}}); });");
+                win.webContents.session.clearStorageData({ storages: ["serviceWorkers"] }).then(() => {
+                    loadWA()
+                }).catch((err) => {
+                    //console.log(err)
+                })
+
             }
         }
 
     });
     win.webContents.on('did-finish-load', (evt) => {
         findID = win.webContents.findInPage('Update Google Chrome')
+
     });
 }
 function liveCheck() {
     dns.resolve("web.whatsapp.com", function (err, addr) {
         if (err) {
             if (isConnected) {
-                win.loadURL('file://' + __dirname + '/offline.html');
+                win.loadFile('offline.html');
+                delete botClient
             }
             isConnected = false;
 
@@ -149,12 +257,11 @@ function liveCheck() {
 }
 
 function createWindow() {
-
     // Create the browser window.
-    win = new BrowserWindow({ width: 800, height: 600, title: 'WALC', icon: path.join(__dirname, 'icons/logo256x256.png') })
+    win = new BrowserWindow({ width: 800, height: 600, title: 'WALC', icon: path.join(__dirname, 'icons/logo256x256.png'), 'webPreferences': { 'nodeIntegration': true } })
     win.setMenuBarVisibility(false);
     win.setAlwaysOnTop(settings.get('alwaysOnTop.value'))
-
+    trayIcon = new Tray(path.join(__dirname, 'icons/logo256x256.png'))
     //Hide Default menubar
     win.setMenu(null);
 
@@ -162,23 +269,42 @@ function createWindow() {
     setInterval(function () {
         liveCheck();
     }, 1000);
-    loadWA()
+    if (isConnected) {
+        loadWA()
+    }
     win.setTitle('WALC')
+    trayIcon.setTitle('WALC')
+    trayIcon.setToolTip('WALC')
+    trayIcon.on('click', () => {
+        if (win.isVisible()) {
+            win.hide()
+            trayIcon.setContextMenu(Menu.buildFromTemplate(showMenu))
+        } else {
+            win.show()
+            trayIcon.setContextMenu(Menu.buildFromTemplate(showMenu))
+        }
+    })
+
+    trayIcon.setContextMenu(Menu.buildFromTemplate(hideMenu))
+
+
 
     win.on('close', e => {
+        e.preventDefault();
         if (settings.get('askOnExit.value') && preventExit) {
-            e.preventDefault();
-            dialog.showMessageBox(win, {
+            res = dialog.showMessageBoxSync(win, {
                 type: 'question',
                 buttons: ['Yes', 'No'],
                 title: 'Exit?',
                 message: "Are you sure you want to exit WALC?"
-            }, (res) => {
-                if (res == 0) {
-                    preventExit = false
-                    win.close()
-                }
             })
+            if (res == 0) {
+                preventExit = false
+                app.exit()
+            }
+        } else {
+            preventExit = false
+            app.exit()
         }
     });
 

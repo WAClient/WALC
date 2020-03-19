@@ -48,6 +48,9 @@ Request new features or vote for existing feature requests at https://feathub.co
 - [X] Show Error if no network connectivity
 - [X] Open links in Default Web Browser
 
+## License
+This content of this repository is lisensed under GPL-3.0 aprt from the `WhatsBot`folder which is a modified version of https://github.com/pedroslopez/whatsapp-web.js which is licensed under Apache-2.0. You may want to view it README inside that folder. A copy of license if also included.
+
 ## Contributions
 * You may check the issues section to solve an issue and submit a PR.
 * Contributions for the listed TODOs are welcomed.

@@ -5,9 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder",
-    "release-linux": "electron-builder --linux"
+    "dist": "rm -r dist && electron-builder --dir && cp /usr/lib/x86_64-linux-gnu/libXtst.so.6 dist/linux-unpacked/ && cp /usr/lib/x86_64-linux-gnu/libXss.so.1 dist/linux-unpacked/ && electron-builder --prepackaged dist/linux-unpacked"
   },
   "repository": {
     "type": "git",
@@ -19,45 +17,46 @@
     "whatsapp-web"
   ],
   "author": "cstayyab <cstayyab@gmail.com>",
-  "license": "LGPL-3.0",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/cstayyab/WALC/issues"
   },
   "build": {
-    "appId": "cstayyab.linux.unofficial.whatsapp",
+    "appId": "com.cstayyab.linux.unofficial.whatsapp",
     "productName": "WALC",
     "files": [
       "!dist",
       "!release-builds"
     ],
     "linux": {
-      "category": "Network",
-      "synopsis": "WhatsApp Client for Linux (Unofficial)",
-      "description": "An unofficial WhatsApp Desktop client for linux",
+      "category": "Social",
+      "description": "An unofficial WhatsApp Desktop client for Linux. For official client use https://web.whatsapp.com as the official desktop client for Linux is not available.",
       "target": [
         "AppImage",
         "snap"
       ],
+      "icon": "icons/logo256x256.png",
+      "synopsis": "WALC - unoffficial WhatsApp Linux Client",
       "publish": {
         "provider": "github",
         "owner": "cstayyab",
         "host": "github.com"
       }
-    },
-    "appImage": {
-      "systemIntegration": "ask"
     }
   },
   "devDependencies": {
-    "electron": "^4.1.5",
-    "electron-builder": "^20.39.0",
-    "electron-packager": "^13.1.1",
-    "webpack": "^4.30.0"
+    "electron": "^8.1.1",
+    "electron-builder": "^22.4.0",
+    "electron-packager": "^14.2.1",
+    "webpack": "^4.42.0"
   },
   "homepage": "https://github.com/cstayyab/WALC#readme",
   "dependencies": {
-    "electron-store": "^3.2.0",
-    "electron-updater": "^4.0.6",
-    "whatsapp-web.js": "^1.2.5"
+    "@pedroslopez/moduleraid": "^4.1.0",
+    "electron-store": "^5.1.1",
+    "electron-updater": "^4.2.5",
+    "get-port-sync": "^1.0.0",
+    "puppeteer-core": "^2.1.1",
+    "puppeteer-in-electron": "^2.0.4"
   }
 }

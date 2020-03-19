@@ -17,3 +17,10 @@
 0.1.4
 - Forced Single Instance of WALC
 - Added Menus ( Window, Settings)
+0.1.5
+- Fixed Allow Multiple Windows
+- Added Tray Icon
+- Added initial support to for Bot (Not yet functional)
+- Updated All Dependencies
+- Removed System Integration support for AppImage because the option has been depcecated
+- Added Snap Support
