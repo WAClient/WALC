@@ -9,6 +9,8 @@ const dns = require("dns");
 const Store = require('electron-store')
 const fs = require('fs')
 const getPortSync = require('get-port-sync');
+const createDesktopShortcut = require('create-desktop-shortcuts');
+const homedir = require('os').homedir();
 
 
 var trayIcon;
@@ -22,7 +24,6 @@ let botClient;
 let customeTitle = "WALC"
 
 let preventTitleChange = true
-
 
 // set user agent manually
 const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
@@ -39,7 +40,44 @@ try {
 }
 catch (e) { console.log(e) }
 
-
+const shortcutDir = path.join(homedir, ".local/share/applications")
+//Create Desktop Shortcut for AppImage
+function integrateToDesktop(win) {
+    const iconDir = path.join(homedir, ".local/share/WALC")
+    const iconPath = path.join(iconDir, "logo256x56.png")
+    fs.mkdirSync(shortcutDir, { recursive: true });
+    fs.mkdirSync(iconDir, { recursive: true });
+    fs.copyFileSync(path.join(__dirname, "icons/logo256x256.png"), iconPath)
+    const shortcutCreated = createDesktopShortcut({
+        onlyCurrentOS: true,
+        customLogger: (msg, error) => {
+            dialog.showMessageBoxSync(win, {
+                type: 'error',
+                buttons: ['OK'],
+                title: 'Desktop Integration',
+                message: msg
+            })
+        },
+        "linux": {
+            filePath: process.env.APPIMAGE,
+            outputPath: shortcutDir,
+            name: 'WALC',
+            description: 'WALC - unofficial WhatsApp Linux Client',
+            icon: iconPath,
+            type: 'Application',
+            terminal: false,
+            chmod: true
+        }
+    })
+    if(shortcutCreated) {
+        dialog.showMessageBoxSync(win, {
+            type: 'info',
+            buttons: ['OK'],
+            title: 'Desktop Integration',
+            message: "WALC has successfully been integrated to your Applications."
+        })
+    }
+}
 
 
 //Default Settings
@@ -80,6 +118,14 @@ const settingsMenu = [{
     click: (menuItem, window, e) => {
         settings.set('multiInstance.value', menuItem.checked)
         preventExit = true;
+    },
+},
+{
+    label: "Update Desktop Integration",
+    type: 'normal',
+    checked: settings.get('multiInstance.value'),
+    click: (menuItem, window, e) => {
+        integrateToDesktop(window)
     },
 }
 ]
@@ -288,7 +334,6 @@ function createWindow() {
     trayIcon.setContextMenu(Menu.buildFromTemplate(hideMenu))
 
 
-
     win.on('close', e => {
         e.preventDefault();
         if (settings.get('askOnExit.value') && preventExit) {
@@ -321,6 +366,19 @@ function createWindow() {
         require('electron').shell.openExternal(url);
     })
 
+    if (process.env.APPIMAGE !== undefined && !fs.existsSync(path.join(shortcutDir, "WALC.desktop"))) {
+        //Desktop Integration of AppImage
+        integrate = dialog.showMessageBoxSync(win, {
+            type: 'question',
+            buttons: ['Yes', 'No'],
+            title: 'Desktop Integration',
+            message: "Do you want to integrate WALC to your Applications?"
+        })
+
+        if (integrate == 0) {
+            integrateToDesktop(win)
+        }
+    }
 
 }
 

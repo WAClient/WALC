@@ -24,3 +24,5 @@
 - Updated All Dependencies
 - Removed System Integration support for AppImage because the option has been depcecated
 - Added Snap Support
+0.1.6
+- Fixed Desktop Integration for AppImages with custom approach

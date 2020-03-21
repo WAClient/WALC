@@ -1,6 +1,6 @@
 {
   "name": "walc",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.",
   "main": "main.js",
   "scripts": {
@@ -53,6 +53,7 @@
   "homepage": "https://github.com/cstayyab/WALC#readme",
   "dependencies": {
     "@pedroslopez/moduleraid": "^4.1.0",
+    "create-desktop-shortcuts": "^1.0.2",
     "electron-store": "^5.1.1",
     "electron-updater": "^4.2.5",
     "get-port-sync": "^1.0.0",
