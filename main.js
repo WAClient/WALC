@@ -127,6 +127,7 @@ const settingsMenu = [{
     click: (menuItem, window, e) => {
         integrateToDesktop(window)
     },
+    visible: process.env.APPIMAGE !== undefined
 }
 ]
 const windowMenu = [{
