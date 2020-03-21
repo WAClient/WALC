@@ -20,3 +20,5 @@ A clear and concise description of any alternative solutions or features you've 
 Add any other context or screenshots about the feature request here.
 
 Please request this feature at https://feathub.com/cstayyab/WALC too. This issue will be used to track this feature only. Requests that are submitted at given URL will be entertained first according to number of votes on that feature.
+
+**To view all feature requests and to vote for your favorite ones visit https://feathub.com/cstayyab/WALC This will help in determining which feature needs to be implemented first**
