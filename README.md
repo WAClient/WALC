@@ -40,20 +40,14 @@ npm start
 [![Feature Requests](http://feathub.com/cstayyab/WALC?format=svg)](http://feathub.com/cstayyab/WALC)
 
 Request new features or vote for existing feature requests at https://feathub.com/cstayyab/WALC/
-
-## TODO
-- [x] Add Desktop Notification Support
-- [ ] Add auto-update feature for AppImage
-- [ ] Add custom title bar
-- [X] Show Error if no network connectivity
-- [X] Open links in Default Web Browser
+After you request a new feature please create an issue for that feature request too mentioned the feathub link of that feature. That issue will be used to track the implementation of that feature.
 
 ## License
-This content of this repository is lisensed under GPL-3.0 aprt from the `WhatsBot`folder which is a modified version of https://github.com/pedroslopez/whatsapp-web.js which is licensed under Apache-2.0. You may want to view it README inside that folder. A copy of license if also included.
+This content of this repository is lisensed under GPL-3.0 apart from the `WhatsBot`folder which is a modified version of https://github.com/pedroslopez/whatsapp-web.js which is licensed under Apache-2.0. You may want to view it README inside that folder. A copy of license is also included.
 
 ## Contributions
 * You may check the issues section to solve an issue and submit a PR.
-* Contributions for the listed TODOs are welcomed.
+* Although it isn't necessary to follow priority order for bugs and number of votes for feature request but it would be really good if you follow that.
 
  ## Join the team 
  Do you want to collaborate? Join the project at https://crowdforge.io/projects/510
