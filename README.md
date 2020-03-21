@@ -48,6 +48,3 @@ This content of this repository is lisensed under GPL-3.0 apart from the `WhatsB
 ## Contributions
 * You may check the issues section to solve an issue and submit a PR.
 * Although it isn't necessary to follow priority order for bugs and number of votes for feature request but it would be really good if you follow that.
-
- ## Join the team 
- Do you want to collaborate? Join the project at https://crowdforge.io/projects/510
