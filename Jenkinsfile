@@ -4,7 +4,7 @@ pipeline {
     stage('Install Dependencies') {
       agent {
         node {
-          label 'Install Dependencies'
+          label 'nodejs'
         }
 
       }
@@ -16,7 +16,7 @@ pipeline {
     stage('Dist Linux') {
       agent {
         node {
-          label 'Dist Linux'
+          label 'nodejs'
         }
 
       }
