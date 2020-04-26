@@ -7,6 +7,7 @@ autoUpdater.checkForUpdatesAndNotify();
 var path = require('path');
 const dns = require("dns");
 const Store = require('electron-store');
+const windowStateKeeper = require('electron-window-state');
 const fs = require('fs');
 const getPortSync = require('get-port-sync');
 const createDesktopShortcut = require('create-desktop-shortcuts');
@@ -319,10 +320,18 @@ function liveCheck() {
 }
 
 function createWindow() {
+    // Load the previous state with fallback to defaults
+    let windowState = windowStateKeeper({
+        defaultWidth: 800,
+        defaultHeight: 600
+    });
+
     // Create the browser window.
     win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        x: windowState.x,
+        y: windowState.y,
+        width: windowState.width,
+        height: windowState.height,
         title: 'WALC',
         icon: path.join(__dirname, 'icons/logo256x256.png'),
         'webPreferences': { 'nodeIntegration': true },
@@ -348,6 +357,8 @@ function createWindow() {
 
     trayIcon.setContextMenu(Menu.buildFromTemplate(getTrayMenu()));
 
+    // register window state listeners
+    windowState.manage(win);
 
     win.on('close', e => {
         e.preventDefault();

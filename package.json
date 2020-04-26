@@ -56,6 +56,7 @@
     "create-desktop-shortcuts": "^1.0.2",
     "electron-store": "^5.1.1",
     "electron-updater": "^4.2.5",
+    "electron-window-state": "^5.0.3",
     "get-port-sync": "^1.0.0",
     "puppeteer-core": "^2.1.1",
     "puppeteer-in-electron": "^2.0.4"
