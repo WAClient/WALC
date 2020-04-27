@@ -18,10 +18,23 @@ class Message extends Base {
 
     _patch(data) {
         /**
+         * MediaKey that represents the sticker 'ID'
+         * @type {string}
+         */
+        this.mediaKey = data.mediaKey;
+
+
+        /**
          * ID that represents the message
          * @type {object}
          */
         this.id = data.id;
+
+        /**
+         * ACK status for the message
+         * @type {MessageAck}
+         */
+        this.ack = data.ack;
 
         /**
          * Indicates if the message has media available for download
@@ -194,7 +207,7 @@ class Message extends Base {
                 await msg.downloadMedia(true, 1);
             }
             
-            if(msg.mediaData.mediaStage != 'RESOLVED') {
+            if(msg.mediaData.mediaStage.includes('ERROR')) {
                 // media could not be downloaded
                 return undefined;
             }
