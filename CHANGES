@@ -26,3 +26,15 @@
 - Added Snap Support
 0.1.6
 - Fixed Desktop Integration for AppImages with custom approach
+0.1.7
+- Commit 081959fcbea9bb112a1b3ee3a3c1b535be04c32f (Merged PR #23 by @Zzombiee2361)
+    * Tray menu reworked
+    * Close to tray
+    * Start hidden
+    * Added exit menu under window
+    * Fixed always on top
+    * Remember window state (position, size, etc)
+- 289cbfe1b39dd02f568856248601c0617a0f334e
+    * Another attempt to update UserAgent before every request to prevent #21
+- 25b1d6db13dcb567346436d02d47bb251c6c13e7
+    * Updated WhatsBot to latest commit(bcd02aa5e4cb96387487595ff02f2c0308793160) of whatsapp-web.js
