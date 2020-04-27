@@ -320,6 +320,12 @@ function liveCheck() {
 }
 
 function createWindow() {
+    // Yet another attempt to handle WhatsApp Web ServiceWorker.js error (Issue #21)
+    session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
+        details.requestHeaders['User-Agent'] = userAgent;
+        callback({ cancel: false, requestHeaders: details.requestHeaders });
+    });
+
     // Load the previous state with fallback to defaults
     let windowState = windowStateKeeper({
         defaultWidth: 800,
