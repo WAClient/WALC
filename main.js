@@ -1,4 +1,4 @@
-const { app, BrowserWindow, session, Menu, dialog, Tray, remote } = require('electron');
+const { app, BrowserWindow, session, Menu, dialog, Tray, remote, ipcMain, nativeImage } = require('electron');
 const { autoUpdater } = require("electron-updater");
 const { Client } = require('./WhatsBot/index');
 const pie = require("puppeteer-in-electron");
@@ -214,6 +214,11 @@ function getTrayMenu() {
     }];
 }
 
+ipcMain.on('renderTray', function(event, data) {
+    const img = nativeImage.createFromDataURL(data);
+    trayIcon.setImage(img);
+});
+
 function loadWA() {
     //Close second instance if multiInstance is disabled
     const multiInstance = settings.get('multiInstance.value');
@@ -256,7 +261,7 @@ function loadWA() {
                     console.log(msg.body);
                 });
                 botClient.on('ready', () => {
-                    customeTitle = `${botClient.info.me.user} - WALC`;
+                    customeTitle = `WALC`;
                     preventTitleChange = false;
                     win.setTitle(customeTitle);
                     preventTitleChange = true;
@@ -264,7 +269,7 @@ function loadWA() {
 
             }
         }).catch((err) => {
-
+            console.log(err);
         });
 
     });
@@ -334,7 +339,10 @@ function createWindow() {
         height: windowState.height,
         title: 'WALC',
         icon: path.join(__dirname, 'icons/logo256x256.png'),
-        'webPreferences': { 'nodeIntegration': true },
+        'webPreferences': {
+            'nodeIntegration': true,
+            preload: `${__dirname}/preload.js`,
+        },
         show: !settings.get('startHidden.value'),
     });
     win.setMenuBarVisibility(false);
