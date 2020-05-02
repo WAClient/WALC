@@ -13,7 +13,9 @@ window.Notification = function(title, options) {
 };
 Object.assign(window.Notification, window.oldNotification);
 
-window.renderTray = (unread) => {
+function renderTray() {
+	const chats = window.Store.Chat.getModelsArray();
+	let unread = chats.reduce((total, chat) => total + chat.unreadCount, 0);
 	const canvas = document.createElement('canvas');
 	const logo = new Image();
 	const ctx = canvas.getContext('2d');
@@ -23,8 +25,8 @@ window.renderTray = (unread) => {
 		canvas.height = logo.naturalHeight;
 
 		ctx.drawImage(logo, 0, 0);
-		if(unread !== undefined) {
-			unread = (Number(unread) > 99 ? 99 : unread);
+		if(unread > 0) {
+			unread = (unread > 99 ? 99 : unread);
 			ctx.fillStyle = 'red';
 			ctx.arc(45, 18, 18, 0, 2*Math.PI);
 			ctx.fill();
@@ -38,4 +40,15 @@ window.renderTray = (unread) => {
 		ipcRenderer.send('renderTray', canvas.toDataURL());
 	};
 	logo.src = 'favicon.ico';
-};
+}
+
+function addUnreadEvent() {
+	if(window.Store) {
+		renderTray();
+		window.Store.Chat.on('change:unreadCount', renderTray);
+	} else {
+		setTimeout(addUnreadEvent, 1000);
+	}
+}
+
+window.addEventListener('load', addUnreadEvent);

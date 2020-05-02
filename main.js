@@ -225,6 +225,7 @@ function loadWA() {
     const singleLock = app.requestSingleInstanceLock();
     if (!singleLock && !multiInstance) {
         win = null;
+        app.isQuiting = true;
         app.quit();
         process.exit(0);
         return;
