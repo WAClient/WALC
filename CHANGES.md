@@ -34,7 +34,13 @@
     * Added exit menu under window
     * Fixed always on top
     * Remember window state (position, size, etc)
-- [289cbfe1b39dd02f568856248601c0617a0f334e](https://github.com/cstayyab/WALC/commit/289cbfe1b39dd02f568856248601c0617a0f334e)
+- Commit [289cbfe1b39dd02f568856248601c0617a0f334e](https://github.com/cstayyab/WALC/commit/289cbfe1b39dd02f568856248601c0617a0f334e)
     * Another attempt to update UserAgent before every request to prevent [#21](https://github.com/cstayyab/WALC/issues/21)
-- [25b1d6db13dcb567346436d02d47bb251c6c13e7](https://github.com/cstayyab/WALC/commit/25b1d6db13dcb567346436d02d47bb251c6c13e7)
+- Commit [25b1d6db13dcb567346436d02d47bb251c6c13e7](https://github.com/cstayyab/WALC/commit/25b1d6db13dcb567346436d02d47bb251c6c13e7)
     * Updated WhatsBot to latest commit([bcd02aa5e4cb96387487595ff02f2c0308793160](https://github.com/pedroslopez/whatsapp-web.js/commit/bcd02aa5e4cb96387487595ff02f2c0308793160)) of [whatsapp-web.js](https://github.com/pedroslopez/whatsapp-web.js)
+- Commit [46aa6ae325f6d3a1d0e35c8d3f4a80a79847f256](https://github.com/cstayyab/WALC/commit/46aa6ae325f6d3a1d0e35c8d3f4a80a79847f256)  (Merged PR [#27](https://github.com/cstayyab/WALC/pull/23) by [@Zzombiee2361](https://github.com/Zzombiee2361))
+    * Implemented On Click Notification handler
+    * Show Number of notifications on Tray Icon when it is below 99 otherwise show 99
+- Commit [76d546787dee597654a84a4a4cc8337f808481b9](https://github.com/cstayyab/WALC/commit/76d546787dee597654a84a4a4cc8337f808481b9)
+    * Displays a notification when your PC goes offline or WhatsApp Server is not accessible by PC (Same for Mobile is stilll needs to be done)
+    * Fixed a bug where frequent change in network state caused WALC to go into an undetermined state
