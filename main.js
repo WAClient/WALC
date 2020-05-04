@@ -1,4 +1,4 @@
-const { app, BrowserWindow, session, Menu, dialog, Tray, remote, ipcMain, nativeImage } = require('electron');
+const { app, BrowserWindow, session, Menu, dialog, Tray, remote, ipcMain, nativeImage, Notification } = require('electron');
 const { autoUpdater } = require("electron-updater");
 const { Client } = require('./WhatsBot/index');
 const pie = require("puppeteer-in-electron");
@@ -273,6 +273,11 @@ function loadWA() {
             console.log(err);
         });
 
+    }).catch((err) => {
+        isConnected = false
+        win.loadFile('offline.html');
+        delete botClient;
+        liveCheck()
     });
 
     win.on('page-title-updated', (evt) => {
@@ -308,10 +313,10 @@ function liveCheck() {
         if (err) {
             if (isConnected) {
                 win.loadFile('offline.html');
+                new Notification({"title": "WALC cannot Access WhatsApp Server.", "body": "Please check your connection.", "silent": false, "icon": "icons/logo256x256.png"}).show()
                 delete botClient;
             }
             isConnected = false;
-
         } else {
             if (isConnected) {
 
