@@ -42,6 +42,12 @@
         "owner": "cstayyab",
         "host": "github.com"
       }
+    },
+    "snap": {
+      "plugs": [
+        "default",
+        "camera"
+      ]
     }
   },
   "devDependencies": {
