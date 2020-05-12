@@ -128,6 +128,17 @@ var settings = new Store({
     }
 });
 
+
+const WhatsAppMenu = [{
+    label: "Archive All Chats",
+    sublabel: "Archive all private and group chats",
+    click: async (menuItem) => {
+        menuItem.enabled = false;
+        await archiveAllChats();
+        menuItem.enabled = true;
+    }
+}];
+
 const settingsMenu = [{
     label: settings.get('askOnExit.name'),
     sublabel: 'Ask before exiting this window',
@@ -278,6 +289,9 @@ const helpMenu = [{
 }]
 
 const mainmenu = [{
+    label: 'WhatsApp',
+    submenu: WhatsAppMenu
+}, {
     label: 'Settings',
     submenu: settingsMenu,
 }, {
@@ -349,7 +363,7 @@ function loadWA() {
             const KEEP_PHONE_CONNECTED_IMG_SELECTOR = '[data-asset-intro-image="true"]';
             await page.waitForSelector(KEEP_PHONE_CONNECTED_IMG_SELECTOR, { timeout: 0 });
             botClient = new Client();
-            botClient.initialize(page, win);
+            await botClient.initialize(page, win);
             if (firstCall) {
                 firstCall = false;
                 win.webContents.executeJavaScript("Notification.requestPermission(function(p){if(p=='granted'){new Notification('WALC Desktop Notifications', {body:'Desktop Notifications are enabled.', icon:'https://web.whatsapp.com/favicon.ico'});};});");
@@ -549,3 +563,16 @@ app.on('activate', () => {
         createWindow();
     }
 });
+
+/* All functions related to WhatsBot */
+async function archiveAllChats() {
+    currentNotify = new Notification({ "title": "Archive All Chats", "body": "Archiving all chats . . .", "silent": true, "icon": "icons/logo256x256.png" })
+    currentNotify.show();
+    chats = await botClient.getChats()
+    chats.forEach(async (chat) => {
+        await chat.archive();
+    })
+    currentNotify.close();
+    new Notification({ "title": "Archive All Chats", "body": "All chats have been archived.", "silent": true, "icon": "icons/logo256x256.png" })
+    
+}
