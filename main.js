@@ -1,4 +1,4 @@
-const { app, BrowserWindow, session, Menu, dialog, Tray, remote, ipcMain, nativeImage, Notification } = require('electron');
+const { app, BrowserWindow, session, Menu, dialog, Tray, remote, ipcMain, nativeImage, Notification, shell, clipboard } = require('electron');
 const { autoUpdater } = require("electron-updater");
 const { Client } = require('./WhatsBot/index');
 const pie = require("puppeteer-in-electron");
@@ -9,12 +9,18 @@ const dns = require("dns");
 const Store = require('electron-store');
 const windowStateKeeper = require('electron-window-state');
 const fs = require('fs');
+const os = require('os')
 const getPortSync = require('get-port-sync');
 const createDesktopShortcut = require('create-desktop-shortcuts');
 const homedir = require('os').homedir();
+const walcinfo = require('./package.json');
+const lsbRelease = require('lsb-release');
 
 
 var trayIcon;
+// Information to be displayed in About Dialog
+var aboutWALC;
+
 let isConnected = true;
 let firstCall = true;
 let preventExit = true;
@@ -25,6 +31,12 @@ let botClient;
 let customeTitle = "WALC";
 
 let preventTitleChange = true;
+
+lsbRelease(function (_, data) {
+    aboutWALC = `Installation Type: ${process.env.APPIMAGE ? "AppImage" : ((isSNAP) ? "Snap" : "Manual")}
+${isSNAP ? `Snap Version:${process.env.SNAP_VERSION}(${process.env.SNAP_REVISION})` : ""}OS: ${data.description} 
+`;
+});
 
 // set user agent manually
 const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36';
@@ -40,6 +52,9 @@ try {
     pie.initialize(app, freePort);
 }
 catch (e) { console.log(e); }
+
+//SNAP Information
+const isSNAP = process.env.SNAP !== undefined && process.env.SNAP !== null;
 
 const shortcutDir = path.join(homedir, ".local/share/applications");
 //Create Desktop Shortcut for AppImage
@@ -185,12 +200,70 @@ const windowMenu = [{
         app.quit();
     },
 }];
+
+const helpMenu = [{
+    label: 'Find Help',
+    sublabel: 'View Related Issues on GitHub',
+    click: () => {
+        shell.openExternal(walcinfo.bugs.url);
+    },
+    accelerator: 'F1'
+}, {
+    label: 'Report Problem',
+    sublabel: 'Create an Bug Report on GitHub',
+    click: () => {
+        shell.openExternal(walcinfo.bugs.url + "/new/?template=bug_report.md&labels=bug&title=[Bug+Report]");
+    }
+}, {
+    label: 'separator',
+    type: 'separator'
+}, {
+    label: 'Request a Feature',
+    sublabel: 'Create a new feature request on GitHub',
+    click: () => {
+        shell.openExternal(walcinfo.bugs.url + "/new/?template=feature_request.md&labels=enhancement&title=[Feature+Request]");
+    }
+}, {
+    label: 'Vote for a Feature',
+    sublabel: 'Vote for existing features on FeatHub',
+    click: () => {
+        shell.openExternal("https://feathub.com/cstayyab/WALC");
+    }
+}, {
+    label: 'separator',
+    type: 'separator'
+}, {
+    label: 'About WALC',
+    sublabel: 'See Version and Diagnostic Info.',
+    click: () => {
+        
+        dialog.showMessageBox(win, {
+            type: "info",
+            buttons: ["Copy to Clipboard", "Close"],
+            defaultId: "0",
+            title: "About WALC",
+            cancelId: "0",
+            message: `WALC ${walcinfo.version}`,
+            detail: aboutWALC,
+            icon: "icons/logo256x256.png"
+        }).then(({response}) => {
+            if(response == 0) {
+                clipboard.writeText(`WALC ${walcinfo.version}` + "\n" + aboutWALC)
+                new Notification({ "title": "About WALC", "body": "Information Copied to Clipboard.", "silent": true, "icon": "icons/logo256x256.png" }).show()
+            }
+        });
+    }
+}]
+
 const mainmenu = [{
     label: 'Settings',
     submenu: settingsMenu,
 }, {
     label: 'Window',
     submenu: windowMenu,
+}, {
+    label: 'Help',
+    submenu: helpMenu
 }];
 
 function toggleVisibility() {
