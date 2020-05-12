@@ -3,7 +3,6 @@ name: Bug report
 about: Create a report to help us improve
 title: "[Bug Report]"
 labels: bug
-assignees: cstayyab
 
 ---
 
@@ -29,9 +28,6 @@ If applicable, add screenshots to help explain your problem.
 
 **System Information (please complete the following information):**
  - OS/Distro:
- - Browsers Installed on your system:
- - Node Version(node --version):
- - NPM version (npm --version): 
 
 **Additional context**
 Add any other context about the problem here.
