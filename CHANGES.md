@@ -44,3 +44,17 @@
 - Commit [76d546787dee597654a84a4a4cc8337f808481b9](https://github.com/cstayyab/WALC/commit/76d546787dee597654a84a4a4cc8337f808481b9)
     * Displays a notification when your PC goes offline or WhatsApp Server is not accessible by PC (Same for Mobile is stilll needs to be done)
     * Fixed a bug where frequent change in network state caused WALC to go into an undetermined state
+## 0.1.8
+- Commit [bd912565fbad80bfd240ea8effff3d7dd2cfa146](https://github.com/cstayyab/WALC/commit/bd912565fbad80bfd240ea8effff3d7dd2cfa146)
+    * Added Camera Interface so that Camera can be used in Snap Version of WALC ([#28](https://github.com/cstayyab/WALC/issues/28))
+- Commit [9d1c8927e4251d4a8739f5c2308b47ac7bc1d761](https://github.com/cstayyab/WALC/commit/9d1c8927e4251d4a8739f5c2308b47ac7bc1d761)
+    * Added Help Menu to access Bug report & feature request from WALC
+    * New wide help menu to show help text under each menu item.
+- Commit [cd1429ff607c6eb4863f5426270093124e1b3ba5](https://github.com/cstayyab/WALC/commit/cd1429ff607c6eb4863f5426270093124e1b3ba5)
+    * Added Help Text to all menu items for easier understanding of what exactly the Menu Item is for.
+- Commit [7a23a72241c052e950bee6e2a88a827ee83e329a](https://github.com/cstayyab/WALC/commit/7a23a72241c052e950bee6e2a88a827ee83e329a)
+    * Added Force Reload to easily clear cache to resolve cache issues when they occur
+    * Added Separators in Window menu for better appearance
+- Commit [82943c1246119340a77cbca6e258fbc7aa83a720](https://github.com/cstayyab/WALC/commit/82943c1246119340a77cbca6e258fbc7aa83a720)
+    * Added new WhatsApp menu for all functions strictly related to WhatsApp
+    * Added menu item to archive all group and private chats
