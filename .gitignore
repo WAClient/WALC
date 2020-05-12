@@ -49,5 +49,9 @@ dist
 /package-lock.json
 *.tgz
 
+# VS Code Files
+.vscode
+.vscode/*
+
 # Personal Files
 TODO
