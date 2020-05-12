@@ -177,6 +177,13 @@ const windowMenu = [{
     sublabel: 'Toggle Chrome Developer Tools',
     role: 'toggleDevTools'
 }, {
+    label: 'Reload Without Cache',
+    sublabel: 'Reload after discarding cached data',
+    role: 'forceReload'
+}, {
+    label: 'separator',
+    type: 'separator'
+}, {
     label: 'Always On Top',
     type: 'checkbox',
     sublabel: 'Keep this window on top of all other windows',
@@ -203,6 +210,9 @@ const windowMenu = [{
         sublabel: 'Reset Zoom to 100%',
         role: 'resetZoom',
     }]
+}, {
+    label: 'separator',
+    type: 'separator'
 }, {
     label: 'Exit',
     sublabel: 'Quit current window of WALC completely',
