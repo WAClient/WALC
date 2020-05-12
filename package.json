@@ -56,7 +56,7 @@
     "electron-packager": "^14.2.1",
     "webpack": "^4.42.0"
   },
-  "homepage": "https://github.com/cstayyab/WALC#readme",
+  "homepage": "https://cstayyab.com/projects/walc",
   "dependencies": {
     "@pedroslopez/moduleraid": "^4.1.0",
     "create-desktop-shortcuts": "^1.0.2",
