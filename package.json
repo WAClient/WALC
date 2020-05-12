@@ -17,7 +17,7 @@
     "whatsapp-web"
   ],
   "author": "cstayyab <cstayyab@gmail.com> (https://cstayyab.com)",
-  "license": "GPL-3.0",
+  "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/cstayyab/WALC/issues"
   },
