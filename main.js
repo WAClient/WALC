@@ -85,7 +85,7 @@ function integrateToDesktop(win) {
             chmod: true
         }
     });
-    if(shortcutCreated) {
+    if (shortcutCreated) {
         dialog.showMessageBoxSync(win, {
             type: 'info',
             buttons: ['OK'],
@@ -236,7 +236,7 @@ const helpMenu = [{
     label: 'About WALC',
     sublabel: 'See Version and Diagnostic Info.',
     click: () => {
-        
+
         dialog.showMessageBox(win, {
             type: "info",
             buttons: ["Copy to Clipboard", "Close"],
@@ -246,8 +246,8 @@ const helpMenu = [{
             message: `WALC ${walcinfo.version}`,
             detail: aboutWALC,
             icon: "icons/logo256x256.png"
-        }).then(({response}) => {
-            if(response == 0) {
+        }).then(({ response }) => {
+            if (response == 0) {
                 clipboard.writeText(`WALC ${walcinfo.version}` + "\n" + aboutWALC)
                 new Notification({ "title": "About WALC", "body": "Information Copied to Clipboard.", "silent": true, "icon": "icons/logo256x256.png" }).show()
             }
@@ -267,7 +267,7 @@ const mainmenu = [{
 }];
 
 function toggleVisibility() {
-    if(win.isVisible()) win.hide();
+    if (win.isVisible()) win.hide();
     else win.show();
     trayIcon.setContextMenu(Menu.buildFromTemplate(getTrayMenu()));
 }
@@ -287,7 +287,7 @@ function getTrayMenu() {
     }];
 }
 
-ipcMain.on('renderTray', function(event, data) {
+ipcMain.on('renderTray', function (event, data) {
     const img = nativeImage.createFromDataURL(data);
     trayIcon.setImage(img);
 });
@@ -386,7 +386,7 @@ function liveCheck() {
         if (err) {
             if (isConnected) {
                 win.loadFile('offline.html');
-                new Notification({"title": "WALC cannot Access WhatsApp Server.", "body": "Please check your connection.", "silent": false, "icon": "icons/logo256x256.png"}).show()
+                new Notification({ "title": "WALC cannot Access WhatsApp Server.", "body": "Please check your connection.", "silent": false, "icon": "icons/logo256x256.png" }).show()
                 delete botClient;
             }
             isConnected = false;
