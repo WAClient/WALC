@@ -130,6 +130,7 @@ var settings = new Store({
 
 const settingsMenu = [{
     label: settings.get('askOnExit.name'),
+    sublabel: 'Ask before exiting this window',
     type: 'checkbox',
     checked: settings.get('askOnExit.value'),
     click: (menuItem, window, e) => {
@@ -138,6 +139,7 @@ const settingsMenu = [{
     },
 }, {
     label: settings.get('multiInstance.name'),
+    sublabel: 'Allow using multiple WhatsApp accounts',
     type: 'checkbox',
     checked: settings.get('multiInstance.value'),
     click: (menuItem, window, e) => {
@@ -146,6 +148,7 @@ const settingsMenu = [{
     },
 }, {
     label: settings.get('closeToTray.name'),
+    sublabel: 'Keep WALC open in Background',
     type: 'checkbox',
     checked: settings.get('closeToTray.value'),
     click: (menuItem) => {
@@ -153,6 +156,7 @@ const settingsMenu = [{
     }
 }, {
     label: settings.get('startHidden.name'),
+    sublabel: 'Keep WALC closed to Try on Start',
     type: 'checkbox',
     checked: settings.get('startHidden.value'),
     click: (menuItem) => {
@@ -160,6 +164,7 @@ const settingsMenu = [{
     }
 }, {
     label: "Update Desktop Integration",
+    sublabel: 'Update WALC Desktop Shortcut',
     type: 'normal',
     checked: settings.get('multiInstance.value'),
     click: (menuItem, window, e) => {
@@ -169,10 +174,12 @@ const settingsMenu = [{
 }];
 const windowMenu = [{
     label: 'Debug Tools',
+    sublabel: 'Toggle Chrome Developer Tools',
     role: 'toggleDevTools'
 }, {
     label: 'Always On Top',
     type: 'checkbox',
+    sublabel: 'Keep this window on top of all other windows',
     checked: settings.get('alwaysOnTop.value'),
     click: (menuItem) => {
         settings.set('alwaysOnTop.value', menuItem.checked);
@@ -181,19 +188,24 @@ const windowMenu = [{
 
 }, {
     label: 'Zoom',
+    sublabel: 'Set Zoom of this Window',
     type: 'submenu',
     submenu: [{
         label: 'Zoom In',
+        sublabel: 'Increase Zoom',
         role: 'zoomIn',
     }, {
         label: 'Zoom Out',
+        sublabel: 'Decrease Zoom',
         role: 'zoomOut',
     }, {
         label: 'Reset Zoom',
+        sublabel: 'Reset Zoom to 100%',
         role: 'resetZoom',
     }]
 }, {
     label: 'Exit',
+    sublabel: 'Quit current window of WALC completely',
     type: 'normal',
     click: () => {
         app.isQuiting = true;
