@@ -51,4 +51,17 @@ function addUnreadEvent() {
 	}
 }
 
-window.addEventListener('load', addUnreadEvent);
+function windowOnLoad() {
+	addUnreadEvent();
+}
+
+function enableDarkMode() {
+	document.body.classList.add("dark");
+}
+function disableDarkMode() {
+	document.body.classList.remove("dark");
+}
+
+window.addEventListener('load', windowOnLoad);
+ipcRenderer.on('enableDarkMode', enableDarkMode);
+ipcRenderer.on('disableDarkMode', disableDarkMode);

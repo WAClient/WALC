@@ -125,6 +125,11 @@ var settings = new Store({
             name: 'Start Hidden',
             description: 'Hide WALC on startup'
         },
+        darkMode: {
+            value: false,
+            name: 'Dark Mode',
+            description: 'Enable Dark Mode in WhatsApp Web'
+        }
     }
 });
 
@@ -136,6 +141,19 @@ const WhatsAppMenu = [{
         menuItem.enabled = false;
         await archiveAllChats();
         menuItem.enabled = true;
+    }
+}, {
+    label: "Dark Mode",
+    sublabel: "Toggle Dark Mode",
+    type: 'checkbox',
+    checked: settings.get('darkMode.value'),
+    click: (menuItem, window, e) => {
+        settings.set('darkMode.value', menuItem.checked);
+        if(menuItem.checked) {
+            win.webContents.send("enableDarkMode");
+        } else {
+            win.webContents.send("disableDarkMode");
+        }
     }
 }];
 
@@ -350,6 +368,11 @@ function loadWA() {
     Menu.setApplicationMenu(menubar);
     win.setMenuBarVisibility(true);
     win.loadURL('https://web.whatsapp.com', { 'userAgent': userAgent }).then(async () => {
+        if(settings.get('darkMode.value')) {
+            win.webContents.send("enableDarkMode");
+        } else {
+            win.webContents.send("disableDarkMode");
+        }
         pie.connect(app, puppeteer).then(async (b) => {
             pieBrowser = b;
             let page;
