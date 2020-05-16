@@ -58,3 +58,8 @@
 - Commit [82943c1246119340a77cbca6e258fbc7aa83a720](https://github.com/cstayyab/WALC/commit/82943c1246119340a77cbca6e258fbc7aa83a720)
     * Added new WhatsApp menu for all functions strictly related to WhatsApp
     * Added menu item to archive all group and private chats
+## 0.1.9
+- Commit [04b8b15c58a2f332bf70939ead72e94f7aeba8a8](https://github.com/cstayyab/WALC/commit/04b8b15c58a2f332bf70939ead72e94f7aeba8a8)
+    * Added WhatsApp Web's Dark Mode.
+- Commit [437dc4623825dc41182e172fc46985dedc9b2d38](https://github.com/cstayyab/WALC/commit/437dc4623825dc41182e172fc46985dedc9b2d38)
+    * Auto Hide Menu Bar. (Please Alt to Toggle) (Feature: [https://feathub.com/cstayyab/WALC/+6](https://feathub.com/cstayyab/WALC/+6))
