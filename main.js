@@ -129,6 +129,11 @@ var settings = new Store({
             value: false,
             name: 'Dark Mode',
             description: 'Enable Dark Mode in WhatsApp Web'
+        },
+        autoHideMenuBar: {
+            value: false,
+            name: "Auo-Hide Menu Bar",
+            description: "Auto-hide top menu bar"
         }
     }
 });
@@ -200,6 +205,20 @@ const settingsMenu = [{
         integrateToDesktop(window);
     },
     visible: process.env.APPIMAGE !== undefined
+}, {
+    label: "Auto-Hide Menu Bar",
+    sublabel: "Toggle menu bar visibility using Alt",
+    type: 'checkbox',
+    checked: settings.get("autoHideMenuBar.value"),
+    click: (menuItem) => {
+        settings.set('autoHideMenuBar.value', menuItem.checked);
+        if(menuItem.checked) {
+            win.setMenuBarVisibility(false);
+        } else {
+            win.setMenuBarVisibility(true);
+        }
+        win.setAutoHideMenuBar(menuItem.checked);
+    }
 }];
 const windowMenu = [{
     label: 'Debug Tools',
@@ -366,7 +385,8 @@ function loadWA() {
     }
     const menubar = Menu.buildFromTemplate(mainmenu);
     Menu.setApplicationMenu(menubar);
-    win.setMenuBarVisibility(true);
+    win.setMenuBarVisibility(!settings.get('autoHideMenuBar.value'));
+    
     win.loadURL('https://web.whatsapp.com', { 'userAgent': userAgent }).then(async () => {
         if(settings.get('darkMode.value')) {
             win.webContents.send("enableDarkMode");
@@ -489,7 +509,8 @@ function createWindow() {
         },
         show: !settings.get('startHidden.value'),
     });
-    win.setMenuBarVisibility(false);
+    win.setMenuBarVisibility(!settings.get('autoHideMenuBar.value'));
+    win.setAutoHideMenuBar(settings.get('autoHideMenuBar.value'));
     win.setAlwaysOnTop(settings.get('alwaysOnTop.value'));
     trayIcon = new Tray(path.join(__dirname, 'icons/logo256x256.png'));
     //Hide Default menubar
