@@ -42,17 +42,23 @@ function renderTray() {
 	logo.src = 'favicon.ico';
 }
 
-function addUnreadEvent() {
-	if(window.Store) {
-		renderTray();
-		window.Store.Chat.on('change:unreadCount', renderTray);
-	} else {
-		setTimeout(addUnreadEvent, 1000);
+function appStateChange(event, state) {
+	if(['OPENING', 'DISCONNECTED', 'TIMEOUT'].includes(state)) {
+		new Notification('WALC disconnected', {
+			body: "Please check your connection.",
+			icon: "favicon.ico"
+		});
 	}
 }
 
-function windowOnLoad() {
-	addUnreadEvent();
+function storeOnLoad() {
+	if(window.Store) {
+		renderTray();
+		window.Store.Chat.on('change:unreadCount', renderTray);
+		window.Store.AppState.on('change:state', appStateChange);
+	} else {
+		setTimeout(storeOnLoad, 1000);
+	}
 }
 
 function enableDarkMode() {
@@ -62,6 +68,6 @@ function disableDarkMode() {
 	document.body.classList.remove("dark");
 }
 
-window.addEventListener('load', windowOnLoad);
+window.addEventListener('load', storeOnLoad);
 ipcRenderer.on('enableDarkMode', enableDarkMode);
 ipcRenderer.on('disableDarkMode', disableDarkMode);

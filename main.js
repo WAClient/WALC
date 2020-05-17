@@ -365,6 +365,8 @@ ipcMain.on('renderTray', function (event, data) {
     trayIcon.setImage(img);
 });
 
+ipcMain.on('liveCheck', liveCheck);
+
 function loadWA() {
     //Close second instance if multiInstance is disabled
     const multiInstance = settings.get('multiInstance.value');
@@ -426,10 +428,7 @@ function loadWA() {
         });
 
     }).catch((err) => {
-        isConnected = false
-        win.loadFile('offline.html');
-        delete botClient;
-        liveCheck()
+        liveCheck();
     });
 
     win.on('page-title-updated', (evt) => {
@@ -460,23 +459,20 @@ function loadWA() {
 
     });
 }
+
 function liveCheck() {
     dns.resolve("web.whatsapp.com", function (err, addr) {
         if (err) {
             if (isConnected) {
                 win.loadFile('offline.html');
-                new Notification({ "title": "WALC cannot Access WhatsApp Server.", "body": "Please check your connection.", "silent": false, "icon": "icons/logo256x256.png" }).show()
-                delete botClient;
+                new Notification({ "title": "WALC disconnected", "body": "Please check your connection.", "silent": false, "icon": "icons/logo256x256.png" }).show();
+                botClient = null;
+            } else {
+                win.webContents.send('offline');
             }
             isConnected = false;
         } else {
-            if (isConnected) {
-
-            }
-            else {
-                loadWA();
-            }
-
+            loadWA();
             isConnected = true;
         }
     });
@@ -516,13 +512,8 @@ function createWindow() {
     //Hide Default menubar
     win.setMenu(null);
 
-    // and load the Main Page of the app.
-    setInterval(function () {
-        liveCheck();
-    }, 1000);
-    if (isConnected) {
-        loadWA();
-    }
+    // Check connection and load the Main Page of the app.
+    liveCheck();
     win.setTitle('WALC');
     trayIcon.setTitle('WALC');
     trayIcon.setToolTip('WALC');
