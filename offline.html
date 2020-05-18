@@ -4,7 +4,7 @@
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
-  <title>OFFLINE</title>
+  <title>WALC</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS -->
@@ -17,14 +17,19 @@
   </style>
 </head>
 
-<body bg-dark>
+<body class="bg-dark">
   <div class="row h-100 justify-content-center align-items-center mx-auto">
     <div class="col-6">
       <div class="card text-white" style="background-color: #009588;">
         <div class="card-body">
           <h4 class="card-title">Not Connected</h4>
-          <p class="card-text">Cannot access WhatsApp Web Service. This page will reload as soon as you are back online.
+          <p class="card-text">
+            Cannot access WhatsApp Web Service. This page will reload as soon as you are back online.
           </p>
+          <div class="d-flex align-items-center">
+            <p class="mr-auto mb-0" id="retry-text"></p>
+            <button class="btn btn-light" id="retry-button">Retry Now</button>
+          </div>
         </div>
       </div>
     </div>
@@ -38,6 +43,7 @@
   <script src="bootstrap/jquery.min.js"></script>
   <script src="bootstrap/popper.min.js"></script>
   <script src="bootstrap/bootstrap.min.js"></script>
+  <script src="offline.js"></script>
 </body>
 
 </html>
