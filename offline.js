@@ -1,5 +1,6 @@
 const { ipcRenderer } = require('electron');
-
+const Store = require('electron-store');
+const settings = new Store({ name: 'settings' });
 const times = [5, 10, 30, 60];
 let index = 0;
 let counter = times[index];
@@ -41,3 +42,9 @@ retryButton.addEventListener('click', () => {
 	liveCheck();
 });
 count();
+
+if(settings.get('darkMode.value')) {
+	document.body.classList.add('bg-dark');
+} else {
+	document.body.classList.remove('bg-dark');
+}
