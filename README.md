@@ -5,6 +5,7 @@ A WhatsApp Desktop client for linux systems. This is an unofficial client. Use h
 
 ## Releases
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/walc)
+[![Get it from linux-APPS](https://i.imgur.com/YGU3qMJ.png)](https://www.linux-apps.com/p/1383431/)
 
 To download an AppImage, please goto [Latest Release](https://github.com/cstayyab/WALC/releases/latest) Page
 
