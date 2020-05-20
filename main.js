@@ -231,7 +231,7 @@ const settingsMenu = [{
         } else {
             win.setMenuBarVisibility(true);
         }
-        win.autoHideMenuBar(menuItem.checked);
+        win.autoHideMenuBar = menuItem.checked;
     }
 }];
 const windowMenu = [{
