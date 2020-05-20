@@ -1,30 +1,55 @@
 const { remote, ipcRenderer } = require('electron');
 const Store = require('electron-store');
+const electronSpellchecker = require('electron-spellchecker');
 
 const settings = new Store({ name: 'settings' });
 
 // override Notification API so it can show the window on click
 window.oldNotification = Notification;
-window.Notification = function(title, options) {
+window.Notification = function (title, options) {
 	const n = new window.oldNotification(title, options);
-	n.addEventListener('click', function() {
+	n.addEventListener('click', function () {
 		const win = remote.getCurrentWindow();
-		if(!win.isVisible()) win.show();
+		if (!win.isVisible()) win.show();
 		win.focus();
 	});
 	return n;
 };
 Object.assign(window.Notification, window.oldNotification);
 
+function getEnvLocale(env) {
+	env = env || process.env;
+
+	return env.LC_ALL || env.LC_MESSAGES || env.LANG || env.LANGUAGE;
+}
+
+
+function setupSpellChecker() {
+	const SpellCheckHandler = electronSpellchecker.SpellCheckHandler;
+	const ContextMenuListener = electronSpellchecker.ContextMenuListener;
+	const ContextMenuBuilder = electronSpellchecker.ContextMenuBuilder;
+	window.spellCheckHandler = new SpellCheckHandler();
+	window.spellCheckHandler.attachToInput();
+
+	window.spellCheckHandler.switchLanguage(getEnvLocale());
+
+	let contextMenuBuilder = new ContextMenuBuilder(window.spellCheckHandler);
+
+	// Add context menu listener
+	let contextMenuListener = new ContextMenuListener((info) => {
+		contextMenuBuilder.showPopupMenu(info);
+	});
+}
+
 function renderTray() {
 	const chats = window.Store.Chat.getModelsArray();
 	let allMuted = settings.get('countMuted.value');
 	let unread = chats.reduce((total, chat) => {
 		// don't count if user disable counter on muted chats
-		if(!settings.get('countMuted.value') && chat.mute.isMuted) {
+		if (!settings.get('countMuted.value') && chat.mute.isMuted) {
 			return total;
 		}
-		if(chat.unreadCount > 0 && !chat.mute.isMuted) {
+		if (chat.unreadCount > 0 && !chat.mute.isMuted) {
 			allMuted = false;
 		}
 		return total + chat.unreadCount;
@@ -37,22 +62,22 @@ function renderTray() {
 		canvas.width = logo.naturalWidth;
 		canvas.height = logo.naturalHeight;
 
-		if(window.Store.AppState.state !== 'CONNECTED') {
+		if (window.Store.AppState.state !== 'CONNECTED') {
 			ctx.filter = 'grayscale(100%)';
 		}
 		ctx.drawImage(logo, 0, 0);
 		ctx.filter = 'none';
-		if(unread > 0) {
+		if (unread > 0) {
 			unread = (unread > 99 ? 99 : unread);
-			if(allMuted) {
+			if (allMuted) {
 				ctx.fillStyle = 'gray';
 			} else {
 				ctx.fillStyle = 'red';
 			}
-			ctx.arc(45, 18, 18, 0, 2*Math.PI);
+			ctx.arc(45, 18, 18, 0, 2 * Math.PI);
 			ctx.fill();
 			ctx.fillStyle = 'white';
-			ctx.font = (unread < 10 ? '28' : '24')+'px sans-serif';
+			ctx.font = (unread < 10 ? '28' : '24') + 'px sans-serif';
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'middle';
 			ctx.fillText(unread, 45, 18);
@@ -64,7 +89,7 @@ function renderTray() {
 }
 
 function appStateChange(event, state) {
-	if(['OPENING', 'DISCONNECTED', 'TIMEOUT'].includes(state)) {
+	if (['OPENING', 'DISCONNECTED', 'TIMEOUT'].includes(state)) {
 		setTimeout(() => {
 			if (state === window.Store.AppState.state) {
 				new Notification('WALC disconnected', {
@@ -74,13 +99,13 @@ function appStateChange(event, state) {
 			}
 			renderTray();
 		}, 3000);
-	} else if(state === 'CONNECTED') {
+	} else if (state === 'CONNECTED') {
 		renderTray();
 	}
 }
 
 function storeOnLoad() {
-	if(window.Store) {
+	if (window.Store) {
 		renderTray();
 		window.Store.Chat.on('change:unreadCount', renderTray);
 		window.Store.Chat.on('change:muteExpiration', renderTray);
@@ -91,11 +116,11 @@ function storeOnLoad() {
 }
 
 function applySettings() {
-	if(settings.get('darkMode.value')) {
+	if (settings.get('darkMode.value')) {
 		enableDarkMode();
 	} else {
 		disableDarkMode();
-	}	
+	}
 }
 
 function enableDarkMode() {
@@ -107,6 +132,7 @@ function disableDarkMode() {
 
 window.addEventListener('load', storeOnLoad);
 window.addEventListener('load', applySettings);
+document.addEventListener("DOMContentLoaded", setupSpellChecker);
 ipcRenderer.on('renderTray', renderTray);
 ipcRenderer.on('enableDarkMode', enableDarkMode);
 ipcRenderer.on('disableDarkMode', disableDarkMode);

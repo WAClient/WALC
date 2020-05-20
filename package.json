@@ -54,12 +54,14 @@
     "electron": "^8.1.1",
     "electron-builder": "^22.4.0",
     "electron-packager": "^14.2.1",
+    "electron-rebuild": "^1.11.0",
     "webpack": "^4.42.0"
   },
   "homepage": "https://cstayyab.com/projects/walc",
   "dependencies": {
     "@pedroslopez/moduleraid": "^4.1.0",
     "create-desktop-shortcuts": "^1.0.2",
+    "electron-spellchecker": "^2.2.1",
     "electron-store": "^5.1.1",
     "electron-updater": "^4.2.5",
     "electron-window-state": "^5.0.3",
