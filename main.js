@@ -148,13 +148,24 @@ const WhatsAppMenu = [{
         menuItem.enabled = true;
     }
 }, {
+    label: "Mark All As Read",
+    sublabel: "Mark all chat as read",
+    click: async (menuItem, window, e) => {
+        menuItem.enabled = false;
+        await markAllChatsAsRead();
+        menuItem.enabled = true;
+    }
+}, {
+    label: 'separator',
+    type: 'separator'
+}, {
     label: "Dark Mode",
     sublabel: "Toggle Dark Mode",
     type: 'checkbox',
     checked: settings.get('darkMode.value'),
     click: (menuItem, window, e) => {
         settings.set('darkMode.value', menuItem.checked);
-        if(menuItem.checked) {
+        if (menuItem.checked) {
             win.webContents.send("enableDarkMode");
         } else {
             win.webContents.send("disableDarkMode");
@@ -212,7 +223,7 @@ const settingsMenu = [{
     checked: settings.get("autoHideMenuBar.value"),
     click: (menuItem) => {
         settings.set('autoHideMenuBar.value', menuItem.checked);
-        if(menuItem.checked) {
+        if (menuItem.checked) {
             win.setMenuBarVisibility(false);
         } else {
             win.setMenuBarVisibility(true);
@@ -303,6 +314,12 @@ const helpMenu = [{
     label: 'separator',
     type: 'separator'
 }, {
+    label: 'Rate && Review WALC',
+    sublabel: 'Help WALC grow by reviewing',
+    click: () => {
+        rateAndReviewWALC();
+    }
+}, {
     label: 'About WALC',
     sublabel: 'See Version and Diagnostic Info.',
     click: () => {
@@ -388,9 +405,9 @@ function loadWA() {
     const menubar = Menu.buildFromTemplate(mainmenu);
     Menu.setApplicationMenu(menubar);
     win.setMenuBarVisibility(!settings.get('autoHideMenuBar.value'));
-    
+
     win.loadURL('https://web.whatsapp.com', { 'userAgent': userAgent }).then(async () => {
-        if(settings.get('darkMode.value')) {
+        if (settings.get('darkMode.value')) {
             win.webContents.send("enableDarkMode");
         } else {
             win.webContents.send("disableDarkMode");
@@ -599,6 +616,23 @@ app.on('activate', () => {
     }
 });
 
+/* Additional Functions */
+function openInSnapStore() {
+    shell.openExternal("snap://walc");
+}
+
+function viewOnLinuxApps() {
+    shell.openExternal("https://www.linux-apps.com/p/1383431/");
+}
+
+function rateAndReviewWALC() {
+    if (isSNAP) {
+        openInSnapStore();
+    } else {
+        viewOnLinuxApps();
+    }
+}
+
 /* All functions related to WhatsBot */
 async function archiveAllChats() {
     currentNotify = new Notification({ "title": "Archive All Chats", "body": "Archiving all chats . . .", "silent": true, "icon": "icons/logo256x256.png" })
@@ -609,5 +643,12 @@ async function archiveAllChats() {
     })
     currentNotify.close();
     new Notification({ "title": "Archive All Chats", "body": "All chats have been archived.", "silent": true, "icon": "icons/logo256x256.png" })
-    
+
+}
+
+async function markAllChatsAsRead() {
+    chats = await botClient.getChats()
+    chats.forEach(async (chat) => {
+        await chat.sendSeen();
+    });
 }
