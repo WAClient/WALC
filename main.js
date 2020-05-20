@@ -208,6 +208,7 @@ const settingsMenu = [{
     checked: settings.get('countMuted.value'),
     click: (menuItem) => {
         settings.set('countMuted.value', menuItem.checked);
+        win.webContents.send('renderTray');
     }
 }, {
     label: "Update Desktop Integration",

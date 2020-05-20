@@ -107,5 +107,6 @@ function disableDarkMode() {
 
 window.addEventListener('load', storeOnLoad);
 window.addEventListener('load', applySettings);
+ipcRenderer.on('renderTray', renderTray);
 ipcRenderer.on('enableDarkMode', enableDarkMode);
 ipcRenderer.on('disableDarkMode', disableDarkMode);
