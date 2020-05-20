@@ -343,16 +343,16 @@ const helpMenu = [{
 }]
 
 const mainmenu = [{
-    label: 'WhatsApp',
+    label: '&WhatsApp',
     submenu: WhatsAppMenu
 }, {
-    label: 'Settings',
+    label: '&Settings',
     submenu: settingsMenu,
 }, {
-    label: 'Window',
+    label: 'Wi&ndow',
     submenu: windowMenu,
 }, {
-    label: 'Help',
+    label: '&Help',
     submenu: helpMenu
 }];
 
