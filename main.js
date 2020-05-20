@@ -132,8 +132,13 @@ var settings = new Store({
         },
         autoHideMenuBar: {
             value: false,
-            name: "Auo-Hide Menu Bar",
+            name: "Auto-Hide Menu Bar",
             description: "Auto-hide top menu bar"
+        },
+        countMuted: {
+            value: true,
+            name: 'Include Muted Chats',
+            description: 'Count muted chats in the badge counter'
         }
     }
 });
@@ -201,11 +206,20 @@ const settingsMenu = [{
     }
 }, {
     label: settings.get('startHidden.name'),
-    sublabel: 'Keep WALC closed to Try on Start',
+    sublabel: 'Keep WALC closed to Tray on Start',
     type: 'checkbox',
     checked: settings.get('startHidden.value'),
     click: (menuItem) => {
         settings.set('startHidden.value', menuItem.checked);
+    }
+}, {
+    label: settings.get('countMuted.name'),
+    sublabel: settings.get('countMuted.description'),
+    type: 'checkbox',
+    checked: settings.get('countMuted.value'),
+    click: (menuItem) => {
+        settings.set('countMuted.value', menuItem.checked);
+        win.webContents.send('renderTray');
     }
 }, {
     label: "Update Desktop Integration",
@@ -228,7 +242,7 @@ const settingsMenu = [{
         } else {
             win.setMenuBarVisibility(true);
         }
-        win.setAutoHideMenuBar(menuItem.checked);
+        win.autoHideMenuBar = menuItem.checked;
     }
 }];
 const windowMenu = [{
@@ -407,11 +421,6 @@ function loadWA() {
     win.setMenuBarVisibility(!settings.get('autoHideMenuBar.value'));
 
     win.loadURL('https://web.whatsapp.com', { 'userAgent': userAgent }).then(async () => {
-        if (settings.get('darkMode.value')) {
-            win.webContents.send("enableDarkMode");
-        } else {
-            win.webContents.send("disableDarkMode");
-        }
         pie.connect(app, puppeteer).then(async (b) => {
             pieBrowser = b;
             let page;
@@ -516,14 +525,14 @@ function createWindow() {
         height: windowState.height,
         title: 'WALC',
         icon: path.join(__dirname, 'icons/logo256x256.png'),
-        'webPreferences': {
-            'nodeIntegration': true,
+        webPreferences: {
+            nodeIntegration: true,
             preload: `${__dirname}/preload.js`,
         },
         show: !settings.get('startHidden.value'),
+        autoHideMenuBar: settings.get('autoHideMenuBar.value'),
     });
     win.setMenuBarVisibility(!settings.get('autoHideMenuBar.value'));
-    win.setAutoHideMenuBar(settings.get('autoHideMenuBar.value'));
     win.setAlwaysOnTop(settings.get('alwaysOnTop.value'));
     trayIcon = new Tray(path.join(__dirname, 'icons/logo256x256.png'));
     //Hide Default menubar
