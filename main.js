@@ -170,11 +170,7 @@ const WhatsAppMenu = [{
     checked: settings.get('darkMode.value'),
     click: (menuItem, window, e) => {
         settings.set('darkMode.value', menuItem.checked);
-        if (menuItem.checked) {
-            win.webContents.send("enableDarkMode");
-        } else {
-            win.webContents.send("disableDarkMode");
-        }
+        win.webContents.send("setDarkMode", menuItem.checked);
     }
 }];
 

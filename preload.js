@@ -1,6 +1,7 @@
 const { remote, ipcRenderer } = require('electron');
 const Store = require('electron-store');
 const electronSpellchecker = require('electron-spellchecker');
+const waStore = require('./waStore');
 
 const settings = new Store({ name: 'settings' });
 
@@ -62,7 +63,7 @@ function renderTray() {
 		canvas.width = logo.naturalWidth;
 		canvas.height = logo.naturalHeight;
 
-		if (window.Store.AppState.state !== 'CONNECTED') {
+		if(window.Store.State.default.state !== 'CONNECTED') {
 			ctx.filter = 'grayscale(100%)';
 		}
 		ctx.drawImage(logo, 0, 0);
@@ -91,48 +92,44 @@ function renderTray() {
 function appStateChange(event, state) {
 	if (['OPENING', 'DISCONNECTED', 'TIMEOUT'].includes(state)) {
 		setTimeout(() => {
-			if (state === window.Store.AppState.state) {
+			if (state === window.Store.State.default.state) {
 				new Notification('WALC disconnected', {
 					body: "Please check your connection.",
 					icon: "favicon.ico"
 				});
 			}
 			renderTray();
-		}, 3000);
+		}, 5000);
 	} else if (state === 'CONNECTED') {
 		renderTray();
 	}
 }
 
 function storeOnLoad() {
-	if (window.Store) {
+	setTimeout(function() {
+		waStore(); // auto load window.Store if undefined
+
 		renderTray();
 		window.Store.Chat.on('change:unreadCount', renderTray);
 		window.Store.Chat.on('change:muteExpiration', renderTray);
-		window.Store.AppState.on('change:state', appStateChange);
+		window.Store.State.default.on('change:state', appStateChange);
+	}, 5000);
+}
+
+function setDarkMode(enabled) {
+	if(enabled) {
+		document.body.classList.add('dark');
 	} else {
-		setTimeout(storeOnLoad, 1000);
+		document.body.classList.remove('dark');
 	}
 }
 
 function applySettings() {
-	if (settings.get('darkMode.value')) {
-		enableDarkMode();
-	} else {
-		disableDarkMode();
-	}
-}
-
-function enableDarkMode() {
-	document.body.classList.add("dark");
-}
-function disableDarkMode() {
-	document.body.classList.remove("dark");
+	setDarkMode(settings.get('darkMode.value'));
 }
 
 window.addEventListener('load', storeOnLoad);
 window.addEventListener('load', applySettings);
 document.addEventListener("DOMContentLoaded", setupSpellChecker);
 ipcRenderer.on('renderTray', renderTray);
-ipcRenderer.on('enableDarkMode', enableDarkMode);
-ipcRenderer.on('disableDarkMode', disableDarkMode);
+ipcRenderer.on('setDarkMode', (ev, enabled) => setDarkMode(enabled));
