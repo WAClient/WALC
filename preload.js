@@ -107,13 +107,17 @@ function appStateChange(event, state) {
 
 function storeOnLoad() {
 	setTimeout(function() {
-		waStore(); // auto load window.Store if undefined
+		if(window.Store || document.getElementById('startup') === null) {
+			waStore(); // auto load window.Store if undefined
 
-		renderTray();
-		window.Store.Chat.on('change:unreadCount', renderTray);
-		window.Store.Chat.on('change:muteExpiration', renderTray);
-		window.Store.State.default.on('change:state', appStateChange);
-	}, 5000);
+			renderTray();
+			window.Store.Chat.on('change:unreadCount', renderTray);
+			window.Store.Chat.on('change:muteExpiration', renderTray);
+			window.Store.State.default.on('change:state', appStateChange);
+		} else {
+			storeOnLoad();
+		}
+	}, 3000);
 }
 
 function setDarkMode(enabled) {
