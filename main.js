@@ -34,7 +34,7 @@ let preventTitleChange = true;
 
 lsbRelease(function (_, data) {
     aboutWALC = `Installation Type: ${process.env.APPIMAGE ? "AppImage" : ((isSNAP) ? "Snap" : "Manual")}
-${isSNAP ? `Snap Version:${process.env.SNAP_VERSION}(${process.env.SNAP_REVISION})` : ""}OS: ${data.description} 
+${isSNAP ? `Snap Version:${process.env.SNAP_VERSION}(${process.env.SNAP_REVISION})` : ""}OS: ${data ? data.description : "Unknown (probably missing lsb_release)"}
 `;
 });
 
