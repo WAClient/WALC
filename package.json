@@ -68,6 +68,7 @@
     "get-port-sync": "^1.0.0",
     "lsb-release": "^0.1.0",
     "puppeteer-core": "^2.1.1",
-    "puppeteer-in-electron": "^2.0.4"
+    "puppeteer-in-electron": "^2.0.4",
+    "mime": "^2.4.5"
   }
 }
