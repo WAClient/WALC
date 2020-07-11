@@ -431,7 +431,7 @@ function loadWA() {
                 // return
                 console.log(e);
             }
-            const KEEP_PHONE_CONNECTED_IMG_SELECTOR = '[data-asset-intro-image="true"]';
+            const KEEP_PHONE_CONNECTED_IMG_SELECTOR = '[data-asset-intro-image-light="true"], [data-asset-intro-image-dark="true"]';
             await page.waitForSelector(KEEP_PHONE_CONNECTED_IMG_SELECTOR, { timeout: 0 });
             botClient = new Client();
             await botClient.initialize(page, win);
