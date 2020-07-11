@@ -5,7 +5,8 @@ const puppeteer = require('puppeteer-core');
 const moduleRaid = require('@pedroslopez/moduleraid/moduleraid');
 
 const Util = require('./util/Util');
-const { WhatsWebURL, UserAgent, DefaultOptions, Events, WAState } = require('./util/Constants');
+const InterfaceController = require('./util/InterfaceController');
+const { WhatsWebURL, DefaultOptions, Events, WAState } = require('./util/Constants');
 const { ExposeStore, LoadUtils } = require('./util/Injected');
 const ChatFactory = require('./factories/ChatFactory');
 const ContactFactory = require('./factories/ContactFactory');
@@ -13,6 +14,7 @@ const { ClientInfo, Message, MessageMedia, Contact, Location, GroupNotification 
 /**
  * Starting point for interacting with the WhatsApp Web API
  * @extends {EventEmitter}
+ * @param {object} options
  * @fires Client#qr
  * @fires Client#authenticated
  * @fires Client#auth_failure
@@ -84,6 +86,9 @@ class Client extends EventEmitter {
             return window.Store.Conn.serialize();
         }));
 
+        // Add InterfaceController
+        this.interface = new InterfaceController(this);
+        
         // Register events
         await page.exposeFunction('onAddMessageEvent', msg => {
             if (!msg.isNewMsg) return;
@@ -273,13 +278,22 @@ class Client extends EventEmitter {
      */
     async destroy() {
         //await this.pupBrowser.close();
-        const KEEP_PHONE_CONNECTED_IMG_SELECTOR = '[data-asset-intro-image="true"]';
+        const KEEP_PHONE_CONNECTED_IMG_SELECTOR = '[data-asset-intro-image-light="true"], [data-asset-intro-image-dark="true"]';
         await page.waitForSelector(KEEP_PHONE_CONNECTED_IMG_SELECTOR, { timeout: 0 });
     }
 
     /**
+     * Logs out the client, closing the current session
+     */
+    async logout() {
+        return await this.pupPage.evaluate(() => {
+            return window.Store.AppState.logout();
+        });
+    }
+
+    /**
 	     * Returns the version of WhatsApp Web currently being run
-	     * @returns Promise<string>
+	     * @returns {Promise<string>}
 	     */
     async getWWebVersion() {
         return await this.pupPage.evaluate(() => {
@@ -324,38 +338,21 @@ class Client extends EventEmitter {
         } else if (options.media instanceof MessageMedia) {
             internalOptions.attachment = options.media;
             internalOptions.caption = content;
+            content = '';
         } else if (content instanceof Location) {
             internalOptions.location = content;
             content = '';
         }
 
         const newMessage = await this.pupPage.evaluate(async (chatId, message, options, sendSeen) => {
-            let chat = window.Store.Chat.get(chatId);
-            let msg;
-            if (!chat) { // The chat is not available in the previously chatted list
+            const chatWid = window.Store.WidFactory.createWid(chatId);
+            const chat = await window.Store.Chat.find(chatWid);
 
-                let newChatId = await window.WWebJS.getNumberId(chatId);
-                if (newChatId) {
-                    //get the topmost chat object and assign the new chatId to it . 
-                    //This is just a workaround.May cause problem if there are no chats at all. Need to dig in and emulate how whatsapp web does
-                    let chat = window.Store.Chat.models[0];
-                    if (!chat)
-                        throw 'Chat List empty! Need at least one open conversation with any of your contact';
-
-                    let originalChatObjId = chat.id;
-                    chat.id = newChatId;
-
-                    msg = await window.WWebJS.sendMessage(chat, message, options);
-                    chat.id = originalChatObjId; //replace the chat with its original id
-                }
+            if(sendSeen) {
+                window.WWebJS.sendSeen(chatId);
             }
-            else {
-                if (sendSeen) {
-                    window.WWebJS.sendSeen(chatId);
-                }
 
-                msg = await window.WWebJS.sendMessage(chat, message, options, sendSeen);
-            }
+            const msg = await window.WWebJS.sendMessage(chat, message, options, sendSeen);
             return msg.serialize();
         }, chatId, content, internalOptions, sendSeen);
 
@@ -411,6 +408,19 @@ class Client extends EventEmitter {
 
         return ContactFactory.create(this, contact);
     }
+
+        /**
+     * Returns an object with information about the invite code's group
+     * @param {string} inviteCode 
+     * @returns {Promise<object>} Invite information
+     */
+    async getInviteInfo(inviteCode) {
+        return await this.pupPage.evaluate(inviteCode => {
+            return window.Store.Wap.groupInviteInfo(inviteCode);
+        }, inviteCode);
+    }
+
+
 
     /**
      * Accepts an invitation to join a group
@@ -476,6 +486,30 @@ class Client extends EventEmitter {
             return chat.archive;
         }, chatId);
     }
+
+    /**
+     * Mutes the Chat until a specified date
+     * @param {string} chatId ID of the chat that will be muted
+     * @param {Date} unmuteDate Date when the chat will be unmuted
+     */
+    async muteChat(chatId, unmuteDate) {
+        await this.pupPage.evaluate(async (chatId, timestamp) => {
+            let chat = await window.Store.Chat.get(chatId);
+            await chat.mute.mute(timestamp, !0);
+        }, chatId, unmuteDate.getTime() / 1000);
+    }
+
+    /**
+     * Unmutes the Chat
+     * @param {string} chatId ID of the chat that will be unmuted
+     */
+    async unmuteChat(chatId) {
+        await this.pupPage.evaluate(async chatId => {
+            let chat = await window.Store.Chat.get(chatId);
+            await window.Store.Cmd.muteChat(chat, false);
+        }, chatId);
+    }
+
     /**
     * Returns the contact ID's profile picture URL, if privacy settings allow it
     * @param {string} contactId the whatsapp user's ID
@@ -500,6 +534,7 @@ class Client extends EventEmitter {
 
     /**
      * Check if a given ID is registered in whatsapp
+     * @param {string} id the whatsapp user's ID
      * @returns {Promise<Boolean>}
      */
     async isRegisteredUser(id) {

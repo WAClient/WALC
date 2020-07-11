@@ -3,7 +3,7 @@
 module.exports = {
     Client: require('./src/Client'),
     
-    version: "1.5.1-post",
+    version: "1.7.0-post",
 
     // Structures
     Chat: require('./src/structures/Chat'),
