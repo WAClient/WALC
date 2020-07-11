@@ -1,6 +1,6 @@
 {
   "name": "walc",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.",
   "main": "main.js",
   "scripts": {

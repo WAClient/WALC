@@ -63,3 +63,31 @@
     * Added WhatsApp Web's Dark Mode (#22 and #30)
 - Commit [437dc4623825dc41182e172fc46985dedc9b2d38](https://github.com/cstayyab/WALC/commit/437dc4623825dc41182e172fc46985dedc9b2d38)
     * Auto Hide Menu Bar. (Please Alt to Toggle) (Feature: [https://feathub.com/cstayyab/WALC/+6](https://feathub.com/cstayyab/WALC/+6))
+## 0.1.10
+- Commit [04b8b15c58a2f332bf70939ead72e94f7aeba8a8](https://github.com/cstayyab/WALC/commit/4d217acfaeff5979627f6462356d72dc507a32f8) (Pull request [#34](https://github.com/cstayyab/WALC/pull/34))
+    * Notification on Disconnect
+    * Rework Offline Page
+- Commit [c32e9d64716c0ef52647d6d93fd20b60076e4c0e](https://github.com/cstayyab/WALC/commit/f24f4e383d9b83284bed34ad194952581afd9c9a)
+    * Tray Badge Update
+    * Dark Mode Settings
+- Commit [f24f4e383d9b83284bed34ad194952581afd9c9a](https://github.com/cstayyab/WALC/commit/f24f4e383d9b83284bed34ad194952581afd9c9a)
+    * Don't show Dark Offline Page when Dark Mode is disabled
+- Commit [d5b344c6b62f7d6b832203e66d5e9c082a4bdb66](d5b344c6b62f7d6b832203e66d5e9c082a4bdb66)
+    * Update tray icon when a chat is added or removed from muted state (Pull request [#38](https://github.com/cstayyab/WALC/pull/38))
+- Commit [66bf7fe6c5670fcdcd326047fb51632647edf1a2](https://github.com/cstayyab/WALC/commit/66bf7fe6c5670fcdcd326047fb51632647edf1a2)
+    * Fixed Bug that prevented auto-hiding of Menu Bar
+- Commit [29250ff481a3d50fd377b9de7c273fc958613d89](https://github.com/cstayyab/WALC/commit/29250ff481a3d50fd377b9de7c273fc958613d89)
+    * Added Rate & Review Option to the Menu Bar
+- Commit [dbad54f166b60095bbc5f4369fc071fc597abbcc](https://github.com/cstayyab/WALC/commit/dbad54f166b60095bbc5f4369fc071fc597abbcc)
+    * Added Shortcut Keys in Menus
+- Commit [d157ba879483e0ce28f57f1ef8043a36c1c7aa84](https://github.com/cstayyab/WALC/commit/d157ba879483e0ce28f57f1ef8043a36c1c7aa84)
+    * Added Spell Check Feature
+- Commit [f91f91039e61d8152c1100c9908226b18ca3175f](https://github.com/cstayyab/WALC/commit/f91f91039e61d8152c1100c9908226b18ca3175f) (Pull Request [#47](https://github.com/cstayyab/WALC/pull/47))
+    * Fix WhatsApp Data Store Detection
+    * Updated Electron Version
+- Commit [696b23c1bd6916d353ddd18589eacb3a056a3aa3](https://github.com/cstayyab/WALC/commit/696b23c1bd6916d353ddd18589eacb3a056a3aa3) (Pull Request [#52](https://github.com/cstayyab/WALC/pull/52))
+    * Fixed Issue of JS Error when LSB_Release Module is missing ([#39](https://github.com/cstayyab/WALC/issues/39))
+- Commit [4ac093eb820b40acb590c1f694f51e0eb5998703](https://github.com/cstayyab/WALC/commit/4ac093eb820b40acb590c1f694f51e0eb5998703)
+    * Fixed Detection when user is logged in
+    * Updated Dependencies
+    * Updated WhatsBot to latest Commit ([bfea74f5675941e2b5f15e3a9badffb8788ef1b9](https://github.com/pedroslopez/whatsapp-web.js/commit/bfea74f5675941e2b5f15e3a9badffb8788ef1b9)) as of 11th July, 2020
