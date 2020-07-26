@@ -7,6 +7,9 @@
     "start": "electron .",
     "dist": "rm -r dist && electron-builder --dir && cp /usr/lib/x86_64-linux-gnu/libXtst.so.6 dist/linux-unpacked/ && cp /usr/lib/x86_64-linux-gnu/libXss.so.1 dist/linux-unpacked/ && electron-builder --prepackaged dist/linux-unpacked"
   },
+  "bin": {
+    "walc": "main.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/cstayyab/WALC.git"
