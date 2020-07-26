@@ -366,8 +366,8 @@ const mainmenu = [{
     submenu: helpMenu
 }];
 
-function toggleVisibility() {
-    if (win.isVisible()) win.hide();
+function toggleVisibility(forceVisible = null) {
+    if ((forceVisible === null && win.isVisible()) || forceVisible === false) win.hide();
     else win.show();
     trayIcon.setContextMenu(Menu.buildFromTemplate(getTrayMenu()));
 }
@@ -394,24 +394,24 @@ ipcMain.on('renderTray', function (event, data) {
 
 ipcMain.on('liveCheck', liveCheck);
 
+//Close second instance if multiInstance is disabled
+if (!settings.get('multiInstance.value') && !app.requestSingleInstanceLock()) {
+    win = null;
+    app.isQuiting = true;
+    preventExit = false;
+    app.quit();
+    process.exit(0);
+} else {
+    app.on('second-instance', (event, cmdLine, workingDir) => {
+        if (!settings.get('multiInstance.value') && win) {
+            if (win.isMinimized()) win.restore();
+            toggleVisibility(true);
+            win.focus();
+        }
+    });
+}
+
 function loadWA() {
-    //Close second instance if multiInstance is disabled
-    const multiInstance = settings.get('multiInstance.value');
-    const singleLock = app.requestSingleInstanceLock();
-    if (!singleLock && !multiInstance) {
-        win = null;
-        app.isQuiting = true;
-        app.quit();
-        process.exit(0);
-        return;
-    } else {
-        app.on('second-instance', (event, cmdLine, workingDir) => {
-            if (!multiInstance && win) {
-                if (win.isMinimized()) win.restore();
-                win.focus();
-            }
-        });
-    }
     const menubar = Menu.buildFromTemplate(mainmenu);
     Menu.setApplicationMenu(menubar);
     win.setMenuBarVisibility(!settings.get('autoHideMenuBar.value'));
