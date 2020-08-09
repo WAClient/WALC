@@ -1,3 +1,5 @@
+#!/usr/bin/env electron
+
 const { app, BrowserWindow, session, Menu, dialog, Tray, remote, ipcMain, nativeImage, Notification, shell, clipboard } = require('electron');
 const { autoUpdater } = require("electron-updater");
 const { Client } = require('./WhatsBot/index');
