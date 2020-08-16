@@ -91,3 +91,15 @@
     * Fixed Detection when user is logged in
     * Updated Dependencies
     * Updated WhatsBot to latest Commit ([bfea74f5675941e2b5f15e3a9badffb8788ef1b9](https://github.com/pedroslopez/whatsapp-web.js/commit/bfea74f5675941e2b5f15e3a9badffb8788ef1b9)) as of 11th July, 2020
+## 0.1.11
+- Commit [54812b4148c4abba2e3f6996b9ac413ef1931b1e](https://github.com/cstayyab/WALC/commit/54812b4148c4abba2e3f6996b9ac413ef1931b1e) (Pull Request #60)
+    * Show WALC instead of exit prompt on new instance (issue #56 and #57)
+- Commit [968f5b2b4313873608845262bf8debf662a39e9d](https://github.com/cstayyab/WALC/commit/968f5b2b4313873608845262bf8debf662a39e9d) (Pull Request #62)
+    * Added launcher script when installed with npm install (issue #61)  
+    Please note that WALC installation using `npm install -g walc` is not officially supported.
+- Commit [ff0fd327a2ec62c1fb9d327248865abf75c5f9b3](https://github.com/cstayyab/WALC/commit/ff0fd327a2ec62c1fb9d327248865abf75c5f9b3) (Pull Request #64)
+    * Removed waStore since window.Store is already loaded by whatsapp-web.js
+    * Removed dark mode toggle since whatsapp officially supports it
+    * Better window.Store detection on preload.js
+    * Added Ctrl+Q shortcut to exit WALC (issue #43)
+    * Immediately retry connecting to whatsapp when internet is online
