@@ -24,7 +24,6 @@ var trayIcon;
 var aboutWALC;
 
 let isConnected = true;
-let firstCall = true;
 let preventExit = true;
 
 let pieBrowser;
@@ -162,18 +161,6 @@ const WhatsAppMenu = [{
         await markAllChatsAsRead();
         menuItem.enabled = true;
     }
-}, {
-    label: 'separator',
-    type: 'separator'
-}, {
-    label: "Dark Mode",
-    sublabel: "Toggle Dark Mode",
-    type: 'checkbox',
-    checked: settings.get('darkMode.value'),
-    click: (menuItem, window, e) => {
-        settings.set('darkMode.value', menuItem.checked);
-        win.webContents.send("setDarkMode", menuItem.checked);
-    }
 }];
 
 const settingsMenu = [{
@@ -288,6 +275,7 @@ const windowMenu = [{
     label: 'Exit',
     sublabel: 'Quit current window of WALC completely',
     type: 'normal',
+    accelerator: 'CmdOrCtrl+Q',
     click: () => {
         app.isQuiting = true;
         app.quit();
@@ -429,24 +417,26 @@ function loadWA() {
                 // return
                 console.log(e);
             }
+
             const KEEP_PHONE_CONNECTED_IMG_SELECTOR = '[data-asset-intro-image-light="true"], [data-asset-intro-image-dark="true"]';
             await page.waitForSelector(KEEP_PHONE_CONNECTED_IMG_SELECTOR, { timeout: 0 });
             botClient = new Client();
-            await botClient.initialize(page, win);
-            if (firstCall) {
-                firstCall = false;
-                win.webContents.executeJavaScript("Notification.requestPermission(function(p){if(p=='granted'){new Notification('WALC Desktop Notifications', {body:'Desktop Notifications are enabled.', icon:'https://web.whatsapp.com/favicon.ico'});};});");
-                botClient.on('message', (msg) => {
-                    console.log(msg.body);
-                });
-                botClient.on('ready', () => {
-                    customeTitle = `WALC`;
-                    preventTitleChange = false;
-                    win.setTitle(customeTitle);
-                    preventTitleChange = true;
-                });
 
-            }
+            botClient.on('ready', () => {
+                // win.webContents.executeJavaScript("Notification.requestPermission(function(p){if(p=='granted'){new Notification('WALC Desktop Notifications', {body:'Desktop Notifications are enabled.', icon:'https://web.whatsapp.com/favicon.ico'});};});");
+                win.webContents.send('storeOnLoad');
+
+                customeTitle = `WALC`;
+                preventTitleChange = false;
+                win.setTitle(customeTitle);
+                preventTitleChange = true;
+            });
+
+            botClient.on('message', (msg) => {
+                console.log(msg.body);
+            });
+
+            botClient.initialize(page, win);
         }).catch((err) => {
             console.log(err);
         });

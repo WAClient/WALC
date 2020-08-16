@@ -18,10 +18,10 @@ function resetCounter() {
 }
 
 function liveCheck() {
+	clearTimeout(timeout);
 	retryButton.disabled = true;
 	retryText.innerHTML = 'Retrying...';
 	ipcRenderer.send('liveCheck');
-	// setTimeout(resetCounter, 2000);
 }
 
 function count() {
@@ -37,14 +37,6 @@ function count() {
 }
 
 ipcRenderer.on('offline', resetCounter);
-retryButton.addEventListener('click', () => {
-	clearTimeout(timeout);
-	liveCheck();
-});
+retryButton.addEventListener('click', liveCheck);
+window.addEventListener('online', () => setTimeout(liveCheck, 1000));
 count();
-
-if(settings.get('darkMode.value')) {
-	document.body.classList.add('bg-dark');
-} else {
-	document.body.classList.remove('bg-dark');
-}
