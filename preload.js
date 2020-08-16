@@ -1,7 +1,6 @@
 const { remote, ipcRenderer } = require('electron');
 const Store = require('electron-store');
 const electronSpellchecker = require('electron-spellchecker');
-const waStore = require('./waStore');
 
 const settings = new Store({ name: 'settings' });
 
@@ -63,7 +62,7 @@ function renderTray() {
 		canvas.width = logo.naturalWidth;
 		canvas.height = logo.naturalHeight;
 
-		if(window.Store.State.default.state !== 'CONNECTED') {
+		if(window.Store.AppState.state !== 'CONNECTED') {
 			ctx.filter = 'grayscale(100%)';
 		}
 		ctx.drawImage(logo, 0, 0);
@@ -92,7 +91,7 @@ function renderTray() {
 function appStateChange(event, state) {
 	if (['OPENING', 'DISCONNECTED', 'TIMEOUT'].includes(state)) {
 		setTimeout(() => {
-			if (state === window.Store.State.default.state) {
+			if (state === window.Store.AppState.state) {
 				new Notification('WALC disconnected', {
 					body: "Please check your connection.",
 					icon: "favicon.ico"
@@ -106,34 +105,12 @@ function appStateChange(event, state) {
 }
 
 function storeOnLoad() {
-	setTimeout(function() {
-		if(window.Store || document.getElementById('startup') === null) {
-			waStore(); // auto load window.Store if undefined
-
-			renderTray();
-			window.Store.Chat.on('change:unreadCount', renderTray);
-			window.Store.Chat.on('change:muteExpiration', renderTray);
-			window.Store.State.default.on('change:state', appStateChange);
-		} else {
-			storeOnLoad();
-		}
-	}, 3000);
+	renderTray();
+	window.Store.Chat.on('change:unreadCount', renderTray);
+	window.Store.Chat.on('change:muteExpiration', renderTray);
+	window.Store.AppState.on('change:state', appStateChange);
 }
 
-function setDarkMode(enabled) {
-	if(enabled) {
-		document.body.classList.add('dark');
-	} else {
-		document.body.classList.remove('dark');
-	}
-}
-
-function applySettings() {
-	setDarkMode(settings.get('darkMode.value'));
-}
-
-window.addEventListener('load', storeOnLoad);
-window.addEventListener('load', applySettings);
 document.addEventListener("DOMContentLoaded", setupSpellChecker);
 ipcRenderer.on('renderTray', renderTray);
-ipcRenderer.on('setDarkMode', (ev, enabled) => setDarkMode(enabled));
+ipcRenderer.on('storeOnLoad', storeOnLoad);
