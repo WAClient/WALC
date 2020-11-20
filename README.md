@@ -3,6 +3,8 @@
 
 A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.
 
+<img src="https://ga-beacon.appspot.com/UA-144002431-2/cstayyab/readme.md?useReferer&pixel" width="0" height="0" />
+
 ## Releases
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/walc)
 [![Get it from linux-APPS](https://i.imgur.com/YGU3qMJ.png)](https://www.linux-apps.com/p/1383431/)
