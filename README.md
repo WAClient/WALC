@@ -40,10 +40,14 @@ npm start
 
 ```
 ## Feature Requests
-[![Feature Requests](http://feathub.com/cstayyab/WALC?format=svg)](http://feathub.com/cstayyab/WALC)
+To suggest any new feature please start a new discussion in the [Feautre Requests](https://github.com/cstayyab/WALC/discussions?discussions_q=category%3A%22Feature+Requests%22) section of [WALC Discussions](https://github.com/cstayyab/WALC/discussions) 
 
-Request new features or vote for existing feature requests at https://feathub.com/cstayyab/WALC/
-After you request a new feature please create an issue for that feature request too mentioned the feathub link of that feature. That issue will be used to track the implementation of that feature.
+You can see the list of old Feature Requests from FeatHub account [here](http://feathub.com/cstayyab/WALC) and it will be closed as soon as we make sure that all the requests have been migrated to WALC Discussions.
+
+<!-- [![Feature Requests](http://feathub.com/cstayyab/WALC?format=svg)]() -->
+
+## Troubleshooting
+If you are having any problem related to usage, building or deplying of WALC please reach out to commmunity in [Troubleshooting](https://github.com/cstayyab/WALC/discussions?discussions_q=category%3ATroubleshooting) section of WALC Discussions. Before starting a new discussion please check already created posts as other people might be having same problem as yours or someone might already have addressed and answered the problem you are having.
 
 ## License
 This content of this repository is lisensed under GPL-3.0 apart from the `WhatsBot`folder which is a modified version of https://github.com/pedroslopez/whatsapp-web.js which is licensed under Apache-2.0. You may want to view it README inside that folder. A copy of license is also included.
