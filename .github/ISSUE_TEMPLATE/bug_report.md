@@ -3,8 +3,15 @@ name: Bug report
 about: Create a report to help us improve
 title: "[Bug Report]"
 labels: bug
+assignees: ''
 
 ---
+
+<!-- 
+If you have all the details required for reproducing this bug and the platform specific details of this bug then please continue to fill this template completely otherwise please start a discussion in Troubleshooting section of the WALC Discussion Board 
+-->
+
+
 
 **Describe the bug**
 A clear and concise description of what the bug is.
