@@ -40,7 +40,7 @@ npm start
 
 ```
 ## Feature Requests
-To suggest any new feature please start a new discussion in the [Feautre Requests](https://github.com/cstayyab/WALC/discussions?discussions_q=category%3A%22Feature+Requests%22) section of [WALC Discussions](https://github.com/cstayyab/WALC/discussions) 
+To suggest any new feature please start a new discussion in the [Feature Requests](https://github.com/cstayyab/WALC/discussions?discussions_q=category%3A%22Feature+Requests%22) section of [WALC Discussions](https://github.com/cstayyab/WALC/discussions) 
 
 You can see the list of old Feature Requests from FeatHub account [here](http://feathub.com/cstayyab/WALC) and it will be closed as soon as we make sure that all the requests have been migrated to WALC Discussions.
 
