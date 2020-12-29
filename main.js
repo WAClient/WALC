@@ -301,7 +301,7 @@ const helpMenu = [{
     label: 'Request a Feature',
     sublabel: 'Create a new feature request on GitHub',
     click: () => {
-        shell.openExternal(walcinfo.bugs.url + "/new/?template=feature_request.md&labels=enhancement&title=[Feature+Request]");
+        shell.openExternal("https://github.com/cstayyab/WALC/discussions/categories/feature-requests");
     }
 }, {
     label: 'Vote for a Feature',
