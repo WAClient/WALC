@@ -283,9 +283,9 @@ const windowMenu = [{
 
 const helpMenu = [{
     label: 'Find Help',
-    sublabel: 'View Related Issues on GitHub',
+    sublabel: 'Get Help on WALC Troubleshooting Board',
     click: () => {
-        shell.openExternal(walcinfo.bugs.url);
+        shell.openExternal("https://github.com/cstayyab/WALC/discussions/categories/troubleshooting");
     },
     accelerator: 'F1'
 }, {
