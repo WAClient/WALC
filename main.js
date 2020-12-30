@@ -16,6 +16,7 @@ const createDesktopShortcut = require('create-desktop-shortcuts');
 const homedir = require('os').homedir();
 const walcinfo = require('./package.json');
 const lsbRelease = require('lsb-release');
+const axios = require('axios');
 
 
 var trayIcon;
@@ -139,10 +140,24 @@ var settings = new Store({
             value: true,
             name: 'Include Muted Chats',
             description: 'Count muted chats in the badge counter'
+        },
+        newStatusNotification: {
+            value: false,
+            name: 'New Status Updates',
+            description: 'Display Notification when someone updates their status.'
         }
     }
 });
 
+const notificationsMenu = [{
+    label: 'New Status Updates',
+    sublabel: 'Display Notification ofr Unmuted Status Updates',
+    type: 'checkbox',
+    checked: settings.get("newStatusNotification.value"),
+    click: (menuItem) => {
+        settings.set('newStatusNotification.value', menuItem.checked);
+    }
+}];
 
 const WhatsAppMenu = [{
     label: "Archive All Chats",
@@ -160,6 +175,11 @@ const WhatsAppMenu = [{
         await markAllChatsAsRead();
         menuItem.enabled = true;
     }
+}, {
+    label: "Notification",
+    sublabel: "Customize WALC Notifications",
+    type: 'submenu',
+    submenu: notificationsMenu
 }];
 
 const settingsMenu = [{
@@ -229,6 +249,7 @@ const settingsMenu = [{
         win.autoHideMenuBar = menuItem.checked;
     }
 }];
+
 const windowMenu = [{
     label: 'Debug Tools',
     sublabel: 'Toggle Chrome Developer Tools',
@@ -408,9 +429,9 @@ function loadWA() {
 
     win.loadURL('about:blank', { 'userAgent': userAgent }).then(async () => {
         pie.connect(app, puppeteer).then(async (pieBrowser) => {
-                botClient = new Client({
-                    customPuppeteerInstance: pieBrowser
-                });
+            botClient = new Client({
+                customPuppeteerInstance: pieBrowser
+            });
 
             botClient.on('ready', () => {
                 win.webContents.send('storeOnLoad');
@@ -422,13 +443,30 @@ function loadWA() {
             });
 
             botClient.on("change_battery", (batteryInfo) => {
-                if(batteryInfo.battery <= 15 && batteryInfo.battery % 5 == 0 && batteryInfo.plugged == false) {
+                if (batteryInfo.battery <= 15 && batteryInfo.battery % 5 == 0 && batteryInfo.plugged == false) {
                     new Notification({ "title": "Battery Low", "body": "You battery is below 15%. Please Charge you phone to remain connected.", "silent": false, "icon": "icons/logo360x360.png" }).show()
                 }
             });
 
+            botClient.on("message", async (msg) => {
+                if (settings.get("newStatusNotification.value")) {
+                    contact = await msg.getContact();
+                    if (msg.isStatus && !contact.statusMute) {
+                        let contactImage = undefined;
+                        picURL = await contact.getProfilePicUrl();
+                        if (picURL) {
+                            let image = await axios.get(picURL, { responseType: 'arraybuffer' });
+                            let returnedB64 = Buffer.from(image.data).toString('base64');
+                            let imgDataUri = "data:" + image.headers['content-type'] + ";base64," + returnedB64;
+                            contactImage = nativeImage.createFromDataURL(imgDataUri);
+                        }
+                        new Notification({ "title": contact.name, "body": "Posted a status update.", "icon": contactImage }).show();
+                    }
+                }
+            });
+
             botClient.initialize();
-            
+
         }).catch((err) => {
             console.log(err);
         });
