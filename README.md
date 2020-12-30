@@ -1,5 +1,12 @@
-# WALC - WhatsApp Linux Client (unofficial)
+<p align="center">
+<img src="https://socialify.git.ci/cstayyab/WALC/image?description=1&font=Bitter&forks=1&logo=https%3A%2F%2Fgithub.com%2Fcstayyab%2FWALC%2Fraw%2Fmaster%2Ficons%2Flogo360x360.png&pattern=Floating%20Cogs&stargazers=1&theme=Dark" alt="WALC" width="640" height="320" />
+</p>
+<h1 align="center">WALC - WhatsApp Linux Client (unofficial)</h1>
+<p align="center">
+
 ![Contributors List](https://img.shields.io/badge/dynamic/json?label=Contributors&query=%24..login&url=https%3A%2F%2Fapi.github.com%2Frepos%2Fcstayyab%2FWALC%2Fcontributors) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/cstayyab/WALC?color=%2325D366&label=Latest%20Release) ![GitHub Releases (by Release)](https://img.shields.io/github/downloads/cstayyab/WALC/latest/total?color=%2325D366&label=Latest%20Version%20AppImage%20Downloads&logo=Linux&logoColor=%23FFFFFF) [![GitHub issues](https://img.shields.io/github/issues/cstayyab/WALC.svg)](https://github.com/cstayyab/WALC/issues) [![GitHub forks](https://img.shields.io/github/forks/cstayyab/WALC.svg)](https://github.com/cstayyab/WALC/network) [![GitHub stars](https://img.shields.io/github/stars/cstayyab/WALC.svg)](https://github.com/cstayyab/WALC/stargazers) [![GitHub license](https://img.shields.io/github/license/cstayyab/WALC.svg)](https://github.com/cstayyab/WALC/blob/master/LICENSE) [![Twitter](https://img.shields.io/twitter/url/https/github.com/cstayyab/WALC.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fcstayyab%2FWALC) [![walc](https://snapcraft.io//walc/badge.svg)](https://snapcraft.io/walc) [![walc](https://snapcraft.io//walc/trending.svg?name=0)](https://snapcraft.io/walc) 
+
+</p>
 
 A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.
 
