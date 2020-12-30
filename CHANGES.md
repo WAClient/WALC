@@ -108,3 +108,5 @@
 - Multiple Commits
     * Replaced WhatsBot with Forked NPM Pakcage for easy integration from upstream
     * Replaced WALC Logo
+- Commit [ccdc526d0d52a7af8a782d0548b31410548094ab](https://github.com/cstayyab/WALC/tree/ccdc526d0d52a7af8a782d0548b31410548094ab)
+    * Battery Low notification if battery is below 15%
