@@ -50,7 +50,7 @@ You can see the list of old Feature Requests from FeatHub account [here](http://
 If you are having any problem related to usage, building or deplying of WALC please reach out to commmunity in [Troubleshooting](https://github.com/cstayyab/WALC/discussions?discussions_q=category%3ATroubleshooting) section of WALC Discussions. Before starting a new discussion please check already created posts as other people might be having same problem as yours or someone might already have addressed and answered the problem you are having.
 
 ## License
-This content of this repository is lisensed under GPL-3.0 apart from the `WhatsBot`folder which is a modified version of https://github.com/pedroslopez/whatsapp-web.js which is licensed under Apache-2.0. You may want to view it README inside that folder. A copy of license is also included.
+This content of this repository is lisensed under GPL-3.0 or later.
 
 ## Contributions
 * You may check the issues section to solve an issue and submit a PR.
