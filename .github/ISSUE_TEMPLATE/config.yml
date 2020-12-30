@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Troubleshoot an Issue
+    url: https://github.com/cstayyab/WALC/discussions/categories/troubleshooting
+    about: Get help with issues regarding WALC
+  - name: Suggest a Feature
+    url: https://github.com/cstayyab/WALC/discussions/categories/feature-requests
+    about: Vote for a feature or Suggest a new one
