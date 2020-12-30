@@ -103,3 +103,8 @@
     * Better window.Store detection on preload.js
     * Added Ctrl+Q shortcut to exit WALC (issue #43)
     * Immediately retry connecting to whatsapp when internet is online
+
+## 0.1.12
+- Multiple Commits
+    * Replaced WhatsBot with Forked NPM Pakcage for easy integration from upstream
+    * Replaced WALC Logo
