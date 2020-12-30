@@ -110,3 +110,5 @@
     * Replaced WALC Logo
 - Commit [ccdc526d0d52a7af8a782d0548b31410548094ab](https://github.com/cstayyab/WALC/tree/ccdc526d0d52a7af8a782d0548b31410548094ab)
     * Battery Low notification if battery is below 15%
+- Commit [a105d4a683261f3216e3979590d6069168a5d4b8](https://github.com/cstayyab/WALC/commit/a105d4a683261f3216e3979590d6069168a5d4b8)
+    * Now you can choose to enable or disable notification for New Status Updates. Please note that you will not be notified about the new Status Updates that you have Muted from WhatsApp. 
