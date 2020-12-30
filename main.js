@@ -1,8 +1,7 @@
 #!/usr/bin/env electron
-
-const { app, BrowserWindow, session, Menu, dialog, Tray, remote, ipcMain, nativeImage, Notification, shell, clipboard } = require('electron');
+const { app, BrowserWindow, session, Menu, dialog, Tray, ipcMain, nativeImage, Notification, shell, clipboard } = require('electron');
 const { autoUpdater } = require("electron-updater");
-const { Client } = require('./WhatsBot/index');
+const { Client } = require('whatsapp-web.js');
 const pie = require("puppeteer-in-electron");
 const puppeteer = require("puppeteer-core");
 autoUpdater.checkForUpdatesAndNotify();
@@ -61,10 +60,10 @@ const shortcutDir = path.join(homedir, ".local/share/applications");
 //Create Desktop Shortcut for AppImage
 function integrateToDesktop(win) {
     const iconDir = path.join(homedir, ".local/share/WALC");
-    const iconPath = path.join(iconDir, "logo256x56.png");
+    const iconPath = path.join(iconDir, "logo360x360.png");
     fs.mkdirSync(shortcutDir, { recursive: true });
     fs.mkdirSync(iconDir, { recursive: true });
-    fs.copyFileSync(path.join(__dirname, "icons/logo256x256.png"), iconPath);
+    fs.copyFileSync(path.join(__dirname, "icons/logo360x360.png"), iconPath);
     const shortcutCreated = createDesktopShortcut({
         onlyCurrentOS: true,
         customLogger: (msg, error) => {
@@ -332,11 +331,11 @@ const helpMenu = [{
             cancelId: "0",
             message: `WALC ${walcinfo.version}`,
             detail: aboutWALC,
-            icon: "icons/logo256x256.png"
+            icon: "icons/logo360x360.png"
         }).then(({ response }) => {
             if (response == 0) {
                 clipboard.writeText(`WALC ${walcinfo.version}` + "\n" + aboutWALC)
-                new Notification({ "title": "About WALC", "body": "Information Copied to Clipboard.", "silent": true, "icon": "icons/logo256x256.png" }).show()
+                new Notification({ "title": "About WALC", "body": "Information Copied to Clipboard.", "silent": true, "icon": "icons/logo360x360.png" }).show()
             }
         });
     }
@@ -406,24 +405,13 @@ function loadWA() {
     Menu.setApplicationMenu(menubar);
     win.setMenuBarVisibility(!settings.get('autoHideMenuBar.value'));
 
-    win.loadURL('https://web.whatsapp.com', { 'userAgent': userAgent }).then(async () => {
-        pie.connect(app, puppeteer).then(async (b) => {
-            pieBrowser = b;
-            let page;
-            try {
-                page = await pie.getPage(pieBrowser, win);
-            }
-            catch (e) {
-                // return
-                console.log(e);
-            }
-
-            const KEEP_PHONE_CONNECTED_IMG_SELECTOR = '[data-asset-intro-image-light="true"], [data-asset-intro-image-dark="true"]';
-            await page.waitForSelector(KEEP_PHONE_CONNECTED_IMG_SELECTOR, { timeout: 0 });
-            botClient = new Client();
+    win.loadURL('about:blank', { 'userAgent': userAgent }).then(async () => {
+        pie.connect(app, puppeteer).then(async (pieBrowser) => {
+                botClient = new Client({
+                    customPuppeteerInstance: pieBrowser
+                });
 
             botClient.on('ready', () => {
-                // win.webContents.executeJavaScript("Notification.requestPermission(function(p){if(p=='granted'){new Notification('WALC Desktop Notifications', {body:'Desktop Notifications are enabled.', icon:'https://web.whatsapp.com/favicon.ico'});};});");
                 win.webContents.send('storeOnLoad');
 
                 customeTitle = `WALC`;
@@ -432,11 +420,8 @@ function loadWA() {
                 preventTitleChange = true;
             });
 
-            botClient.on('message', (msg) => {
-                console.log(msg.body);
-            });
-
-            botClient.initialize(page, win);
+            botClient.initialize();
+            
         }).catch((err) => {
             console.log(err);
         });
@@ -479,7 +464,7 @@ function liveCheck() {
         if (err) {
             if (isConnected) {
                 win.loadFile('offline.html');
-                new Notification({ "title": "WALC disconnected", "body": "Please check your connection.", "silent": false, "icon": "icons/logo256x256.png" }).show();
+                new Notification({ "title": "WALC disconnected", "body": "Please check your connection.", "silent": false, "icon": "icons/logo360x360.png" }).show();
                 botClient = null;
             } else {
                 win.webContents.send('offline');
@@ -512,17 +497,18 @@ function createWindow() {
         width: windowState.width,
         height: windowState.height,
         title: 'WALC',
-        icon: path.join(__dirname, 'icons/logo256x256.png'),
+        icon: path.join(__dirname, 'icons/logo360x360.png'),
         webPreferences: {
             nodeIntegration: true,
-            preload: `${__dirname}/preload.js`,
+            enableRemoteModule: true,
+            preload: path.join(__dirname, 'preload.js')
         },
         show: !settings.get('startHidden.value'),
         autoHideMenuBar: settings.get('autoHideMenuBar.value'),
     });
     win.setMenuBarVisibility(!settings.get('autoHideMenuBar.value'));
     win.setAlwaysOnTop(settings.get('alwaysOnTop.value'));
-    trayIcon = new Tray(path.join(__dirname, 'icons/logo256x256.png'));
+    trayIcon = new Tray(path.join(__dirname, 'icons/logo360x360.png'));
     //Hide Default menubar
     win.setMenu(null);
 
@@ -632,14 +618,14 @@ function rateAndReviewWALC() {
 
 /* All functions related to WhatsBot */
 async function archiveAllChats() {
-    currentNotify = new Notification({ "title": "Archive All Chats", "body": "Archiving all chats . . .", "silent": true, "icon": "icons/logo256x256.png" })
+    currentNotify = new Notification({ "title": "Archive All Chats", "body": "Archiving all chats . . .", "silent": true, "icon": "icons/logo360x360.png" })
     currentNotify.show();
     chats = await botClient.getChats()
     chats.forEach(async (chat) => {
         await chat.archive();
     })
     currentNotify.close();
-    new Notification({ "title": "Archive All Chats", "body": "All chats have been archived.", "silent": true, "icon": "icons/logo256x256.png" })
+    new Notification({ "title": "Archive All Chats", "body": "All chats have been archived.", "silent": true, "icon": "icons/logo360x360.png" })
 
 }
 
