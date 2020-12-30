@@ -283,9 +283,9 @@ const windowMenu = [{
 
 const helpMenu = [{
     label: 'Find Help',
-    sublabel: 'View Related Issues on GitHub',
+    sublabel: 'Get Help on WALC Troubleshooting Board',
     click: () => {
-        shell.openExternal(walcinfo.bugs.url);
+        shell.openExternal("https://github.com/cstayyab/WALC/discussions/categories/troubleshooting");
     },
     accelerator: 'F1'
 }, {
@@ -301,11 +301,12 @@ const helpMenu = [{
     label: 'Request a Feature',
     sublabel: 'Create a new feature request on GitHub',
     click: () => {
-        shell.openExternal(walcinfo.bugs.url + "/new/?template=feature_request.md&labels=enhancement&title=[Feature+Request]");
+        shell.openExternal("https://github.com/cstayyab/WALC/discussions/categories/feature-requests");
     }
 }, {
     label: 'Vote for a Feature',
     sublabel: 'Vote for existing features on FeatHub',
+    visible: false,
     click: () => {
         shell.openExternal("https://feathub.com/cstayyab/WALC");
     }
