@@ -420,6 +420,12 @@ function loadWA() {
                 preventTitleChange = true;
             });
 
+            botClient.on("change_battery", (batteryInfo) => {
+                if(batteryInfo.battery <= 15 && batteryInfo.battery % 5 == 0 && batteryInfo.plugged == false) {
+                    new Notification({ "title": "Battery Low", "body": "You battery is below 15%. Please Charge you phone to remain connected.", "silent": false, "icon": "icons/logo360x360.png" }).show()
+                }
+            });
+
             botClient.initialize();
             
         }).catch((err) => {
