@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://socialify.git.ci/cstayyab/WALC/image?description=1&font=Bitter&forks=1&logo=https%3A%2F%2Fgithub.com%2Fcstayyab%2FWALC%2Fraw%2Fmaster%2Ficons%2Flogo360x360.png&pattern=Floating%20Cogs&stargazers=1&theme=Dark" alt="WALC" width="640" height="320" />
+<img src="https://socialify.git.ci/cstayyab/WALC/image?description=1&font=Bitter&forks=1&logo=https%3A%2F%2Fgithub.com%2Fcstayyab%2FWALC%2Fraw%2Fmaster%2Fsrc%2Ficons%2Flogo360x360.png&pattern=Floating%20Cogs&stargazers=1&theme=Dark" alt="WALC" width="640" height="320" />
 </p>
 <h1 align="center">WALC - WhatsApp Linux Client (unofficial)</h1>
 <p align="center">
