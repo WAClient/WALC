@@ -69,10 +69,10 @@ function integrateToDesktop(win) {
         onlyCurrentOS: true,
         customLogger: (msg, error) => {
             dialog.showMessageBoxSync(win, {
-                type: 'error',
+                type: 'none',
                 buttons: ['OK'],
                 title: 'Desktop Integration',
-                message: msg
+                message: msg,
             });
         },
         "linux": {
@@ -88,7 +88,7 @@ function integrateToDesktop(win) {
     });
     if (shortcutCreated) {
         dialog.showMessageBoxSync(win, {
-            type: 'info',
+            type: 'none',
             buttons: ['OK'],
             title: 'Desktop Integration',
             message: "WALC has successfully been integrated to your Applications."
@@ -346,14 +346,13 @@ const helpMenu = [{
     click: () => {
 
         dialog.showMessageBox(win, {
-            type: "info",
+            type: "none",
             buttons: ["Copy to Clipboard", "Close"],
             defaultId: "0",
             title: "About WALC",
             cancelId: "0",
             message: `WALC ${walcinfo.version}`,
             detail: aboutWALC,
-            icon: "icons/logo360x360.png"
         }).then(({ response }) => {
             if (response == 0) {
                 clipboard.writeText(`WALC ${walcinfo.version}` + "\n" + aboutWALC)
@@ -575,7 +574,7 @@ function createWindow() {
             toggleVisibility();
         } else if (settings.get('askOnExit.value') && preventExit) {
             res = dialog.showMessageBoxSync(win, {
-                type: 'question',
+                type: 'none',
                 buttons: ['Yes', 'No'],
                 title: 'Exit?',
                 message: "Are you sure you want to exit WALC?"
@@ -606,12 +605,12 @@ function createWindow() {
     if (process.env.APPIMAGE !== undefined && !fs.existsSync(path.join(shortcutDir, "WALC.desktop"))) {
         //Desktop Integration of AppImage
         integrate = dialog.showMessageBoxSync(win, {
-            type: 'question',
+            type: 'none',
             buttons: ['Yes', 'No'],
             title: 'Desktop Integration',
             message: "Do you want to integrate WALC to your Applications?"
         });
-
+        
         if (integrate == 0) {
             integrateToDesktop(win);
         }
