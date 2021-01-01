@@ -14,7 +14,7 @@ const os = require('os')
 const getPortSync = require('get-port-sync');
 const createDesktopShortcut = require('create-desktop-shortcuts');
 const homedir = require('os').homedir();
-const walcinfo = require('./package.json');
+const walcinfo = require('../package.json');
 const lsbRelease = require('lsb-release');
 const axios = require('axios');
 

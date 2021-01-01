@@ -2,7 +2,7 @@
   "name": "walc",
   "version": "0.1.11-post",
   "description": "A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
     "start": "electron .",
     "dist": "rm -r dist && electron-builder --dir && cp /usr/lib/x86_64-linux-gnu/libXtst.so.6 dist/linux-unpacked/ && cp /usr/lib/x86_64-linux-gnu/libXss.so.1 dist/linux-unpacked/ && electron-builder --prepackaged dist/linux-unpacked"
@@ -38,7 +38,7 @@
         "AppImage",
         "snap"
       ],
-      "icon": "icons/logo360x360.png",
+      "icon": "src/icons/logo360x360.png",
       "synopsis": "WALC - unoffficial WhatsApp Linux Client",
       "publish": {
         "provider": "github",
