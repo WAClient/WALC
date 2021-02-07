@@ -1,14 +1,26 @@
 #!/usr/bin/env electron
-const { app, BrowserWindow, session, Menu, dialog, Tray, ipcMain, nativeImage, Notification, shell, clipboard } = require('electron');
+const {
+    app,
+    BrowserWindow,
+    session,
+    Menu,
+    dialog,
+    Tray,
+    ipcMain,
+    nativeImage,
+    Notification,
+    shell,
+    clipboard,
+} = require('electron');
 const { autoUpdater } = require("electron-updater");
 const { Client } = require('whatsapp-web.js');
 const pie = require("puppeteer-in-electron");
 const puppeteer = require("puppeteer-core");
 autoUpdater.checkForUpdatesAndNotify();
 var path = require('path');
-const dns = require("dns");
 const Store = require('electron-store');
 const windowStateKeeper = require('electron-window-state');
+const contextMenu = require('electron-context-menu');
 const fs = require('fs');
 const os = require('os')
 const getPortSync = require('get-port-sync');
@@ -18,7 +30,7 @@ const walcinfo = require('../package.json');
 const lsbRelease = require('lsb-release');
 const axios = require('axios');
 
-
+const ICON_PATH = path.join(__dirname, 'icons/logo360x360.png');
 var trayIcon;
 // Information to be displayed in About Dialog
 var aboutWALC;
@@ -39,10 +51,15 @@ ${isSNAP ? `Snap Version:${process.env.SNAP_VERSION}(${process.env.SNAP_REVISION
 `;
 });
 
+contextMenu({
+    showInspectElement: false,
+});
+
 // set user agent manually
 const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36';
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
+/** @type {BrowserWindow} */
 let win;
 findID = null;
 emptyBody = null;
@@ -386,7 +403,7 @@ function getTrayMenu() {
     let visibilityLabel = (win.isVisible() ? 'Hide' : 'Show') + ' WALC';
     return [{
         label: visibilityLabel,
-        click: toggleVisibility
+        click: () => toggleVisibility()
     }, {
         label: 'Quit',
         click: function () {
@@ -402,7 +419,21 @@ ipcMain.on('renderTray', function (event, data) {
     trayIcon.setImage(img);
 });
 
-ipcMain.on('liveCheck', liveCheck);
+ipcMain.on('loadWA', loadWA);
+
+ipcMain.on('focusWindow', (event) => {
+    const window = BrowserWindow.fromWebContents(event.sender);
+    if(!window.isVisible()) window.show();
+    window.focus();
+});
+
+ipcMain.handle('getSettings', () => {
+    return settings.store;
+});
+
+ipcMain.handle('getIcon', () => {
+    return nativeImage.createFromPath(ICON_PATH).toDataURL();
+});
 
 //Close second instance if multiInstance is disabled
 if (!settings.get('multiInstance.value') && !app.requestSingleInstanceLock()) {
@@ -422,10 +453,6 @@ if (!settings.get('multiInstance.value') && !app.requestSingleInstanceLock()) {
 }
 
 function loadWA() {
-    const menubar = Menu.buildFromTemplate(mainmenu);
-    Menu.setApplicationMenu(menubar);
-    win.setMenuBarVisibility(!settings.get('autoHideMenuBar.value'));
-
     win.loadURL('about:blank', { 'userAgent': userAgent }).then(async () => {
         pie.connect(app, puppeteer).then(async (pieBrowser) => {
             botClient = new Client({
@@ -433,6 +460,9 @@ function loadWA() {
             });
 
             botClient.on('ready', () => {
+                const menubar = Menu.buildFromTemplate(mainmenu);
+                Menu.setApplicationMenu(menubar);
+                win.setMenuBarVisibility(!settings.get('autoHideMenuBar.value'));
                 win.webContents.send('storeOnLoad');
 
                 customeTitle = `WALC`;
@@ -449,9 +479,9 @@ function loadWA() {
 
             botClient.on("message", async (msg) => {
                 if (settings.get("newStatusNotification.value")) {
-                    contact = await msg.getContact();
+                    const contact = await msg.getContact();
                     if (msg.isStatus && !contact.statusMute) {
-                        let contactImage = undefined;
+                        let contactImage;
                         picURL = await contact.getProfilePicUrl();
                         if (picURL) {
                             let image = await axios.get(picURL, { responseType: 'arraybuffer' });
@@ -470,8 +500,6 @@ function loadWA() {
             console.log(err);
         });
 
-    }).catch((err) => {
-        liveCheck();
     });
 
     win.on('page-title-updated', (evt) => {
@@ -499,25 +527,11 @@ function loadWA() {
     });
     win.webContents.on('did-finish-load', (evt) => {
         findID = win.webContents.findInPage('Update Google Chrome');
-
     });
-}
-
-function liveCheck() {
-    dns.resolve("web.whatsapp.com", function (err, addr) {
-        if (err) {
-            if (isConnected) {
-                win.loadFile('offline.html');
-                new Notification({ "title": "WALC disconnected", "body": "Please check your connection.", "silent": false, "icon": "icons/logo360x360.png" }).show();
-                botClient = null;
-            } else {
-                win.webContents.send('offline');
-            }
-            isConnected = false;
-        } else {
-            loadWA();
-            isConnected = true;
-        }
+    win.webContents.on('did-fail-load', () => {
+        win.loadFile('src/offline.html');
+        new Notification({ "title": "WALC disconnected", "body": "Please check your connection.", "silent": false, "icon": ICON_PATH }).show();
+        isConnected = false;
     });
 }
 
@@ -543,8 +557,7 @@ function createWindow() {
         title: 'WALC',
         icon: path.join(__dirname, 'icons/logo360x360.png'),
         webPreferences: {
-            nodeIntegration: true,
-            enableRemoteModule: true,
+            enableRemoteModule: false,
             preload: path.join(__dirname, 'preload.js')
         },
         show: !settings.get('startHidden.value'),
@@ -556,8 +569,8 @@ function createWindow() {
     //Hide Default menubar
     win.setMenu(null);
 
-    // Check connection and load the Main Page of the app.
-    liveCheck();
+    // load the Main Page of the app.
+    loadWA();
     win.setTitle('WALC');
     trayIcon.setTitle('WALC');
     trayIcon.setToolTip('WALC');
