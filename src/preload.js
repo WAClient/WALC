@@ -14,6 +14,14 @@ window.Notification = function (title, options) {
 };
 Object.assign(window.Notification, window.oldNotification);
 
+const badge = {
+	x: 180,
+	y: 180,
+	radius: 120,
+	font: 172,
+	fontSmall: 124,
+};
+
 function renderTray() {
 	const chats = window.Store.Chat.getModelsArray();
 	let allMuted = settings.countMuted.value;
@@ -47,13 +55,13 @@ function renderTray() {
 			} else {
 				ctx.fillStyle = 'red';
 			}
-			ctx.arc(45, 18, 18, 0, 2 * Math.PI);
+			ctx.arc(badge.x, badge.y, badge.radius, 0, 2 * Math.PI);
 			ctx.fill();
 			ctx.fillStyle = 'white';
-			ctx.font = (unread < 10 ? '28' : '24') + 'px sans-serif';
+			ctx.font = (unread < 10 ? badge.font : badge.fontSmall) + 'px sans-serif';
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'middle';
-			ctx.fillText(unread, 45, 18);
+			ctx.fillText(unread, badge.x, badge.y);
 		}
 
 		ipcRenderer.send('renderTray', canvas.toDataURL());
