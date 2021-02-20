@@ -529,6 +529,7 @@ function loadWA() {
         findID = win.webContents.findInPage('Update Google Chrome');
     });
     win.webContents.on('did-fail-load', () => {
+        win.webContents.send('renderTray');
         win.loadFile('src/offline.html');
         new Notification({ "title": "WALC disconnected", "body": "Please check your connection.", "silent": false, "icon": ICON_PATH }).show();
         isConnected = false;

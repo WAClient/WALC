@@ -23,18 +23,21 @@ const badge = {
 };
 
 function renderTray() {
-	const chats = window.Store.Chat.getModelsArray();
-	let allMuted = settings.countMuted.value;
-	let unread = chats.reduce((total, chat) => {
-		// don't count if user disable counter on muted chats
-		if (!settings.countMuted.value && chat.mute.isMuted) {
-			return total;
-		}
-		if (chat.unreadCount > 0 && !chat.mute.isMuted) {
-			allMuted = false;
-		}
-		return total + chat.unreadCount;
-	}, 0);
+	let unread = 0;
+	if(window.Store && window.Store.Chat) {
+		const chats = window.Store.Chat.getModelsArray();
+		let allMuted = settings.countMuted.value;
+		unread = chats.reduce((total, chat) => {
+			// don't count if user disable counter on muted chats
+			if (!settings.countMuted.value && chat.mute.isMuted) {
+				return total;
+			}
+			if (chat.unreadCount > 0 && !chat.mute.isMuted) {
+				allMuted = false;
+			}
+			return total + chat.unreadCount;
+		}, 0);
+	}
 	const canvas = document.createElement('canvas');
 	const logo = new Image();
 	const ctx = canvas.getContext('2d');
@@ -43,7 +46,7 @@ function renderTray() {
 		canvas.width = logo.naturalWidth;
 		canvas.height = logo.naturalHeight;
 
-		if(window.Store.AppState.state !== 'CONNECTED') {
+		if(!window.Store || window.Store.AppState.state !== 'CONNECTED') {
 			ctx.filter = 'grayscale(100%)';
 		}
 		ctx.drawImage(logo, 0, 0);
