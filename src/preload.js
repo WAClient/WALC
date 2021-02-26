@@ -24,9 +24,9 @@ const badge = {
 
 function renderTray() {
 	let unread = 0;
+	let allMuted = settings.countMuted.value;
 	if(window.Store && window.Store.Chat) {
 		const chats = window.Store.Chat.getModelsArray();
-		let allMuted = settings.countMuted.value;
 		unread = chats.reduce((total, chat) => {
 			// don't count if user disable counter on muted chats
 			if (!settings.countMuted.value && chat.mute.isMuted) {
