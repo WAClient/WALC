@@ -1,6 +1,5 @@
 const { ipcRenderer } = require('electron');
 
-let settings = ipcRenderer.invoke('getSettings').then((value) => settings = value);
 let icon = ipcRenderer.invoke('getIcon').then((value) => icon = value);
 
 // override Notification API so it can show the window on click
@@ -22,14 +21,15 @@ const badge = {
 	fontSmall: 124,
 };
 
-function renderTray() {
+async function renderTray() {
 	let unread = 0;
-	let allMuted = settings.countMuted.value;
+	const countMuted = await ipcRenderer.invoke('getSettings', 'countMuted.value');
+	let allMuted = countMuted;
 	if(window.Store && window.Store.Chat) {
 		const chats = window.Store.Chat.getModelsArray();
 		unread = chats.reduce((total, chat) => {
 			// don't count if user disable counter on muted chats
-			if (!settings.countMuted.value && chat.mute.isMuted) {
+			if (!countMuted && chat.mute.isMuted) {
 				return total;
 			}
 			if (chat.unreadCount > 0 && !chat.mute.isMuted) {
@@ -89,10 +89,6 @@ function appStateChange(event, state) {
 }
 
 function storeOnLoad() {
-	if(settings instanceof Promise) {
-		settings.then(() => storeOnLoad());
-		return;
-	}
 	if(icon instanceof Promise) {
 		icon.then(() => storeOnLoad());
 		return;
@@ -109,11 +105,3 @@ window.WALC = {
 
 ipcRenderer.on('renderTray', renderTray);
 ipcRenderer.on('storeOnLoad', storeOnLoad);
-
-setTimeout(() => {
-	window.test = {
-		settings,
-		icon,
-		renderTray,
-	};
-}, 5000);

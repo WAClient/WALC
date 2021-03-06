@@ -427,7 +427,10 @@ ipcMain.on('focusWindow', (event) => {
     window.focus();
 });
 
-ipcMain.handle('getSettings', () => {
+ipcMain.handle('getSettings', (event, key = null) => {
+    if(key) {
+        return settings.get(key);
+    }
     return settings.store;
 });
 
