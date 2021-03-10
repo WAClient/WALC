@@ -1,59 +1,43 @@
-const { remote, ipcRenderer } = require('electron');
-const Store = require('electron-store');
-const electronSpellchecker = require('electron-spellchecker');
+const { ipcRenderer } = require('electron');
 
-const settings = new Store({ name: 'settings' });
+let icon = ipcRenderer.invoke('getIcon').then((value) => icon = value);
 
 // override Notification API so it can show the window on click
 window.oldNotification = Notification;
 window.Notification = function (title, options) {
 	const n = new window.oldNotification(title, options);
 	n.addEventListener('click', function () {
-		const win = remote.getCurrentWindow();
-		if (!win.isVisible()) win.show();
-		win.focus();
+		ipcRenderer.send('focusWindow');
 	});
 	return n;
 };
 Object.assign(window.Notification, window.oldNotification);
 
-function getEnvLocale(env) {
-	env = env || process.env;
+const badge = {
+	x: 180,
+	y: 180,
+	radius: 120,
+	font: 172,
+	fontSmall: 124,
+};
 
-	return env.LC_ALL || env.LC_MESSAGES || env.LANG || env.LANGUAGE;
-}
-
-
-function setupSpellChecker() {
-	const SpellCheckHandler = electronSpellchecker.SpellCheckHandler;
-	const ContextMenuListener = electronSpellchecker.ContextMenuListener;
-	const ContextMenuBuilder = electronSpellchecker.ContextMenuBuilder;
-	window.spellCheckHandler = new SpellCheckHandler();
-	window.spellCheckHandler.attachToInput();
-
-	window.spellCheckHandler.switchLanguage(getEnvLocale());
-
-	let contextMenuBuilder = new ContextMenuBuilder(window.spellCheckHandler);
-
-	// Add context menu listener
-	let contextMenuListener = new ContextMenuListener((info) => {
-		contextMenuBuilder.showPopupMenu(info);
-	});
-}
-
-function renderTray() {
-	const chats = window.Store.Chat.getModelsArray();
-	let allMuted = settings.get('countMuted.value');
-	let unread = chats.reduce((total, chat) => {
-		// don't count if user disable counter on muted chats
-		if (!settings.get('countMuted.value') && chat.mute.isMuted) {
-			return total;
-		}
-		if (chat.unreadCount > 0 && !chat.mute.isMuted) {
-			allMuted = false;
-		}
-		return total + chat.unreadCount;
-	}, 0);
+async function renderTray() {
+	let unread = 0;
+	const countMuted = await ipcRenderer.invoke('getSettings', 'countMuted.value');
+	let allMuted = countMuted;
+	if(window.Store && window.Store.Chat) {
+		const chats = window.Store.Chat.getModelsArray();
+		unread = chats.reduce((total, chat) => {
+			// don't count if user disable counter on muted chats
+			if (!countMuted && chat.mute.isMuted) {
+				return total;
+			}
+			if (chat.unreadCount > 0 && !chat.mute.isMuted) {
+				allMuted = false;
+			}
+			return total + chat.unreadCount;
+		}, 0);
+	}
 	const canvas = document.createElement('canvas');
 	const logo = new Image();
 	const ctx = canvas.getContext('2d');
@@ -62,7 +46,7 @@ function renderTray() {
 		canvas.width = logo.naturalWidth;
 		canvas.height = logo.naturalHeight;
 
-		if(window.Store.AppState.state !== 'CONNECTED') {
+		if(!window.Store || window.Store.AppState.state !== 'CONNECTED') {
 			ctx.filter = 'grayscale(100%)';
 		}
 		ctx.drawImage(logo, 0, 0);
@@ -74,18 +58,18 @@ function renderTray() {
 			} else {
 				ctx.fillStyle = 'red';
 			}
-			ctx.arc(45, 18, 18, 0, 2 * Math.PI);
+			ctx.arc(badge.x, badge.y, badge.radius, 0, 2 * Math.PI);
 			ctx.fill();
 			ctx.fillStyle = 'white';
-			ctx.font = (unread < 10 ? '28' : '24') + 'px sans-serif';
+			ctx.font = (unread < 10 ? badge.font : badge.fontSmall) + 'px sans-serif';
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'middle';
-			ctx.fillText(unread, 45, 18);
+			ctx.fillText(unread, badge.x, badge.y);
 		}
 
 		ipcRenderer.send('renderTray', canvas.toDataURL());
 	};
-	logo.src = 'favicon.ico';
+	logo.src = icon;
 }
 
 function appStateChange(event, state) {
@@ -94,7 +78,7 @@ function appStateChange(event, state) {
 			if (state === window.Store.AppState.state) {
 				new Notification('WALC disconnected', {
 					body: "Please check your connection.",
-					icon: "favicon.ico"
+					icon: icon,
 				});
 			}
 			renderTray();
@@ -105,12 +89,19 @@ function appStateChange(event, state) {
 }
 
 function storeOnLoad() {
+	if(icon instanceof Promise) {
+		icon.then(() => storeOnLoad());
+		return;
+	}
 	renderTray();
 	window.Store.Chat.on('change:unreadCount', renderTray);
 	window.Store.Chat.on('change:muteExpiration', renderTray);
 	window.Store.AppState.on('change:state', appStateChange);
 }
 
-document.addEventListener("DOMContentLoaded", setupSpellChecker);
+window.WALC = {
+	load: () => ipcRenderer.send('loadWA'),
+};
+
 ipcRenderer.on('renderTray', renderTray);
 ipcRenderer.on('storeOnLoad', storeOnLoad);
