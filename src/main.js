@@ -13,7 +13,7 @@ const {
     clipboard,
 } = require('electron');
 const { autoUpdater } = require("electron-updater");
-const { Client } = require('whatsapp-web.js');
+const { Client } = require('whatsapp-web-electron.js');
 const pie = require("puppeteer-in-electron");
 const puppeteer = require("puppeteer-core");
 autoUpdater.checkForUpdatesAndNotify();
@@ -458,9 +458,7 @@ if (!settings.get('multiInstance.value') && !app.requestSingleInstanceLock()) {
 function loadWA() {
     win.loadURL('about:blank', { 'userAgent': userAgent }).then(async () => {
         pie.connect(app, puppeteer).then(async (pieBrowser) => {
-            botClient = new Client({
-                customPuppeteerInstance: pieBrowser
-            });
+            botClient = new Client(pieBrowser);
 
             botClient.on('ready', () => {
                 const menubar = Menu.buildFromTemplate(mainmenu);

@@ -1,12 +1,11 @@
 {
   "name": "walc",
-  "version": "0.1.11-post",
+  "version": "0.1.12",
   "description": "A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
-    "dist": "rm -rf dist && electron-builder --dir && cp /usr/lib/x86_64-linux-gnu/libXtst.so.6 dist/linux-unpacked/ && cp /usr/lib/x86_64-linux-gnu/libXss.so.1 dist/linux-unpacked/ && electron-builder --prepackaged dist/linux-unpacked",
-    "postinstall": "patch-package && electron-builder install-app-deps"
+    "dist": "rm -rf dist && electron-builder --dir && cp /usr/lib/x86_64-linux-gnu/libXtst.so.6 dist/linux-unpacked/ && cp /usr/lib/x86_64-linux-gnu/libXss.so.1 dist/linux-unpacked/ && electron-builder --prepackaged dist/linux-unpacked"
   },
   "bin": {
     "walc": "main.js"
@@ -72,9 +71,8 @@
     "get-port-sync": "^1.0.0",
     "lsb-release": "^0.1.0",
     "mime": "^2.4.5",
-    "patch-package": "^6.4.5",
     "puppeteer-core": "^7.1.0",
     "puppeteer-in-electron": "^3.0.3",
-    "whatsapp-web.js": "^1.12.5"
+    "whatsapp-web-electron.js": "^1.12.5"
   }
 }
