@@ -40,10 +40,9 @@ jspm_packages
 # Yarn
 yarn.lock
 
-# Express
-public
-
 # Packaging / releases
+public/js
+public/mix-manifest.json
 release-builds
 dist
 /package-lock.json

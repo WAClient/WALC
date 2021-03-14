@@ -1,0 +1,6 @@
+{
+	"paths": {
+		"@layouts/*": ["./src/Layouts/*"],
+	},
+	"exclude": ["node_modules", ".git", "dist"]
+}

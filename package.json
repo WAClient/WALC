@@ -5,7 +5,14 @@
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
-    "dist": "rm -rf dist && electron-builder --dir && cp /usr/lib/x86_64-linux-gnu/libXtst.so.6 dist/linux-unpacked/ && cp /usr/lib/x86_64-linux-gnu/libXss.so.1 dist/linux-unpacked/ && electron-builder --prepackaged dist/linux-unpacked"
+    "dist": "rm -rf dist && electron-builder --dir && cp /usr/lib/x86_64-linux-gnu/libXtst.so.6 dist/linux-unpacked/ && cp /usr/lib/x86_64-linux-gnu/libXss.so.1 dist/linux-unpacked/ && electron-builder --prepackaged dist/linux-unpacked",
+    "dev": "npm run development",
+    "development": "mix",
+    "watch": "mix watch",
+    "watch-poll": "mix watch -- --watch-options-poll=1000",
+    "hot": "mix watch --hot",
+    "prod": "npm run production",
+    "production": "mix --production"
   },
   "bin": {
     "walc": "main.js"
@@ -54,16 +61,30 @@
     }
   },
   "devDependencies": {
-    "electron": "^11.1.1",
+    "@mdi/js": "^5.9.55",
+    "deepmerge": "^4.2.2",
+    "electron": "^11.3.0",
     "electron-builder": "^22.4.0",
+    "electron-devtools-installer": "^3.1.1",
     "electron-packager": "^14.2.1",
     "electron-rebuild": "^1.11.0",
-    "webpack": "^4.42.0"
+    "laravel-mix": "^6.0.13",
+    "postcss": "^8.2.8",
+    "sass": "^1.32.8",
+    "sass-loader": "^11.0.1",
+    "vue": "^2.5.17",
+    "vue-loader": "^15.9.6",
+    "vue-template-compiler": "^2.6.12",
+    "vuetify": "^2.4.4",
+    "vuetify-loader": "^1.7.2",
+    "vuetifyjs-mix-extension": "0.0.20",
+    "webpack": "^5.25.0"
   },
   "homepage": "https://cstayyab.com/projects/walc",
   "dependencies": {
     "axios": "^0.21.1",
     "create-desktop-shortcuts": "^1.0.2",
+    "dot-prop": "^6.0.1",
     "electron-context-menu": "^2.4.0",
     "electron-store": "^5.1.1",
     "electron-updater": "^4.2.5",
@@ -73,6 +94,7 @@
     "mime": "^2.4.5",
     "puppeteer-core": "^7.1.0",
     "puppeteer-in-electron": "^3.0.3",
+    "vue-router": "^3.5.1",
     "whatsapp-web-electron.js": "^1.12.5"
   }
 }

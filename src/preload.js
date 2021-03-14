@@ -88,12 +88,33 @@ function appStateChange(event, state) {
 	}
 }
 
+function installAppIcon() {
+	const container = document.querySelector('#side header div:first-child');
+	const image = new Image();
+	container.style.display = 'flex'
+	container.style.alignItems = 'center'
+	image.src = icon
+	image.style = `
+		display: block;
+		margin-left: auto;
+		margin-right: 16px;
+		width: 30px;
+		height: 30px;
+		cursor: pointer;
+	`;
+	image.addEventListener('click', () => {
+		ipcRenderer.send('openDashboard');
+	})
+	container.appendChild(image);
+}
+
 function storeOnLoad() {
 	if(icon instanceof Promise) {
 		icon.then(() => storeOnLoad());
 		return;
 	}
 	renderTray();
+	installAppIcon();
 	window.Store.Chat.on('change:unreadCount', renderTray);
 	window.Store.Chat.on('change:muteExpiration', renderTray);
 	window.Store.AppState.on('change:state', appStateChange);

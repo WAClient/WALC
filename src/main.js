@@ -18,7 +18,8 @@ const pie = require("puppeteer-in-electron");
 const puppeteer = require("puppeteer-core");
 autoUpdater.checkForUpdatesAndNotify();
 var path = require('path');
-const Store = require('electron-store');
+// const Store = require('electron-store');
+const settings = require('./settings');
 const windowStateKeeper = require('electron-window-state');
 const contextMenu = require('electron-context-menu');
 const fs = require('fs');
@@ -29,6 +30,7 @@ const homedir = require('os').homedir();
 const walcinfo = require('../package.json');
 const lsbRelease = require('lsb-release');
 const axios = require('axios');
+const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
 
 const ICON_PATH = path.join(__dirname, 'icons/logo360x360.png');
 var trayIcon;
@@ -61,6 +63,8 @@ const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, li
 // be closed automatically when the JavaScript object is garbage collected.
 /** @type {BrowserWindow} */
 let win;
+/** @type {BrowserWindow} */
+let dashboardWin;
 findID = null;
 emptyBody = null;
 
@@ -115,56 +119,56 @@ function integrateToDesktop(win) {
 
 
 //Default Settings
-var settings = new Store({
-    name: 'settings',
-    defaults: {
-        askOnExit: {
-            value: true,
-            name: 'Ask on Exit',
-            description: 'If enabled, WALC will confirm everytime you want to close it. Default is true.'
-        },
-        multiInstance: {
-            value: false,
-            name: 'Allow Multiple Instances',
-            description: "It allows you open multiple instances of WALC so you can login to more than one WhatsApp account. It is disabled by default."
-        },
-        alwaysOnTop: {
-            value: false,
-            name: 'Always On Top',
-            description: 'Allow WALC to always be shown in front of other apps'
-        },
-        closeToTray: {
-            value: false,
-            name: 'Close to Tray',
-            description: 'If enabled, WALC will be hidden everytime you want to close it. Default is false.'
-        },
-        startHidden: {
-            value: false,
-            name: 'Start Hidden',
-            description: 'Hide WALC on startup'
-        },
-        darkMode: {
-            value: false,
-            name: 'Dark Mode',
-            description: 'Enable Dark Mode in WhatsApp Web'
-        },
-        autoHideMenuBar: {
-            value: false,
-            name: "Auto-Hide Menu Bar",
-            description: "Auto-hide top menu bar"
-        },
-        countMuted: {
-            value: true,
-            name: 'Include Muted Chats',
-            description: 'Count muted chats in the badge counter'
-        },
-        newStatusNotification: {
-            value: false,
-            name: 'New Status Updates',
-            description: 'Display Notification when someone updates their status.'
-        }
-    }
-});
+// var settings = new Store({
+//     name: 'settings',
+//     defaults: {
+//         askOnExit: {
+//             value: true,
+//             name: 'Ask on Exit',
+//             description: 'If enabled, WALC will confirm everytime you want to close it. Default is true.'
+//         },
+//         multiInstance: {
+//             value: false,
+//             name: 'Allow Multiple Instances',
+//             description: "It allows you open multiple instances of WALC so you can login to more than one WhatsApp account. It is disabled by default."
+//         },
+//         alwaysOnTop: {
+//             value: false,
+//             name: 'Always On Top',
+//             description: 'Allow WALC to always be shown in front of other apps'
+//         },
+//         closeToTray: {
+//             value: false,
+//             name: 'Close to Tray',
+//             description: 'If enabled, WALC will be hidden everytime you want to close it. Default is false.'
+//         },
+//         startHidden: {
+//             value: false,
+//             name: 'Start Hidden',
+//             description: 'Hide WALC on startup'
+//         },
+//         darkMode: {
+//             value: false,
+//             name: 'Dark Mode',
+//             description: 'Enable Dark Mode in WhatsApp Web'
+//         },
+//         autoHideMenuBar: {
+//             value: false,
+//             name: "Auto-Hide Menu Bar",
+//             description: "Auto-hide top menu bar"
+//         },
+//         countMuted: {
+//             value: true,
+//             name: 'Include Muted Chats',
+//             description: 'Count muted chats in the badge counter'
+//         },
+//         newStatusNotification: {
+//             value: false,
+//             name: 'New Status Updates',
+//             description: 'Display Notification when someone updates their status.'
+//         }
+//     }
+// });
 
 const notificationsMenu = [{
     label: 'New Status Updates',
@@ -427,6 +431,10 @@ ipcMain.on('focusWindow', (event) => {
     window.focus();
 });
 
+ipcMain.on('openDashboard', (event) => {
+    loadDashboard();
+});
+
 ipcMain.handle('getSettings', (event, key = null) => {
     if(key) {
         return settings.get(key);
@@ -434,12 +442,18 @@ ipcMain.handle('getSettings', (event, key = null) => {
     return settings.store;
 });
 
+ipcMain.handle('setSettings', (event, values) => {
+    for (const [key, value] of Object.entries(values)) {
+        settings.set(key, value);
+    }
+});
+
 ipcMain.handle('getIcon', () => {
     return nativeImage.createFromPath(ICON_PATH).toDataURL();
 });
 
 //Close second instance if multiInstance is disabled
-if (!settings.get('multiInstance.value') && !app.requestSingleInstanceLock()) {
+if (!settings.get('advanced.multiInstance.value') && !app.requestSingleInstanceLock()) {
     win = null;
     app.isQuiting = true;
     preventExit = false;
@@ -447,7 +461,7 @@ if (!settings.get('multiInstance.value') && !app.requestSingleInstanceLock()) {
     process.exit(0);
 } else {
     app.on('second-instance', (event, cmdLine, workingDir) => {
-        if (!settings.get('multiInstance.value') && win) {
+        if (!settings.get('advanced.multiInstance.value') && win) {
             if (win.isMinimized()) win.restore();
             toggleVisibility(true);
             win.focus();
@@ -455,15 +469,35 @@ if (!settings.get('multiInstance.value') && !app.requestSingleInstanceLock()) {
     });
 }
 
+function loadDashboard() {
+    dashboardWin.loadFile('public/index.html');
+    dashboardWin.show();
+}
+
 function loadWA() {
+    console.log(settings.store);
     win.loadURL('about:blank', { 'userAgent': userAgent }).then(async () => {
+        dashboardWin = new BrowserWindow({
+            title: 'WALC',
+            icon: path.join(__dirname, 'icons/logo360x360.png'),
+            show: false,
+            webPreferences: {
+                nodeIntegration: true,
+            },
+        });
+
+        dashboardWin.on('close', (e) => {
+            e.preventDefault();
+            dashboardWin.hide();
+        });
+        
         pie.connect(app, puppeteer).then(async (pieBrowser) => {
             botClient = new Client(pieBrowser);
 
             botClient.on('ready', () => {
                 const menubar = Menu.buildFromTemplate(mainmenu);
                 Menu.setApplicationMenu(menubar);
-                win.setMenuBarVisibility(!settings.get('autoHideMenuBar.value'));
+                // win.setMenuBarVisibility(!settings.get('autoHideMenuBar.value'));
                 win.webContents.send('storeOnLoad');
 
                 customeTitle = `WALC`;
@@ -479,7 +513,7 @@ function loadWA() {
             });
 
             botClient.on("message", async (msg) => {
-                if (settings.get("newStatusNotification.value")) {
+                if (settings.get("notification.newStatus.value")) {
                     const contact = await msg.getContact();
                     if (msg.isStatus && !contact.statusMute) {
                         let contactImage;
@@ -562,11 +596,10 @@ function createWindow() {
             enableRemoteModule: false,
             preload: path.join(__dirname, 'preload.js')
         },
-        show: !settings.get('startHidden.value'),
-        autoHideMenuBar: settings.get('autoHideMenuBar.value'),
+        show: !settings.get('trayIcon.startHidden.value'),
+        autoHideMenuBar: settings.get('trayIcon.autoHideMenuBar.value'),
     });
-    win.setMenuBarVisibility(!settings.get('autoHideMenuBar.value'));
-    win.setAlwaysOnTop(settings.get('alwaysOnTop.value'));
+    win.setAlwaysOnTop(settings.get('general.alwaysOnTop.value'));
     trayIcon = new Tray(path.join(__dirname, 'icons/logo360x360.png'));
     //Hide Default menubar
     win.setMenu(null);
@@ -585,9 +618,9 @@ function createWindow() {
 
     win.on('close', e => {
         e.preventDefault();
-        if (settings.get('closeToTray.value') && !app.isQuiting) {
+        if (settings.get('trayIcon.closeToTray.value') && !app.isQuiting) {
             toggleVisibility();
-        } else if (settings.get('askOnExit.value') && preventExit) {
+        } else if (settings.get('general.askOnExit.value') && preventExit) {
             res = dialog.showMessageBoxSync(win, {
                 type: 'none',
                 buttons: ['Yes', 'No'],
@@ -639,7 +672,20 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', () => {
+    if (process.env.NODE_ENV !== 'production') {
+        // FIXME: properly load Vue.js devtools
+        // installExtension(VUEJS_DEVTOOLS, { loadExtensionOptions: {allowFileAccess: true} })
+        //     .then((name) => console.log(`Added Extension:  ${name}`))
+        //     .catch((err) => console.log('An error occurred: ', err));
+        const vueDevToolsPath = path.join(
+            os.homedir(),
+            `.config/google-chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/5.3.4_0`
+        );
+        session.defaultSession.loadExtension(vueDevToolsPath)
+    }
+    createWindow();
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
