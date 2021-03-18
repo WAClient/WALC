@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
-    "dist": "rm -rf dist && electron-builder --dir && cp /usr/lib/x86_64-linux-gnu/libXtst.so.6 dist/linux-unpacked/ && cp /usr/lib/x86_64-linux-gnu/libXss.so.1 dist/linux-unpacked/ && electron-builder --prepackaged dist/linux-unpacked",
+    "dist": "npm run prod && rm -rf dist && electron-builder --dir && cp /usr/lib/x86_64-linux-gnu/libXtst.so.6 dist/linux-unpacked/ && cp /usr/lib/x86_64-linux-gnu/libXss.so.1 dist/linux-unpacked/ && electron-builder --prepackaged dist/linux-unpacked",
     "dev": "npm run development",
     "development": "mix",
     "watch": "mix watch",

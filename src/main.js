@@ -475,7 +475,6 @@ function loadDashboard() {
 }
 
 function loadWA() {
-    console.log(settings.store);
     win.loadURL('about:blank', { 'userAgent': userAgent }).then(async () => {
         dashboardWin = new BrowserWindow({
             title: 'WALC',
@@ -490,7 +489,7 @@ function loadWA() {
             e.preventDefault();
             dashboardWin.hide();
         });
-        
+
         pie.connect(app, puppeteer).then(async (pieBrowser) => {
             botClient = new Client(pieBrowser);
 
@@ -607,7 +606,7 @@ function createWindow() {
     // load the Main Page of the app.
     loadWA();
     win.setTitle('WALC');
-    trayIcon.setTitle('WALC');
+    trayIcon.setTitle('WALC');1112
     trayIcon.setToolTip('WALC');
     trayIcon.on('click', toggleVisibility);
 
@@ -680,9 +679,10 @@ app.on('ready', () => {
         //     .catch((err) => console.log('An error occurred: ', err));
         const vueDevToolsPath = path.join(
             os.homedir(),
-            `.config/google-chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/5.3.4_0`
+            `.config/google-chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/5.3.4_1`
         );
-        session.defaultSession.loadExtension(vueDevToolsPath)
+        session.defaultSession.loadExtension(vueDevToolsPath, { allowFileAccess: true })
+            .then(() => console.log('Vue extension loaded'));
     }
     createWindow();
 });

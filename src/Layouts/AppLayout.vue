@@ -1,14 +1,6 @@
 <template>
   <div>
-    <!-- <v-navigation-drawer
-      v-model="drawer"
-      app
-    >
-      <router-link to="/settings">Go to Foo</router-link>
-    </v-navigation-drawer> -->
-
     <v-app-bar app>
-      <!-- <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon> -->
       <v-btn icon @click="goBack()" v-show="!hideBackButton">
         <v-icon>{{ icons.mdiArrowLeft }}</v-icon>
       </v-btn>
