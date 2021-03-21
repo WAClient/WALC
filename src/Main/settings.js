@@ -177,13 +177,11 @@ const store = new Store({
 // attach value getter and setter to electron-store
 Object.keys(schema).forEach((group) => {
 	Object.keys(schema[group]).forEach((key) => {
-		schema[group][key].value = store.store[group][key];
-
-		// NOTE: I'd use getter and setter but it won't appear in JSON
-		// Object.defineProperty(schema[group][key], 'value', {
-		// 	get: () => store.get(`${group}.${key}`),
-		// 	set: (value) => store.set(`${group}.${key}`, value),
-		// });
+		Object.defineProperty(schema[group][key], 'value', {
+			get: () => store.get(`${group}.${key}`),
+			set: (value) => store.set(`${group}.${key}`, value),
+			enumerable: true,
+		});
 	});
 });
 
@@ -191,7 +189,9 @@ settings.store = schema;
 settings.get = (key) => dotProp.get(schema, key);
 settings.set = (key, value) => {
 	dotProp.set(schema, key, value);
-	store.set(key, value);
+};
+settings.onDidChange = (key, handler) => {
+	return store.onDidChange(key, handler);
 };
 
 module.exports = settings;

@@ -19,7 +19,7 @@ const puppeteer = require("puppeteer-core");
 autoUpdater.checkForUpdatesAndNotify();
 var path = require('path');
 // const Store = require('electron-store');
-const settings = require('./settings');
+const settings = require('./Main/settings');
 const windowStateKeeper = require('electron-window-state');
 const contextMenu = require('electron-context-menu');
 const fs = require('fs');
@@ -31,9 +31,9 @@ const walcinfo = require('../package.json');
 const lsbRelease = require('lsb-release');
 const axios = require('axios');
 const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
+const TrayManager = require('./Main/tray');
 
 const ICON_PATH = path.join(__dirname, 'icons/logo360x360.png');
-var trayIcon;
 // Information to be displayed in About Dialog
 var aboutWALC;
 
@@ -397,32 +397,6 @@ const mainmenu = [{
     submenu: helpMenu
 }];
 
-function toggleVisibility(forceVisible = null) {
-    if ((forceVisible === null && win.isVisible()) || forceVisible === false) win.hide();
-    else win.show();
-    trayIcon.setContextMenu(Menu.buildFromTemplate(getTrayMenu()));
-}
-
-function getTrayMenu() {
-    let visibilityLabel = (win.isVisible() ? 'Hide' : 'Show') + ' WALC';
-    return [{
-        label: visibilityLabel,
-        click: () => toggleVisibility()
-    }, {
-        label: 'Quit',
-        click: function () {
-            preventExit = false;
-            app.isQuiting = true;
-            app.quit();
-        }
-    }];
-}
-
-ipcMain.on('renderTray', function (event, data) {
-    const img = nativeImage.createFromDataURL(data);
-    trayIcon.setImage(img);
-});
-
 ipcMain.on('loadWA', loadWA);
 
 ipcMain.on('focusWindow', (event) => {
@@ -452,6 +426,11 @@ ipcMain.handle('getIcon', () => {
     return nativeImage.createFromPath(ICON_PATH).toDataURL();
 });
 
+ipcMain.handle('quit', () => {
+    app.isQuiting = true;
+    app.quit();
+});
+
 //Close second instance if multiInstance is disabled
 if (!settings.get('advanced.multiInstance.value') && !app.requestSingleInstanceLock()) {
     win = null;
@@ -463,7 +442,6 @@ if (!settings.get('advanced.multiInstance.value') && !app.requestSingleInstanceL
     app.on('second-instance', (event, cmdLine, workingDir) => {
         if (!settings.get('advanced.multiInstance.value') && win) {
             if (win.isMinimized()) win.restore();
-            toggleVisibility(true);
             win.focus();
         }
     });
@@ -489,6 +467,9 @@ function loadWA() {
             e.preventDefault();
             dashboardWin.hide();
         });
+
+        // loadDashboard();
+        // return;
 
         pie.connect(app, puppeteer).then(async (pieBrowser) => {
             botClient = new Client(pieBrowser);
@@ -595,30 +576,34 @@ function createWindow() {
             enableRemoteModule: false,
             preload: path.join(__dirname, 'preload.js')
         },
-        show: !settings.get('trayIcon.startHidden.value'),
         autoHideMenuBar: settings.get('trayIcon.autoHideMenuBar.value'),
     });
     win.setAlwaysOnTop(settings.get('general.alwaysOnTop.value'));
-    trayIcon = new Tray(path.join(__dirname, 'icons/logo360x360.png'));
     //Hide Default menubar
     win.setMenu(null);
+
+    if(settings.get('trayIcon.enabled.value') && settings.get('trayIcon.startHidden.value')) {
+        win.hide();
+    }
+
+    const trayManager = new TrayManager(win);
+    trayManager.init();
 
     // load the Main Page of the app.
     loadWA();
     win.setTitle('WALC');
-    trayIcon.setTitle('WALC');1112
-    trayIcon.setToolTip('WALC');
-    trayIcon.on('click', toggleVisibility);
-
-    trayIcon.setContextMenu(Menu.buildFromTemplate(getTrayMenu()));
 
     // register window state listeners
     windowState.manage(win);
 
     win.on('close', e => {
         e.preventDefault();
-        if (settings.get('trayIcon.closeToTray.value') && !app.isQuiting) {
-            toggleVisibility();
+        if (
+            settings.get('trayIcon.enabled.value') &&
+            settings.get('trayIcon.closeToTray.value')
+            && !app.isQuiting
+        ) {
+            trayManager.toggleVisibility();
         } else if (settings.get('general.askOnExit.value') && preventExit) {
             res = dialog.showMessageBoxSync(win, {
                 type: 'none',
@@ -679,7 +664,7 @@ app.on('ready', () => {
         //     .catch((err) => console.log('An error occurred: ', err));
         const vueDevToolsPath = path.join(
             os.homedir(),
-            `.config/google-chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/5.3.4_1`
+            `.config/google-chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/5.3.4_0`
         );
         session.defaultSession.loadExtension(vueDevToolsPath, { allowFileAccess: true })
             .then(() => console.log('Vue extension loaded'));

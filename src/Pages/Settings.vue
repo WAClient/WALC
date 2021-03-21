@@ -1,5 +1,5 @@
 <template>
-  <app-layout hide-back-button title="Settings">
+  <app-layout title="Settings">
     <v-sheet class="overflow-hidden mx-auto mt-4" :elevation="8" rounded="lg" max-width="500px">
       <v-list>
         <v-list-item

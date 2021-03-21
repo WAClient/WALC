@@ -28,10 +28,8 @@ Vue.use(VueRouter);
 const routes = [
 	{
 		path: '/',
-		redirect: '/settings',
-		// TODO: implement dashboard
-		// component: Dashboard,
-		// name: 'dashboard',
+		component: Dashboard,
+		name: 'dashboard',
 	}, {
 		path: '/settings',
 		component: Settings,
