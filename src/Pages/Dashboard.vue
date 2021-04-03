@@ -49,7 +49,7 @@ export default {
           text: 'Quit',
           icon: mdiPower,
           onclick: () => {
-            ipcRenderer.invoke('quit');
+            ipcRenderer.invoke('quit', this.$instance.id);
           }
         },
       ],

@@ -1,15 +1,27 @@
 const { ipcRenderer } = require('electron');
 
+let instanceID;
 let icon = ipcRenderer.invoke('getIcon').then((value) => icon = value);
+
+const settings = {
+	get: (key = null) => ipcRenderer.invoke('getSettings', key),
+	set: (values = {}) => ipcRenderer.invoke('setSettings', values),
+};
+
+async function instanceExec(key, ...args) {
+	return ipcRenderer.invoke(`instance.${key}`, instanceID, ...args);
+}
 
 // override Notification API so it can show the window on click
 window.oldNotification = Notification;
-window.Notification = function (title, options) {
-	const n = new window.oldNotification(title, options);
-	n.addEventListener('click', function () {
-		ipcRenderer.send('focusWindow');
-	});
-	return n;
+window.Notification = async function (title, options) {
+	if(await settings.get('notification.enabled')) {
+		const n = new window.oldNotification(title, options);
+		n.addEventListener('click', function () {
+			ipcRenderer.send('focusWindow');
+		});
+		return n;
+	}
 };
 Object.assign(window.Notification, window.oldNotification);
 
@@ -23,7 +35,7 @@ const badge = {
 
 async function renderTray() {
 	let unread = 0;
-	const countMuted = await ipcRenderer.invoke('getSettings', 'countMuted.value');
+	const countMuted = await settings.get('countMuted.value');
 	let allMuted = countMuted;
 	if(window.Store && window.Store.Chat) {
 		const chats = window.Store.Chat.getModelsArray();
@@ -103,12 +115,14 @@ function installAppIcon() {
 		cursor: pointer;
 	`;
 	image.addEventListener('click', () => {
-		ipcRenderer.send('openDashboard');
+		const darkTheme = document.body.classList.contains('dark');
+		instanceExec('openDashboard', darkTheme);
 	})
 	container.appendChild(image);
 }
 
-function storeOnLoad() {
+function ready(id) {
+	instanceID = id;
 	if(icon instanceof Promise) {
 		icon.then(() => storeOnLoad());
 		return;
@@ -125,4 +139,7 @@ window.WALC = {
 };
 
 ipcRenderer.on('renderTray', renderTray);
-ipcRenderer.on('storeOnLoad', storeOnLoad);
+ipcRenderer.on('ready', (e, id) => ready(id));
+ipcRenderer.on('darkTheme', (e) => {
+	ipcRenderer.send('darkTheme-reply', document.body.classList.contains('dark'));
+});

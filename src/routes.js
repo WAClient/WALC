@@ -7,6 +7,7 @@ import SettingsGeneral from './Pages/Settings/General';
 import SettingsNotification from './Pages/Settings/Notification';
 import SettingsTrayIcon from './Pages/Settings/TrayIcon';
 import SettingsAdvanced from './Pages/Settings/Advanced';
+import Help from './Pages/Help';
 import Offline from './Pages/Offline';
 
 function groupRoutes(config, routes) {
@@ -34,6 +35,10 @@ const routes = [
 		path: '/settings',
 		component: Settings,
 		name: 'settings'
+	}, {
+		path: '/help',
+		component: Help,
+		name: 'help',
 	},
 	...groupRoutes({ prefix: '/settings', as: 'settings.' }, [
 		{

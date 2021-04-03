@@ -3,12 +3,7 @@ const { app, Tray, Menu, ipcMain, nativeImage } = require('electron');
 const settings = require('./settings');
 
 module.exports = class TrayManager {
-	/**
-	 * TrayManager constructor
-	 * @param {import('electron').BrowserWindow} browserWindow Main BrowserWindow
-	 */
-	constructor(browserWindow) {
-		this.win = browserWindow;
+	constructor() {
 		this.tray = null;
 
 		ipcMain.on('renderTray', (event, data) => {
@@ -26,7 +21,15 @@ module.exports = class TrayManager {
 		});
 	}
 
-	init() {
+	/**
+	 * Create tray
+	 * TODO: figure out multi instance
+	 * @param {import('electron').BrowserWindow} browserWindow Main BrowserWindow
+	 */
+	init(browserWindow) {
+		if(browserWindow) {
+			this.win = browserWindow;
+		}
 		if(settings.get('trayIcon.enabled.value')) {
 			this.tray = new Tray(path.join(__dirname, '../icons/logo360x360.png'));
 			this.tray.setTitle('WALC');
@@ -43,9 +46,8 @@ module.exports = class TrayManager {
 			click: () => this.toggleVisibility()
 		}, {
 			label: 'Quit',
-			click: function () {
-				app.isQuiting = true;
-				app.quit();
+			click: () => {
+				this.win.quitWindow();
 			}
 		}]);
 		this.tray.setContextMenu(menu);
