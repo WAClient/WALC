@@ -18,7 +18,7 @@ Vue.prototype.$instance = {
 	id: null,
 	isSnap: false,
 	isAppImage: false,
-	exec = (key, ...args) => {
+	exec: (key, ...args) => {
 		return ipcRenderer.invoke(`instance.${key}`, vm.$instance.id, ...args);
 	},
 };

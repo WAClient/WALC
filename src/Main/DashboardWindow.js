@@ -31,13 +31,12 @@ module.exports = class DashboardWindow extends BrowserWindow {
 			Menu.buildFromTemplate([{ role: 'viewMenu' }])
 		);
 
-		// just for debugging
-		// this.show();
-
 		// added timeout to prevent whatsapp being loaded to this window instead of main
 		// hopefully no race condition bug later...
 		setTimeout(() => {
 			this.loadFile('public/index.html').then(() => {
+				// just for debugging
+				// this.show();
 				// this.webContents.openDevTools();
 			});
 		}, 2000);

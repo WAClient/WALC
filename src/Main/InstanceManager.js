@@ -1,6 +1,9 @@
+const { app, ipcMain, Menu, BrowserWindow } = require('electron');
+const walcinfo = require('../../package.json');
+const lsbRelease = require('lsb-release');
+
 const MainWindow = require('./MainWindow');
 const DashboardWindow = require('./DashboardWindow');
-const { app, ipcMain, Menu, BrowserWindow } = require('electron');
 const MainMenu = require('./MainMenu');
 const DashboardMenu = require('./DashboardMenu');
 
@@ -23,12 +26,27 @@ module.exports = class InstanceManager {
 
 		this._initIPC();
 
+		lsbRelease((_, data) => {
+			const installType = (process.env.APPIMAGE ? "AppImage" : (process.env.SNAP ? "Snap" : "Manual"));
+			const version = walcinfo.version;
+			const os = (data ? data.description : "Unknown (probably missing lsb_release)");
+			this.aboutInfo = {
+				installType,
+				version,
+				os,
+			};
+		});
+
 		// TODO: store & read instance data to disk
 	}
 
 	_initIPC() {
 		ipcMain.handle('instance.openDashboard', (event, id, darkTheme) => {
 			this.openDashboard(id, darkTheme);
+		});
+
+		ipcMain.handle('instance.about', (event, id) => {
+			return this.aboutInfo;
 		});
 
 		[
