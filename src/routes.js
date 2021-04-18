@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 
 import Dashboard from './Pages/Dashboard';
+import Tools from './Pages/Tools';
 import Settings from './Pages/Settings';
 import SettingsGeneral from './Pages/Settings/General';
 import SettingsNotification from './Pages/Settings/Notification';
@@ -31,6 +32,10 @@ const routes = [
 		path: '/',
 		component: Dashboard,
 		name: 'dashboard',
+	}, {
+		path: '/tools',
+		component: Tools,
+		name: 'tools'
 	}, {
 		path: '/settings',
 		component: Settings,

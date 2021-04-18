@@ -29,7 +29,7 @@ const homedir = require('os').homedir();
 const walcinfo = require('../package.json');
 const lsbRelease = require('lsb-release');
 const axios = require('axios');
-const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
+// const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
 const TrayManager = require('./Main/TrayManager');
 const InstanceManager = require('./Main/InstanceManager');
 
@@ -58,6 +58,9 @@ ${isSNAP ? `Snap Version:${process.env.SNAP_VERSION}(${process.env.SNAP_REVISION
 
 contextMenu({
     showInspectElement: false,
+    shouldShowMenu: (event, params) => {
+        return !(params.titleText === 'Open Dashboard' && params.mediaType === 'image');
+    }
 });
 
 // set user agent manually

@@ -38,7 +38,6 @@ module.exports = class DashboardWindow extends BrowserWindow {
 		// hopefully no race condition bug later...
 		setTimeout(() => {
 			this.loadFile('public/index.html').then(() => {
-				this.webContents.send('setID', id);
 				// this.webContents.openDevTools();
 			});
 		}, 2000);
@@ -56,6 +55,14 @@ module.exports = class DashboardWindow extends BrowserWindow {
 		this.webContents.on('new-window', (event, url) => {
 			event.preventDefault();
 			require('electron').shell.openExternal(url);
+		});
+
+		this.on('show', () => {
+			const isSnap = process.env.SNAP !== undefined && process.env.SNAP !== null;
+			const isAppImage = process.env.APPIMAGE !== undefined && process.env.APPIMAGE !== null;
+			this.webContents.send('setID', {
+				id, isSnap, isAppImage
+			});
 		});
 	}
 

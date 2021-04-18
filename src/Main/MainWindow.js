@@ -1,4 +1,7 @@
 const path = require('path');
+const fs = require('fs');
+const homedir = require('os').homedir();
+const createDesktopShortcut = require('create-desktop-shortcuts');
 const { app, dialog, BrowserWindow, Notification } = require("electron");
 const windowStateKeeper = require("electron-window-state");
 const settings = require('./settings');
@@ -55,8 +58,8 @@ module.exports = class MainWindow extends BrowserWindow {
 				preload: path.join(__dirname, '../preload.js'),
 				spellcheck: settings.get('general.spellcheck.value'),
 			},
-			// show: !shouldHide,
-			show: true,
+			show: !shouldHide,
+			// show: true,
 			autoHideMenuBar: settings.get('trayIcon.autoHideMenuBar.value'),
 			alwaysOnTop: settings.get('general.alwaysOnTop.value'),
 			...options
@@ -74,10 +77,16 @@ module.exports = class MainWindow extends BrowserWindow {
 		});
 	}
 
+	/**
+	 * Send notification using a template
+	 * @param {string} name Template name
+	 * @param  {...any} args Arguments to pass to template
+	 * @return {Notification|null}
+	 */
 	notify(name, ...args) {
 		const enabled = settings.get('notification.enabled.value');
 		const allowed = (
-			!settings.get(`notification.${name}`) || // check if there's a setting
+			!settings.get(`notification.${name}`) || // allow if there's no setting
 			settings.get(`notification.${name}.value`) // if there is, then check if enabled
 		);
 
@@ -87,12 +96,35 @@ module.exports = class MainWindow extends BrowserWindow {
 				template = template(...args);
 			}
 
-			new Notification({
+			const notification = new Notification({
 				silent: false,
 				icon: ICON_PATH,
 				...template,
-			}).show();
+			});
+			notification.show();
+			return notification;
 		}
+		return null;
+	}
+
+	/**
+	 * Send a simple notification
+	 * @param {string} title
+	 * @param {string} body
+	 * @param {object} params Additional params
+	 * @return {Notification|null}
+	 */
+	simpleNotify(title, body, params = {}) {
+		if(!settings.get('notification.enabled.value')) return null;
+
+		const notification = new Notification({
+			silent: false,
+			icon: ICON_PATH,
+			title, body,
+			...params
+		});
+		notification.show();
+		return notification;
 	}
 
 	/**
@@ -213,5 +245,61 @@ module.exports = class MainWindow extends BrowserWindow {
 		});
 
 		this.whatsapp.initialize();
+	}
+
+	async archiveAllChats() {
+		const currentNotify = this.simpleNotify('Archive All Chats', 'Archiving all chats...', { silent: true });
+		const chats = await this.whatsapp.getChats();
+		chats.forEach(async (chat) => {
+			await chat.archive();
+		});
+		currentNotify.close();
+		this.simpleNotify('Archive All Chats', 'All chats have been archived.');
+	}
+
+	async markAllChatsAsRead() {
+		this.simpleNotify('Mark All Chats', 'Marking all chats...');
+		const chats = await this.whatsapp.getChats()
+		chats.forEach(async (chat) => {
+			await chat.sendSeen();
+		});
+	}
+
+	integrateToDesktop() {
+		const shortcutDir = path.join(homedir, ".local/share/applications");
+		const iconDir = path.join(homedir, ".local/share/WALC");
+		const iconPath = path.join(iconDir, "logo360x360.png");
+		fs.mkdirSync(shortcutDir, { recursive: true });
+		fs.mkdirSync(iconDir, { recursive: true });
+		fs.copyFileSync(path.join(__dirname, "../icons/logo360x360.png"), iconPath);
+		const shortcutCreated = createDesktopShortcut({
+			onlyCurrentOS: true,
+			customLogger: (msg, error) => {
+				dialog.showMessageBoxSync(this, {
+					type: 'none',
+					buttons: ['OK'],
+					title: 'Desktop Integration',
+					message: msg,
+				});
+			},
+			"linux": {
+				filePath: process.env.APPIMAGE,
+				outputPath: shortcutDir,
+				name: 'WALC',
+				description: 'WALC - unofficial WhatsApp Linux Client',
+				icon: iconPath,
+				type: 'Application',
+				terminal: false,
+				chmod: true
+			}
+		});
+		if (shortcutCreated) {
+			dialog.showMessageBoxSync(this, {
+				type: 'none',
+				buttons: ['OK'],
+				title: 'Desktop Integration',
+				message: "WALC has successfully been integrated to your Applications."
+			});
+		}
 	}
 }

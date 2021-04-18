@@ -106,6 +106,7 @@ function installAppIcon() {
 	container.style.display = 'flex'
 	container.style.alignItems = 'center'
 	image.src = icon
+	image.title = 'Open Dashboard';
 	image.style = `
 		display: block;
 		margin-left: auto;
@@ -117,7 +118,11 @@ function installAppIcon() {
 	image.addEventListener('click', () => {
 		const darkTheme = document.body.classList.contains('dark');
 		instanceExec('openDashboard', darkTheme);
-	})
+	});
+	image.addEventListener('contextmenu', () => {
+		const darkTheme = document.body.classList.contains('dark');
+		instanceExec('dashboard-context-menu', darkTheme);
+	});
 	container.appendChild(image);
 }
 

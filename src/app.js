@@ -16,6 +16,11 @@ const app = document.getElementById('app');
 
 Vue.prototype.$instance = {
 	id: null,
+	isSnap: false,
+	isAppImage: false,
+	exec = (key, ...args) => {
+		return ipcRenderer.invoke(`instance.${key}`, vm.$instance.id, ...args);
+	},
 };
 
 const vm = new Vue({
@@ -24,9 +29,11 @@ const vm = new Vue({
 	render: (h) => h(App, { props: {} }),
 }).$mount(app);
 
-ipcRenderer.on('setID', (event, id) => {
+ipcRenderer.on('setID', (event, { id, isSnap, isAppImage }) => {
 	vm.$instance.id = id;
-	console.log(vm.$instance.id);
+	vm.$instance.isSnap = isSnap;
+	vm.$instance.isAppImage = isAppImage;
+	console.log(vm.$instance);
 });
 
 ipcRenderer.on('navigate', (event, url) => {

@@ -1,7 +1,8 @@
 const MainWindow = require('./MainWindow');
 const DashboardWindow = require('./DashboardWindow');
-const { app, Menu, ipcMain } = require('electron');
+const { app, ipcMain, Menu, BrowserWindow } = require('electron');
 const MainMenu = require('./MainMenu');
+const DashboardMenu = require('./DashboardMenu');
 
 /**
  * @typedef Instance
@@ -28,6 +29,21 @@ module.exports = class InstanceManager {
 	_initIPC() {
 		ipcMain.handle('instance.openDashboard', (event, id, darkTheme) => {
 			this.openDashboard(id, darkTheme);
+		});
+
+		[
+			'archiveAllChats',
+			'markAllChatsAsRead',
+			'integrateToDesktop',
+		].forEach((func) => {
+			ipcMain.handle(`instance.main.${func}`, (event, id, ...args) => {
+				this.instances[id].main[func](...args);
+			});
+		});
+
+		ipcMain.handle('instance.dashboard-context-menu', (event, id, darkTheme) => {
+			const menu = Menu.buildFromTemplate(DashboardMenu(id, darkTheme, this));
+			menu.popup(BrowserWindow.fromWebContents(event.sender));
 		});
 	}
 
@@ -109,13 +125,12 @@ module.exports = class InstanceManager {
 	}
 
 	handleClose(id) {
-		console.log(id, instances);
 		const instance = this.instances[id];
 		instance.dashboard.quitWindow();
 		delete this.instances[id];
 
 		if(!Object.keys(this.instances).length) {
-			app.quit();
+			setTimeout(() => app.quit(), 50);
 		}
 	}
 }
