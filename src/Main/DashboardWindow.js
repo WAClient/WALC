@@ -1,6 +1,7 @@
 const path = require('path');
 const { BrowserWindow, Menu } = require("electron");
 const windowStateKeeper = require("electron-window-state");
+const settings = require('./settings');
 
 module.exports = class DashboardWindow extends BrowserWindow {
 	constructor(id, name, options = {}) {
@@ -30,6 +31,7 @@ module.exports = class DashboardWindow extends BrowserWindow {
 		this.setMenu(
 			Menu.buildFromTemplate([{ role: 'viewMenu' }])
 		);
+		this.setMenuBarVisibility(false);
 
 		// added timeout to prevent whatsapp being loaded to this window instead of main
 		// hopefully no race condition bug later...
@@ -62,6 +64,10 @@ module.exports = class DashboardWindow extends BrowserWindow {
 			this.webContents.send('setID', {
 				id, isSnap, isAppImage
 			});
+		});
+
+		settings.onDidChange('general.alwaysOnTop', (value) => {
+			this.setAlwaysOnTop(value);
 		});
 	}
 

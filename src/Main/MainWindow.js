@@ -60,7 +60,7 @@ module.exports = class MainWindow extends BrowserWindow {
 			},
 			show: !shouldHide,
 			// show: true,
-			autoHideMenuBar: settings.get('trayIcon.autoHideMenuBar.value'),
+			autoHideMenuBar: true,
 			alwaysOnTop: settings.get('general.alwaysOnTop.value'),
 			...options
 		});
@@ -200,6 +200,10 @@ module.exports = class MainWindow extends BrowserWindow {
 		settings.onDidChange('general.alwaysOnTop', (value) => {
 			this.setAlwaysOnTop(value);
 		});
+
+		settings.onDidChange('general.fullWidth', (value) => {
+			this.webContents.send('setFullWidth', value);
+		});
 	}
 
 	async _initWhatsapp() {
@@ -258,7 +262,6 @@ module.exports = class MainWindow extends BrowserWindow {
 	}
 
 	async markAllChatsAsRead() {
-		this.simpleNotify('Mark All Chats', 'Marking all chats...');
 		const chats = await this.whatsapp.getChats()
 		chats.forEach(async (chat) => {
 			await chat.sendSeen();

@@ -100,6 +100,18 @@ function appStateChange(event, state) {
 	}
 }
 
+function setFullWidth(status) {
+	/** @type {HTMLDivElement} */
+	const container = document.querySelector('#app > .app-wrapper-web > div');
+	if(status) {
+		container.style.width = '100%';
+		container.style.height = '100%';
+		container.style.top = '0';
+	} else {
+		container.removeAttribute('style');
+	}
+}
+
 function installAppIcon() {
 	const container = document.querySelector('#side header div:first-child');
 	const image = new Image();
@@ -148,3 +160,4 @@ ipcRenderer.on('ready', (e, id) => ready(id));
 ipcRenderer.on('darkTheme', (e) => {
 	ipcRenderer.send('darkTheme-reply', document.body.classList.contains('dark'));
 });
+ipcRenderer.on('setFullWidth', (e, status) => setFullWidth(status))
