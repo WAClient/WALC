@@ -6,6 +6,7 @@ const MainWindow = require('./MainWindow');
 const DashboardWindow = require('./DashboardWindow');
 const MainMenu = require('./MainMenu');
 const DashboardMenu = require('./DashboardMenu');
+const settings = require('./settings');
 
 /**
  * @typedef Instance
@@ -41,15 +42,24 @@ module.exports = class InstanceManager {
 	}
 
 	_initIPC() {
-		ipcMain.handle('instance.openDashboard', (event, id, darkTheme) => {
-			this.openDashboard(id, darkTheme);
+		ipcMain.handle('getInstanceID', (event) => {
+			return BrowserWindow.fromWebContents(event.sender)._id;
+		});
+
+		ipcMain.handle('instance.openDashboard', (event, id) => {
+			this.openDashboard(id);
 		});
 
 		ipcMain.handle('instance.about', (event, id) => {
 			return this.aboutInfo;
 		});
 
+		ipcMain.handle('instance.setDarkTheme', (event, id, darkTheme) => {
+			settings.set('theme.dark.value', darkTheme);
+		});
+
 		[
+			'initWhatsapp',
 			'archiveAllChats',
 			'markAllChatsAsRead',
 			'integrateToDesktop',
@@ -59,8 +69,8 @@ module.exports = class InstanceManager {
 			});
 		});
 
-		ipcMain.handle('instance.dashboard-context-menu', (event, id, darkTheme) => {
-			const menu = Menu.buildFromTemplate(DashboardMenu(id, darkTheme, this));
+		ipcMain.handle('instance.dashboard-context-menu', (event, id) => {
+			const menu = Menu.buildFromTemplate(DashboardMenu(id, this));
 			menu.popup(BrowserWindow.fromWebContents(event.sender));
 		});
 	}
@@ -75,7 +85,7 @@ module.exports = class InstanceManager {
 			mainWindow.setMenu(
 				Menu.buildFromTemplate(menubar)
 			);
-		})
+		});
 
 		const instance = {
 			id,
@@ -109,8 +119,8 @@ module.exports = class InstanceManager {
 		instance.main.quitWindow();
 	}
 
-	openDashboard(id, darkTheme = null) {
-		this.instances[id].dashboard.open(darkTheme);
+	openDashboard(id) {
+		this.instances[id].dashboard.open();
 	}
 
 	/**

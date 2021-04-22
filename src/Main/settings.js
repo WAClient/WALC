@@ -81,6 +81,11 @@ const schema = {
 			hidden: true,
 		},
 	},
+	theme: {
+		dark: {
+			default: false,
+		},
+	}
 };
 
 // get default value from schema
@@ -96,82 +101,6 @@ const defaults = Object.keys(schema).reduce((defaults, group) => {
 const store = new Store({
 	name: 'settings',
 	defaults: defaults,
-	// defaults: {
-	// 	general: {
-	// 		askOnExit: {
-	// 			value: true,
-	// 			name: 'Ask on Exit',
-	// 			description: 'If enabled, WALC will confirm everytime you want to close it. Default is true.'
-	// 		},
-	// 		alwaysOnTop: {
-	// 			value: false,
-	// 			name: 'Always On Top',
-	// 			description: 'Allow WALC to always be shown in front of other apps'
-	// 		},
-	// 	},
-	// 	notification: {
-	// 		newStatus: {
-	// 			value: false,
-	// 			name: 'New Status Updates',
-	// 			description: 'Display Notification when someone updates their status.'
-	// 		},
-	// 	},
-	// 	trayIcon: {
-	// 		trayEnabled: {
-	// 			value: true,
-	// 			name: 'Enable tray icon',
-	// 		},
-	// 		closeToTray: {
-	// 			value: false,
-	// 			name: 'Close to Tray',
-	// 			description: 'If enabled, WALC will be hidden everytime you want to close it. Default is false.'
-	// 		},
-	// 		startHidden: {
-	// 			value: false,
-	// 			name: 'Start Hidden',
-	// 			description: 'Hide WALC on startup'
-	// 		},
-	// 		countMuted: {
-	// 			value: true,
-	// 			name: 'Include Muted Chats',
-	// 			description: 'Count muted chats in the badge counter'
-	// 		},
-	// 	},
-	// 	advanced: {
-	// 		multiInstance: {
-	// 			value: false,
-	// 			name: 'Allow Multiple Instances',
-	// 			description: "It allows you open multiple instances of WALC so you can login to more than one WhatsApp account. It is disabled by default."
-	// 		},
-	// 	},
-	// },
-	// migrations: {
-	// 	'0.1.12': (settings) => {
-	// 		const store = settings.store;
-
-	// 		const newSettings = {
-	// 			general: {
-	// 				askOnExit: store.askOnExit.value,
-	// 				alwaysOnTop: store.alwaysOnTop.value,
-	// 			},
-	// 			notification: {
-	// 				newStatus: store.newStatusNotification.value,
-	// 			},
-	// 			trayIcon: {
-	// 				closeToTray: store.closeToTray.value,
-	// 				startHidden: store.startHidden.value,
-	// 				countMuted: store.countMuted.value,
-	// 			},
-	// 			advanced: {
-	// 				multiInstance: store.multiInstance,
-	// 			},
-	// 		};
-
-	// 		settings.store = newSettings;
-	// 		settings.delete('darkMode');
-	// 		settings.delete('autoHideMenuBar');
-	// 	}
-	// },
 });
 
 // attach value getter and setter to electron-store

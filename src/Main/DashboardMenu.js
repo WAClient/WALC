@@ -1,16 +1,15 @@
 /**
  * @param {string} id
- * @param {boolean} darkTheme
  * @param {import('./InstanceManager')} instanceManager
  */
-module.exports = function DashboardMenu(id, darkTheme, instanceManager) {
+module.exports = function DashboardMenu(id, instanceManager) {
 	const window = instanceManager.instances[id].main;
 	return [
 		{
 			label: 'Open Dashboard',
 			accelerator: 'Ctrl+D',
 			click: () => {
-				instanceManager.openDashboard(id, darkTheme);
+				instanceManager.openDashboard(id);
 			},
 		}, {
 			label: 'Quit',

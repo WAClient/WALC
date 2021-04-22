@@ -12,13 +12,6 @@ module.exports = async function MainMenu(id, window, instanceManager) {
 		chats = await window.whatsapp.getChats();
 	});
 
-	// TODO: properly track dark theme in instance manager
-	let darkTheme = false;
-	window.webContents.send('darkTheme');
-	ipcMain.on('darkTheme-reply', (e, status) => {
-		darkTheme = status;
-	});
-	
 	const chatMenu = [];
 	for(let i = 0; i < 9; i++) {
 		const num = i + 1;
@@ -39,7 +32,7 @@ module.exports = async function MainMenu(id, window, instanceManager) {
 					label: 'Open Dashboard',
 					accelerator: 'Ctrl+D',
 					click: () => {
-						instanceManager.openDashboard(id, darkTheme);
+						instanceManager.openDashboard(id);
 					},
 				}, {
 					label: 'Quit',

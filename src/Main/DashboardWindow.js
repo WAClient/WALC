@@ -69,22 +69,20 @@ module.exports = class DashboardWindow extends BrowserWindow {
 		settings.onDidChange('general.alwaysOnTop', (value) => {
 			this.setAlwaysOnTop(value);
 		});
+
+		settings.onDidChange('theme.dark', (value) => {
+			this.webContents.send('darkTheme', value);
+		});
 	}
 
-	open(darkTheme = null) {
-		if(darkTheme !== null) {
-			this.darkTheme(darkTheme);
-		}
-		this.navigateTo('/');
+	open(url = '/') {
+		this.webContents.send('darkTheme', settings.get('theme.dark.value'));
+		this.navigateTo(url);
 		this.show();
 	}
 
 	navigateTo(url) {
 		this.webContents.send('navigate', url);
-	}
-
-	darkTheme(status) {
-		this.webContents.send('darkTheme', status);
 	}
 
 	quitWindow() {

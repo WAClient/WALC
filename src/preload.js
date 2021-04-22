@@ -9,6 +9,9 @@ const settings = {
 };
 
 async function instanceExec(key, ...args) {
+	if(instanceID === undefined) {
+		instanceID = await ipcRenderer.invoke('getInstanceID');
+	}
 	return ipcRenderer.invoke(`instance.${key}`, instanceID, ...args);
 }
 
@@ -64,6 +67,7 @@ async function renderTray() {
 		ctx.drawImage(logo, 0, 0);
 		ctx.filter = 'none';
 		if (unread > 0) {
+			const fontSize = (unread < 10 ? badge.font : badge.fontSmall)
 			unread = (unread > 99 ? 99 : unread);
 			if (allMuted) {
 				ctx.fillStyle = 'gray';
@@ -73,7 +77,7 @@ async function renderTray() {
 			ctx.arc(badge.x, badge.y, badge.radius, 0, 2 * Math.PI);
 			ctx.fill();
 			ctx.fillStyle = 'white';
-			ctx.font = (unread < 10 ? badge.font : badge.fontSmall) + 'px sans-serif';
+			ctx.font = `bold ${fontSize}px sans-serif`;
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'middle';
 			ctx.fillText(unread, badge.x, badge.y);
@@ -128,24 +132,36 @@ function installAppIcon() {
 		cursor: pointer;
 	`;
 	image.addEventListener('click', () => {
-		const darkTheme = document.body.classList.contains('dark');
-		instanceExec('openDashboard', darkTheme);
+		instanceExec('openDashboard');
 	});
 	image.addEventListener('contextmenu', () => {
-		const darkTheme = document.body.classList.contains('dark');
-		instanceExec('dashboard-context-menu', darkTheme);
+		instanceExec('dashboard-context-menu');
 	});
 	container.appendChild(image);
 }
 
-function ready(id) {
-	instanceID = id;
+function observeTheme() {
+	instanceExec('setDarkTheme', document.body.classList.contains('dark'));
+	const observer = new MutationObserver(() => {
+		instanceExec('setDarkTheme', document.body.classList.contains('dark'));
+	});
+
+	observer.observe(document.body, {
+		attributes: true, 
+		attributeFilter: ['class'],
+		childList: false, 
+		characterData: false
+	});
+}
+
+function ready() {
 	if(icon instanceof Promise) {
 		icon.then(() => storeOnLoad());
 		return;
 	}
 	renderTray();
 	installAppIcon();
+	observeTheme();
 	window.Store.Chat.on('change:unreadCount', renderTray);
 	window.Store.Chat.on('change:muteExpiration', renderTray);
 	window.Store.AppState.on('change:state', appStateChange);
@@ -156,8 +172,5 @@ window.WALC = {
 };
 
 ipcRenderer.on('renderTray', renderTray);
-ipcRenderer.on('ready', (e, id) => ready(id));
-ipcRenderer.on('darkTheme', (e) => {
-	ipcRenderer.send('darkTheme-reply', document.body.classList.contains('dark'));
-});
+ipcRenderer.on('ready', () => ready());
 ipcRenderer.on('setFullWidth', (e, status) => setFullWidth(status))
