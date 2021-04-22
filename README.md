@@ -30,7 +30,7 @@ sudo snap install walc
 
 ## Manual Compilation and Usage
 If you want to get the version which is not yet released, follow the following steps 
-```
+```bash
 # You must have git, npm and node installed
 
 # clone the repo
@@ -41,6 +41,12 @@ cd WALC
 
 # install dependencies
 npm install
+
+# build assets
+npm run dev
+
+# or alternatively to watch for changes
+npm run watch
 
 # start the app
 npm start
