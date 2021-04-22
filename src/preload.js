@@ -18,7 +18,7 @@ async function instanceExec(key, ...args) {
 // override Notification API so it can show the window on click
 window.oldNotification = Notification;
 window.Notification = async function (title, options) {
-	if(await settings.get('notification.enabled')) {
+	if(await settings.get('notification.enabled.value')) {
 		const n = new window.oldNotification(title, options);
 		n.addEventListener('click', function () {
 			ipcRenderer.send('focusWindow');
@@ -38,7 +38,7 @@ const badge = {
 
 async function renderTray() {
 	let unread = 0;
-	const countMuted = await settings.get('countMuted.value');
+	const countMuted = await settings.get('trayIcon.countMuted.value');
 	let allMuted = countMuted;
 	if(window.Store && window.Store.Chat) {
 		const chats = window.Store.Chat.getModelsArray();

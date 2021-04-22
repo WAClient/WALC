@@ -154,11 +154,15 @@ module.exports = class InstanceManager {
 
 	handleClose(id) {
 		const instance = this.instances[id];
-		instance.dashboard.quitWindow();
-		delete this.instances[id];
-
-		if(!Object.keys(this.instances).length) {
-			setTimeout(() => app.quit(), 50);
+		console.log('Instance list: ', Object.keys(this.instances));
+		console.log('Quiting instance: ', id);
+		if(instance) {
+			instance.dashboard.quitWindow();
+			delete this.instances[id];
+		}
+		if(!Object.keys(this.instances).length && !this._quiting) {
+			this._quiting = true;
+			setTimeout(() => app.quit(), 500);
 		}
 	}
 }
