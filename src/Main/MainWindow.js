@@ -27,10 +27,6 @@ const notifications = {
 		title: contact.name,
 		body: "Posted a status update.",
 	}),
-	ready: {
-		title: 'WALC connected',
-		body: '',
-	},
 };
 
 module.exports = class MainWindow extends BrowserWindow {
@@ -71,10 +67,8 @@ module.exports = class MainWindow extends BrowserWindow {
 
 		this._id = id;
 		this._name = name
-		this._initEvents();
-		this.loadURL('about:blank', { userAgent }).then(async () => {
-			this._initWhatsapp();
-		});
+		this.initEvents();
+		this.initWhatsapp();
 	}
 
 	/**
@@ -137,7 +131,7 @@ module.exports = class MainWindow extends BrowserWindow {
 		this.close();
 	}
 
-	_initEvents() {
+	initEvents() {
 		this.isQuiting = false;
 		this.exitConfirmed = false;
 
@@ -190,11 +184,10 @@ module.exports = class MainWindow extends BrowserWindow {
 		});
 
 		this.webContents.on('did-fail-load', () => {
+			const darkTheme = settings.get('theme.dark.value');
+			this.loadFile('public/offline.html', { hash: (darkTheme ? 'dark' : '') });
 			this.webContents.send('renderTray');
-			this.loadFile('src/offline.html');
 			this.notify('offline');
-			// new Notification({ "title": "WALC disconnected", "body": "Please check your connection.", "silent": false, "icon": ICON_PATH }).show();
-			isConnected = false;
 		});
 
 		settings.onDidChange('general.alwaysOnTop', (value) => {
@@ -206,49 +199,47 @@ module.exports = class MainWindow extends BrowserWindow {
 		});
 	}
 
-	async _initWhatsapp() {
-		console.log('Initializing');
-		// const freePort = getPortSync();
-		// await pie.initialize(app, freePort);
-		// console.log('Initialized');
-		const pieBrowser = await pie.connect(app, puppeteer);
+	async initWhatsapp() {
+		this.loadURL('about:blank', { userAgent }).then(async () => {
+			console.log('Initializing');
+			const pieBrowser = await pie.connect(app, puppeteer);
 
-		console.log('Creating client');
-		this.whatsapp = new Client(pieBrowser);
+			console.log('Creating client');
+			this.whatsapp = new Client(pieBrowser);
+			this.whatsappReady = false;
 
-		this.whatsapp.on('ready', () => {
-			console.log('whatsapp-web.js ready')
-			this.webContents.send('ready', this._id);
-			this.emit('ready');
-			this.notify('ready');
-		});
+			this.whatsapp.on('ready', () => {
+				console.log('whatsapp-web.js ready');
+				this.whatsappReady = true;
+				this.webContents.send('ready', this._id);
+				this.emit('ready');
+			});
 
-		this.whatsapp.on("change_battery", (batteryInfo) => {
-			if (batteryInfo.battery <= 15 && batteryInfo.battery % 5 == 0 && batteryInfo.plugged == false) {
-				this.notify('lowBattery');
-				// new Notification({ "title": "Battery Low", "body": "You battery is below 15%. Please Charge you phone to remain connected.", "silent": false, "icon": "icons/logo360x360.png" }).show()
-			}
-		});
-
-		this.whatsapp.on("message", async (msg) => {
-			if (settings.get("notification.newStatus.value")) {
-				const contact = await msg.getContact();
-				if (msg.isStatus && !contact.statusMute) {
-					let contactImage;
-					picURL = await contact.getProfilePicUrl();
-					if (picURL) {
-						let image = await axios.get(picURL, { responseType: 'arraybuffer' });
-						let returnedB64 = Buffer.from(image.data).toString('base64');
-						let imgDataUri = "data:" + image.headers['content-type'] + ";base64," + returnedB64;
-						contactImage = nativeImage.createFromDataURL(imgDataUri);
-					}
-					this.notify('newStatus', contact);
-					// new Notification({ "title": contact.name, "body": "Posted a status update.", "icon": contactImage }).show();
+			this.whatsapp.on("change_battery", (batteryInfo) => {
+				if (batteryInfo.battery <= 15 && batteryInfo.battery % 5 == 0 && batteryInfo.plugged == false) {
+					this.notify('lowBattery');
 				}
-			}
-		});
+			});
 
-		this.whatsapp.initialize();
+			this.whatsapp.on("message", async (msg) => {
+				if (settings.get("notification.newStatus.value")) {
+					const contact = await msg.getContact();
+					if (msg.isStatus && !contact.statusMute) {
+						let contactImage;
+						picURL = await contact.getProfilePicUrl();
+						if (picURL) {
+							let image = await axios.get(picURL, { responseType: 'arraybuffer' });
+							let returnedB64 = Buffer.from(image.data).toString('base64');
+							let imgDataUri = "data:" + image.headers['content-type'] + ";base64," + returnedB64;
+							contactImage = nativeImage.createFromDataURL(imgDataUri);
+						}
+						this.notify('newStatus', contact);
+					}
+				}
+			});
+
+			this.whatsapp.initialize();
+		});
 	}
 
 	async archiveAllChats() {

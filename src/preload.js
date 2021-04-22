@@ -168,7 +168,7 @@ function ready() {
 }
 
 window.WALC = {
-	load: () => ipcRenderer.send('loadWA'),
+	load: () => instanceExec('main.initWhatsapp'),
 };
 
 ipcRenderer.on('renderTray', renderTray);

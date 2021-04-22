@@ -7,8 +7,10 @@ module.exports = class TrayManager {
 		this.tray = null;
 
 		ipcMain.on('renderTray', (event, data) => {
-			const img = nativeImage.createFromDataURL(data);
-			this.tray.setImage(img);
+			if(settings.get('trayIcon.enabled.value')) {
+				const img = nativeImage.createFromDataURL(data);
+				this.tray.setImage(img);
+			}
 		});
 
 		settings.onDidChange('trayIcon.enabled', (value) => {
@@ -19,22 +21,29 @@ module.exports = class TrayManager {
 				this.destroy();
 			}
 		});
+
+		settings.onDidChange('trayIcon.countMuted', () => {
+			this.win.webContents.send('renderTray');
+		});
 	}
 
 	/**
 	 * Create tray
 	 * TODO: figure out multi instance
-	 * @param {import('electron').BrowserWindow} browserWindow Main BrowserWindow
+	 * @param {import('./MainWindow')} mainWindow Main BrowserWindow
 	 */
-	init(browserWindow) {
-		if(browserWindow) {
-			this.win = browserWindow;
+	init(mainWindow) {
+		if(mainWindow) {
+			this.win = mainWindow;
 		}
 		if(settings.get('trayIcon.enabled.value')) {
 			this.tray = new Tray(path.join(__dirname, '../icons/logo360x360.png'));
 			this.tray.setTitle('WALC');
 			this.tray.setToolTip('WALC');
 			this.setContextMenu();
+			if(this.win.whatsappReady) {
+				this.win.webContents.send('renderTray');
+			}
 		}
 	}
 
