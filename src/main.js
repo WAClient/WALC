@@ -129,17 +129,19 @@ ipcMain.on('focusWindow', (event) => {
     window.focus();
 });
 
-ipcMain.handle('getSettings', (event, key = null) => {
+ipcMain.on('getSettings', (event, key = null) => {
     if(key) {
-        return settings.get(key);
+        event.returnValue = settings.get(key);
+        return;
     }
-    return settings.store;
+    event.returnValue = settings.store;
 });
 
-ipcMain.handle('setSettings', (event, values) => {
+ipcMain.on('setSettings', (event, values) => {
     for (const [key, value] of Object.entries(values)) {
         settings.set(key, value);
     }
+    event.returnValue = true;
 });
 
 ipcMain.handle('getIcon', () => {

@@ -4,8 +4,8 @@ let instanceID;
 let icon = ipcRenderer.invoke('getIcon').then((value) => icon = value);
 
 const settings = {
-	get: (key = null) => ipcRenderer.invoke('getSettings', key),
-	set: (values = {}) => ipcRenderer.invoke('setSettings', values),
+	get: (key = null) => ipcRenderer.sendSync('getSettings', key),
+	set: (values = {}) => ipcRenderer.sendSync('setSettings', values),
 };
 
 async function instanceExec(key, ...args) {
@@ -17,8 +17,8 @@ async function instanceExec(key, ...args) {
 
 // override Notification API so it can show the window on click
 window.oldNotification = Notification;
-window.Notification = async function (title, options) {
-	if(await settings.get('notification.enabled.value')) {
+window.Notification = function (title, options) {
+	if(settings.get('notification.enabled.value')) {
 		const n = new window.oldNotification(title, options);
 		n.addEventListener('click', function () {
 			ipcRenderer.send('focusWindow');
@@ -36,9 +36,9 @@ const badge = {
 	fontSmall: 124,
 };
 
-async function renderTray() {
+function renderTray() {
 	let unread = 0;
-	const countMuted = await settings.get('trayIcon.countMuted.value');
+	const countMuted = settings.get('trayIcon.countMuted.value');
 	let allMuted = countMuted;
 	if(window.Store && window.Store.Chat) {
 		const chats = window.Store.Chat.getModelsArray();
