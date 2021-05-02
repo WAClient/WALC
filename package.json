@@ -1,10 +1,10 @@
 {
   "name": "walc",
-  "version": "0.1.12",
+  "version": "0.2.0",
   "description": "A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.",
   "main": "src/main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "electron-forge start",
     "dist": "npm run prod && rm -rf dist && electron-builder --dir && cp /usr/lib/x86_64-linux-gnu/libXtst.so.6 dist/linux-unpacked/ && cp /usr/lib/x86_64-linux-gnu/libXss.so.1 dist/linux-unpacked/ && electron-builder --prepackaged dist/linux-unpacked",
     "dev": "npm run development",
     "development": "mix",
@@ -12,7 +12,11 @@
     "watch-poll": "mix watch -- --watch-options-poll=1000",
     "hot": "mix watch --hot",
     "prod": "npm run production",
-    "production": "mix --production"
+    "production": "mix --production",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "make-prod": "rm -rf out && npm install && npm run prod && npm run make",
+    "make-dev": "rm -rf out && npm install && npm run dev && npm run make"
   },
   "bin": {
     "walc": "main.js"
@@ -31,42 +35,17 @@
   "bugs": {
     "url": "https://github.com/cstayyab/WALC/issues"
   },
-  "build": {
-    "appId": "com.cstayyab.linux.unofficial.whatsapp",
-    "productName": "WALC",
-    "files": [
-      "!dist",
-      "!release-builds"
-    ],
-    "linux": {
-      "category": "Social",
-      "description": "An unofficial WhatsApp Desktop client for Linux. For official client use https://web.whatsapp.com as the official desktop client for Linux is not available.",
-      "target": [
-        "AppImage",
-        "snap"
-      ],
-      "icon": "src/icons/logo360x360.png",
-      "synopsis": "WALC - unoffficial WhatsApp Linux Client",
-      "publish": {
-        "provider": "github",
-        "owner": "cstayyab",
-        "host": "github.com"
-      }
-    },
-    "snap": {
-      "plugs": [
-        "default",
-        "camera"
-      ]
-    }
-  },
   "devDependencies": {
+    "@davidwinter/electron-forge-maker-snap": "^0.7.1",
+    "@electron-forge/cli": "^6.0.0-beta.54",
+    "@electron-forge/maker-deb": "^6.0.0-beta.54",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.54",
+    "@electron-forge/maker-zip": "^6.0.0-beta.54",
     "@mdi/js": "^5.9.55",
     "deepmerge": "^4.2.2",
     "electron": "^11.3.0",
-    "electron-builder": "^22.4.0",
     "electron-devtools-installer": "^3.1.1",
-    "electron-packager": "^14.2.1",
+    "electron-forge-maker-appimage": "trusktr/electron-forge-maker-appimage#patch-1",
     "electron-rebuild": "^1.11.0",
     "laravel-mix": "^6.0.13",
     "postcss": "^8.2.8",
@@ -96,5 +75,8 @@
     "puppeteer-in-electron": "^3.0.3",
     "vue-router": "^3.5.1",
     "whatsapp-web-electron.js": "^1.12.5"
+  },
+  "config": {
+    "forge": "./forge.config.js"
   }
 }
