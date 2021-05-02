@@ -54,3 +54,6 @@ dist
 
 # Personal Files
 TODO
+
+# electron-forge output directory
+out
