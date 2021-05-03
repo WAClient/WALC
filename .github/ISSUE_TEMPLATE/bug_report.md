@@ -1,6 +1,6 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: Bug report (Developers Only)
+about: Only file a bug if you are a developer and have complete information about the bug. Otherwise proceed to Troubleshooting and we will create a bug report once it's verified
 title: "[Bug Report]"
 labels: bug
 assignees: ''
