@@ -1,6 +1,6 @@
 {
   "name": "walc",
-  "version": "0.1.12",
+  "version": "0.2.1",
   "description": "A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.",
   "main": "src/main.js",
   "scripts": {
@@ -63,38 +63,38 @@
   "devDependencies": {
     "@mdi/js": "^5.9.55",
     "deepmerge": "^4.2.2",
-    "electron": "^11.3.0",
-    "electron-builder": "^22.4.0",
-    "electron-devtools-installer": "^3.1.1",
+    "electron": "^11.4.4",
+    "electron-builder": "^22.10.5",
+    "electron-devtools-installer": "^3.2.0",
     "electron-packager": "^14.2.1",
     "electron-rebuild": "^1.11.0",
-    "laravel-mix": "^6.0.13",
-    "postcss": "^8.2.8",
-    "sass": "^1.32.8",
+    "laravel-mix": "^6.0.18",
+    "postcss": "^8.2.13",
+    "sass": "^1.32.12",
     "sass-loader": "^11.0.1",
     "vue": "^2.5.17",
     "vue-loader": "^15.9.6",
     "vue-template-compiler": "^2.6.12",
-    "vuetify": "^2.4.4",
+    "vuetify": "^2.4.11",
     "vuetify-loader": "^1.7.2",
     "vuetifyjs-mix-extension": "0.0.20",
-    "webpack": "^5.25.0"
+    "webpack": "^5.36.2"
   },
   "homepage": "https://cstayyab.com/projects/walc",
   "dependencies": {
     "axios": "^0.21.1",
-    "create-desktop-shortcuts": "^1.0.2",
+    "create-desktop-shortcuts": "^1.4.0",
     "dot-prop": "^6.0.1",
-    "electron-context-menu": "^2.4.0",
+    "electron-context-menu": "^2.5.2",
     "electron-store": "^5.1.1",
-    "electron-updater": "^4.2.5",
+    "electron-updater": "^4.3.8",
     "electron-window-state": "^5.0.3",
     "get-port-sync": "^1.0.0",
     "lsb-release": "^0.1.0",
-    "mime": "^2.4.5",
+    "mime": "^2.5.2",
     "puppeteer-core": "^7.1.0",
     "puppeteer-in-electron": "^3.0.3",
     "vue-router": "^3.5.1",
-    "whatsapp-web-electron.js": "^1.12.5"
+    "whatsapp-web-electron.js": "^1.12.6"
   }
 }

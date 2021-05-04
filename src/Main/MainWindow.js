@@ -11,7 +11,7 @@ const { Client } = require('whatsapp-web-electron.js');
 // const getPortSync = require('get-port-sync');
 
 const ICON_PATH = path.join(__dirname, '../icons/logo360x360.png');
-const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36';
+const userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36';
 
 // notifications template
 const notifications = {
@@ -190,6 +190,24 @@ module.exports = class MainWindow extends BrowserWindow {
 			this.notify('offline');
 		});
 
+		let findID;
+		this.webContents.on('found-in-page', (evt, result) => {
+			if (result.requestId == findID) {
+				if (result.matches > 0) {
+					this.webContents.session.clearStorageData({ storages: ["serviceWorkers"] }).then(() => {
+						this.webContents.reload();
+					}).catch((err) => {
+						console.log(err);
+					});
+	
+				}
+			}
+		});
+
+		this.webContents.on('did-finish-load', (evt) => {
+			findID = this.webContents.findInPage('Update Google Chrome');
+		});
+
 		settings.onDidChange('general.alwaysOnTop', (value) => {
 			this.setAlwaysOnTop(value);
 		});
@@ -201,15 +219,14 @@ module.exports = class MainWindow extends BrowserWindow {
 
 	async initWhatsapp() {
 		this.loadURL('about:blank', { userAgent }).then(async () => {
-			console.log('Initializing');
 			const pieBrowser = await pie.connect(app, puppeteer);
 
-			console.log('Creating client');
-			this.whatsapp = new Client(pieBrowser);
+			console.log('Creating whatsapp client');
+			this.whatsapp = new Client(pieBrowser, this);
 			this.whatsappReady = false;
 
 			this.whatsapp.on('ready', () => {
-				console.log('whatsapp-web.js ready');
+				console.log('Whatsapp client ready');
 				this.whatsappReady = true;
 				this.webContents.send('ready', this._id);
 				this.emit('ready');
@@ -236,6 +253,14 @@ module.exports = class MainWindow extends BrowserWindow {
 						this.notify('newStatus', contact);
 					}
 				}
+			});
+
+			this.whatsapp.on('disconnected', (reason) => {
+				console.log(`\nWarning! Client disconnected. Reason: ${reason}\n`);
+				this.whatsapp.removeAllListeners();
+				delete this.whatsapp;
+				// FIXME: for some reason web.whatsapp.com failed to load without the delay
+				setTimeout(() => this.initWhatsapp(), 2000);
 			});
 
 			this.whatsapp.initialize();
