@@ -5,8 +5,12 @@
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
-    "dist": "npm run prod && rm -rf dist && electron-builder --dir && cp /usr/lib/x86_64-linux-gnu/libXtst.so.6 dist/linux-unpacked/ && cp /usr/lib/x86_64-linux-gnu/libXss.so.1 dist/linux-unpacked/ && electron-builder --prepackaged dist/linux-unpacked",
+    "clean": "rm -rf dist",
+    "dist": "npm run prod && npm run clean && npm run rebuild-deps && npm run build",
+    "build": "electron-builder",
+    "rebuild-deps": "electron-rebuild",
     "dev": "npm run development",
+    "postinstall": "electron-builder install-app-deps",
     "development": "mix",
     "watch": "mix watch",
     "watch-poll": "mix watch -- --watch-options-poll=1000",
@@ -33,6 +37,7 @@
   },
   "build": {
     "appId": "com.cstayyab.linux.unofficial.whatsapp",
+    "npmRebuild": false,
     "productName": "WALC",
     "files": [
       "!dist",
@@ -56,7 +61,9 @@
     "snap": {
       "plugs": [
         "default",
-        "camera"
+        "camera",
+        "audio-playback",
+        "audio-record"
       ]
     }
   },
