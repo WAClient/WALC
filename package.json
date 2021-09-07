@@ -23,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cstayyab/WALC.git"
+    "url": "https://github.com/WAClient/WALC.git"
   },
   "keywords": [
     "whatsapp",
@@ -47,38 +47,28 @@
       "category": "Social",
       "description": "An unofficial WhatsApp Desktop client for Linux. For official client use https://web.whatsapp.com as the official desktop client for Linux is not available.",
       "target": [
-        "AppImage",
-        "snap"
+        "AppImage"
       ],
       "icon": "src/icons/logo360x360.png",
       "synopsis": "WALC - unoffficial WhatsApp Linux Client",
       "publish": {
         "provider": "github",
-        "owner": "cstayyab",
+        "owner": "WAClient",
         "host": "github.com"
       }
-    },
-    "snap": {
-      "plugs": [
-        "default",
-        "camera",
-        "audio-playback",
-        "audio-record"
-      ]
     }
   },
   "devDependencies": {
     "@mdi/js": "^5.9.55",
     "deepmerge": "^4.2.2",
-    "electron": "^11.4.4",
+    "electron": "^14.0.0",
     "electron-builder": "^22.10.5",
     "electron-devtools-installer": "^3.2.0",
-    "electron-packager": "^14.2.1",
-    "electron-rebuild": "^1.11.0",
+    "electron-rebuild": "^3.2.3",
     "laravel-mix": "^6.0.18",
     "postcss": "^8.2.13",
-    "sass": "^1.32.12",
-    "sass-loader": "^11.0.1",
+    "sass": "~1.32.13",
+    "sass-loader": "^12.1.0",
     "vue": "^2.5.17",
     "vue-loader": "^15.9.6",
     "vue-template-compiler": "^2.6.12",
@@ -89,19 +79,19 @@
   },
   "homepage": "https://cstayyab.com/projects/walc",
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.21.4",
     "create-desktop-shortcuts": "^1.4.0",
     "dot-prop": "^6.0.1",
-    "electron-context-menu": "^2.5.2",
-    "electron-store": "^5.1.1",
+    "electron-context-menu": "^3.1.1",
+    "electron-store": "^8.0.0",
     "electron-updater": "^4.3.8",
     "electron-window-state": "^5.0.3",
     "get-port-sync": "^1.0.0",
     "lsb-release": "^0.1.0",
     "mime": "^2.5.2",
-    "puppeteer-core": "^7.1.0",
+    "puppeteer-core": "^10.2.0",
     "puppeteer-in-electron": "^3.0.3",
     "vue-router": "^3.5.1",
-    "whatsapp-web-electron.js": "^1.12.6"
+    "whatsapp-web-electron.js": "^1.14.1-3"
   }
 }

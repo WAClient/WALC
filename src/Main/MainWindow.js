@@ -53,6 +53,7 @@ module.exports = class MainWindow extends BrowserWindow {
 				enableRemoteModule: false,
 				preload: path.join(__dirname, '../preload.js'),
 				spellcheck: settings.get('general.spellcheck.value'),
+				contextIsolation: false,
 			},
 			show: !shouldHide,
 			// show: true,

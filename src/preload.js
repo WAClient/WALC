@@ -172,5 +172,5 @@ window.WALC = {
 };
 
 ipcRenderer.on('renderTray', renderTray);
-ipcRenderer.on('ready', () => ready());
+ipcRenderer.on('ready', ready);
 ipcRenderer.on('setFullWidth', (e, status) => setFullWidth(status))

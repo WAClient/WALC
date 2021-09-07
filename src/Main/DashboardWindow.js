@@ -22,6 +22,7 @@ module.exports = class DashboardWindow extends BrowserWindow {
             show: false,
             webPreferences: {
                 nodeIntegration: true,
+				contextIsolation: false,
             },
 			...options
 		});
