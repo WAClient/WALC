@@ -65,17 +65,17 @@
     "electron-builder": "^22.10.5",
     "electron-devtools-installer": "^3.2.0",
     "electron-rebuild": "^3.2.3",
-    "laravel-mix": "^6.0.18",
-    "postcss": "^8.2.13",
+    "laravel-mix": "^6.0.31",
+    "postcss": "^8.3.8",
     "sass": "~1.32.13",
     "sass-loader": "^12.1.0",
     "vue": "^2.5.17",
-    "vue-loader": "^15.9.6",
+    "vue-loader": "^15.9.8",
     "vue-template-compiler": "^2.6.12",
-    "vuetify": "^2.4.11",
-    "vuetify-loader": "^1.7.2",
+    "vuetify": "^2.5.8",
+    "vuetify-loader": "^1.7.3",
     "vuetifyjs-mix-extension": "0.0.20",
-    "webpack": "^5.36.2"
+    "webpack": "^5.54.0"
   },
   "homepage": "https://cstayyab.com/projects/walc",
   "dependencies": {

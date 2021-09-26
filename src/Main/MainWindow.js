@@ -51,7 +51,7 @@ module.exports = class MainWindow extends BrowserWindow {
 			icon: ICON_PATH,
 			webPreferences: {
 				enableRemoteModule: false,
-				preload: path.join(__dirname, '../preload.js'),
+				preload: path.join(__dirname, '../Renderer/App.js'),
 				spellcheck: settings.get('general.spellcheck.value'),
 				contextIsolation: false,
 			},
@@ -64,7 +64,8 @@ module.exports = class MainWindow extends BrowserWindow {
 
 		windowState.manage(this);
 
-		this.setMenu(null);
+		// this.setMenu(null);
+		this.webContents.openDevTools();
 
 		this._id = id;
 		this._name = name

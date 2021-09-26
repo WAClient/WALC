@@ -1,14 +1,20 @@
-const { ipcRenderer } = require('electron');
-const Settings = require('./Renderer/Settings');
-const Instance = require('./Renderer/Instance');
+const { ipcRenderer, contextBridge } = require('electron');
+const Settings = require('./Settings');
+const Instance = require('./Instance');
 
 class App {
 	constructor() {
+		console.log('Initializing WALC');
 		this.initialized = false;
 		this.awaitApp();
 		ipcRenderer.on('renderTray', () => this.renderTray());
-		// ipcRenderer.on('ready', () => this.init());
+		ipcRenderer.on('ready', () => this.init());
 		ipcRenderer.on('setFullWidth', (e, status) => this.setFullWidth(status));
+
+		window.WALC = {
+			load: () => Instance.exec('main.initWhatsapp'),
+			renderTray: () => this.renderTray(),
+		};
 	}
 
 	awaitApp() {
@@ -39,6 +45,7 @@ class App {
 			window.Store.Chat.on('change:muteExpiration', () => this.renderTray());
 		}
 		this.initialized = true;
+		console.log('WALC Initialized');
 	}
 
 	renderTray() {
@@ -114,7 +121,3 @@ class App {
 }
 
 new App();
-
-window.WALC = {
-	load: () => Instance.exec('main.initWhatsapp'),
-};
