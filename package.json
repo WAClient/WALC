@@ -87,6 +87,7 @@
     "electron-updater": "^4.3.8",
     "electron-window-state": "^5.0.3",
     "get-port-sync": "^1.0.0",
+    "is-online": "^9.0.1",
     "lsb-release": "^0.1.0",
     "mime": "^2.5.2",
     "puppeteer-core": "^10.2.0",
