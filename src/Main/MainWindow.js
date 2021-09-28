@@ -65,7 +65,7 @@ module.exports = class MainWindow extends BrowserWindow {
 		windowState.manage(this);
 
 		// this.setMenu(null);
-		this.webContents.openDevTools();
+		// this.webContents.openDevTools();
 
 		this._id = id;
 		this._name = name

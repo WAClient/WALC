@@ -1,6 +1,8 @@
 {
 	"paths": {
+		"@/*": ["./src/*"],
 		"@layouts/*": ["./src/Layouts/*"],
+		"@mixins/*": ["./src/Mixins/*"],
 	},
 	"exclude": ["node_modules", ".git", "dist"]
 }

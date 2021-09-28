@@ -1,15 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-
-import Dashboard from './Pages/Dashboard';
-import Tools from './Pages/Tools';
-import Settings from './Pages/Settings';
-import SettingsGeneral from './Pages/Settings/General';
-import SettingsNotification from './Pages/Settings/Notification';
-import SettingsTrayIcon from './Pages/Settings/TrayIcon';
-import SettingsAdvanced from './Pages/Settings/Advanced';
-import Help from './Pages/Help';
-import Offline from './Pages/Offline';
+import Route, { route } from './Main/Route';
 
 function groupRoutes(config, routes) {
 	if(typeof routes === 'function') {
@@ -27,48 +18,18 @@ function groupRoutes(config, routes) {
 }
 
 Vue.use(VueRouter);
-const routes = [
-	{
-		path: '/',
-		component: Dashboard,
-		name: 'dashboard',
-	}, {
-		path: '/tools',
-		component: Tools,
-		name: 'tools'
-	}, {
-		path: '/settings',
-		component: Settings,
-		name: 'settings'
-	}, {
-		path: '/help',
-		component: Help,
-		name: 'help',
-	},
-	...groupRoutes({ prefix: '/settings', as: 'settings.' }, [
-		{
-			path: '/general',
-			component: SettingsGeneral,
-			name: 'general',
-		}, {
-			path: '/notification',
-			component: SettingsNotification,
-			name: 'notification',
-		}, {
-			path: '/tray-icon',
-			component: SettingsTrayIcon,
-			name: 'tray-icon',
-		}, {
-			path: '/advanced',
-			component: SettingsAdvanced,
-			name: 'advanced',
-		},
+const routes = Route.create([
+	route('/', 'Dashboard').name('dashboard'),
+	route('/tools', 'Tools').name('tools'),
+	route('/settings', 'Settings').name('settings'),
+	route('/help', 'Help').name('help'),
+	route('/offline', 'Offline').name('offline'),
+	Route.group({ prefix: '/settings', as: 'settings.', namespace: 'Settings' }, [
+		route('/general', 'General').name('general'),
+		route('/notification', 'Notification').name('notification'),
+		route('/tray-icon', 'TrayIcon').name('tray-icon'),
+		route('/advanced', 'Advanced').name('advanced'),
 	]),
-	{
-		path: '/offline',
-		component: Offline,
-		name: 'offline,'
-	}
-];
+]);
 
 export default new VueRouter({ routes });

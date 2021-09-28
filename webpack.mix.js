@@ -4,15 +4,19 @@ require('vuetifyjs-mix-extension');
 
 mix.setPublicPath('public')
 	.alias({
-		"@layouts": path.resolve(__dirname, "src/Layouts/"),
-		"@mixins": path.resolve(__dirname, "src/Mixins/"),
+		'@': path.resolve(__dirname, 'src/'),
+		'@layouts': path.resolve(__dirname, 'src/Layouts/'),
+		'@mixins': path.resolve(__dirname, 'src/Mixins/'),
 	})
 	.js('src/app.js', 'js')
 	.vuetify('vuetify-loader')
 	.vue({ version: 2 })
 	.js('src/offline.js', 'js')
 	.vuetify('vuetify-loader')
-	.vue({ version: 2 });
+	.vue({ version: 2 })
+	.webpackConfig({
+		output: { publicPath: './' },
+	});
 
 if(!mix.inProduction()) {
 	mix.disableNotifications()

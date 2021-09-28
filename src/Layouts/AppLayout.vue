@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-app>
     <v-app-bar app>
       <v-btn icon @click="goBack()" v-show="!hideBackButton">
         <v-icon>{{ icons.mdiArrowLeft }}</v-icon>
@@ -11,7 +11,7 @@
     <v-main>
       <slot></slot>
     </v-main>
-  </div>
+  </v-app>
 </template>
 
 <script>
