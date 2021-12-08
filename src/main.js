@@ -176,25 +176,34 @@ function createWindow() {
 
 }
 
+const gotTheLock = app.requestSingleInstanceLock();
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', () => {
-    if (process.env.NODE_ENV !== 'production') {
-        // FIXME: properly load Vue.js devtools
-        // installExtension(VUEJS_DEVTOOLS, { loadExtensionOptions: {allowFileAccess: true} })
-        //     .then((name) => console.log(`Added Extension:  ${name}`))
-        //     .catch((err) => console.log('An error occurred: ', err));
-        // const vueDevToolsPath = path.join(
-        //     os.homedir(),
-        //     `.config/google-chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/5.3.4_0`
-        // );
-        // session.defaultSession.loadExtension(vueDevToolsPath, { allowFileAccess: true })
-        //     .then(() => console.log('Vue extension loaded'));
-    }
-    createWindow();
-});
+if(!gotTheLock) {
+    app.quit();
+} else {
+    app.on('second-instance', () => {
+        trayManager.setVisibility(true);
+    });
+    
+    // This method will be called when Electron has finished
+    // initialization and is ready to create browser windows.
+    // Some APIs can only be used after this event occurs.
+    app.on('ready', () => {
+        if (process.env.NODE_ENV !== 'production') {
+            // FIXME: properly load Vue.js devtools
+            // installExtension(VUEJS_DEVTOOLS, { loadExtensionOptions: {allowFileAccess: true} })
+            //     .then((name) => console.log(`Added Extension:  ${name}`))
+            //     .catch((err) => console.log('An error occurred: ', err));
+            // const vueDevToolsPath = path.join(
+            //     os.homedir(),
+            //     `.config/google-chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/5.3.4_0`
+            // );
+            // session.defaultSession.loadExtension(vueDevToolsPath, { allowFileAccess: true })
+            //     .then(() => console.log('Vue extension loaded'));
+        }
+        createWindow();
+    });
+}
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {

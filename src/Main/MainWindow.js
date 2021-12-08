@@ -180,9 +180,9 @@ module.exports = class MainWindow extends BrowserWindow {
 			}
 		});
 
-		this.webContents.on('new-window', (event, url) => {
-			event.preventDefault();
-			require('electron').shell.openExternal(url);
+		this.webContents.setWindowOpenHandler((details) => {
+			require('electron').shell.openExternal(details.url);
+			return { action: 'deny' };
 		});
 
 		this.webContents.on('did-fail-load', () => {
