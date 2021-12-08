@@ -9,7 +9,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-tooltip left transition="slide-x-reverse-transition">
+      <v-tooltip v-if="!$store.state.whatsappConnected" left transition="slide-x-reverse-transition">
         <template #activator="{ attr, on }">
           <v-icon color="warning" v-bind="attr" v-on="on">{{ icons.mdiAlertCircle }}</v-icon>
         </template>

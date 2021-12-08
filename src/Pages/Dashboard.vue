@@ -23,7 +23,7 @@ export default {
           title: 'Tools',
           icon: mdiTools,
           to: '/tools',
-          disabled: () => !this.$instance.whatsappConnected,
+          disabled: () => !this.$store.state.whatsappConnected,
         }, {
           title: 'Settings',
           icon: mdiCog,
@@ -36,7 +36,7 @@ export default {
           title: 'Quit',
           icon: mdiPower,
           onclick: () => {
-            ipcRenderer.invoke('quit', this.$instance.id);
+            ipcRenderer.invoke('quit', this.$store.state.id);
           }
         },
       ],

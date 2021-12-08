@@ -36,6 +36,7 @@ class App {
 
 	async init() {
 		if(this.initialized) return;
+		this.initialized = true;
 
 		this.icon = await ipcRenderer.invoke('getIcon');
 		Instance.init(this.icon);
@@ -44,7 +45,6 @@ class App {
 			window.Store.Chat.on('change:unreadCount', () => this.renderTray());
 			window.Store.Chat.on('change:muteExpiration', () => this.renderTray());
 		}
-		this.initialized = true;
 		console.log('WALC Initialized');
 	}
 

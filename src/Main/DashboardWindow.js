@@ -41,6 +41,7 @@ module.exports = class DashboardWindow extends BrowserWindow {
 		});
 
 		this.isQuiting = false;
+		this._whatsappReady = false;
 		
 		this.on('close', (e) => {
 			if(this.isQuiting) {
@@ -61,6 +62,7 @@ module.exports = class DashboardWindow extends BrowserWindow {
 			this.webContents.send('setID', {
 				id, isSnap, isAppImage
 			});
+			this.webContents.send('whatsappReady', this._whatsappReady);
 		});
 
 		settings.onDidChange('general.alwaysOnTop', (value) => {
@@ -80,6 +82,11 @@ module.exports = class DashboardWindow extends BrowserWindow {
 
 	navigateTo(url) {
 		this.webContents.send('navigate', url);
+	}
+
+	whatsappReady(status) {
+		this.webContents.send('whatsappReady', status);
+		this._whatsappReady = status;
 	}
 
 	quitWindow() {

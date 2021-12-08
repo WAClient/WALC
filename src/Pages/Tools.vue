@@ -21,22 +21,21 @@ export default {
           title: 'Archive All Chats',
           icon: mdiArchive,
           onclick: () => {
-            this.$instance.exec('main.archiveAllChats');
+            this.$exec('main.archiveAllChats');
           },
         }, {
           title: 'Mark All As Read',
           icon: mdiCheckAll,
           onclick: () => {
-			      console.log(this.$instance);
-            this.$instance.exec('main.markAllChatsAsRead');
+            this.$exec('main.markAllChatsAsRead');
           },
         }, {
           title: 'Update Desktop Integration',
           icon: mdiMonitor,
           onclick: () => {
-            this.$instance.exec('main.integrateToDesktop');
+            this.$exec('main.integrateToDesktop');
           },
-          visible: this.$instance.isAppImage,
+          visible: () => this.$store.state.isAppImage,
         },
       ],
     }

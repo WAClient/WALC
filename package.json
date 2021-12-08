@@ -93,6 +93,7 @@
     "puppeteer-core": "^10.4.0",
     "puppeteer-in-electron": "^3.0.3",
     "vue-router": "^3.5.3",
+    "vuex": "^3.6.2",
     "whatsapp-web-electron.js": "^1.15.3-1"
   }
 }

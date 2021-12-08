@@ -35,8 +35,7 @@ export default {
     SheetList,
   },
   created() {
-    console.log(this.$instance);
-    this.$instance.exec('about').then((info) => {
+    this.$exec('about').then((info) => {
       this.about.installType = info.installType;
       this.about.version = info.version;
       this.about.os = info.os;

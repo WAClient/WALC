@@ -85,6 +85,7 @@ module.exports = class InstanceManager {
 			mainWindow.setMenu(
 				Menu.buildFromTemplate(menubar)
 			);
+			dashboardWindow.whatsappReady(true);
 		});
 
 		const instance = {

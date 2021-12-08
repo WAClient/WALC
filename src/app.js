@@ -1,9 +1,31 @@
 import Vue from 'vue';
+import Vuex from 'vuex';
 import Vuetify from 'vuetify/lib';
 import router from './routes';
 import App from './Pages/App';
 
 const { ipcRenderer } = window.require('electron');
+
+Vue.use(Vuex);
+
+const store = new Vuex.Store({
+	state: {
+		id: null,
+		isSnap: false,
+		isAppImage: false,
+		whatsappConnected: false,
+	},
+	mutations: {
+		setId(state, { id, isSnap, isAppImage }) {
+			state.id = id;
+			state.isSnap = isSnap;
+			state.isAppImage = isAppImage;
+		},
+		setWhatsappConnected(state, status) {
+			state.whatsappConnected = status;
+		},
+	}
+});
 
 Vue.use(Vuetify);
 const vuetify = new Vuetify({
@@ -14,31 +36,25 @@ const vuetify = new Vuetify({
 
 const app = document.getElementById('app');
 
-Vue.prototype.$instance = {
-	id: null,
-	isSnap: false,
-	isAppImage: false,
-	whatsappConnected: false,
-	exec: (key, ...args) => {
-		return ipcRenderer.invoke(`instance.${key}`, vm.$instance.id, ...args);
-	},
+Vue.prototype.$exec = (key, ...args) => {
+	return ipcRenderer.invoke(`instance.${key}`, store.state.id, ...args);
 };
 
 const vm = new Vue({
 	vuetify,
 	router,
+	store,
 	render: (h) => h(App, { props: {} }),
 }).$mount(app);
 
-ipcRenderer.on('setID', (event, { id, isSnap, isAppImage }) => {
-	vm.$instance.id = id;
-	vm.$instance.isSnap = isSnap;
-	vm.$instance.isAppImage = isAppImage;
-	console.log(vm.$instance);
+ipcRenderer.on('setID', (event, data) => {
+	vm.$store.commit('setId', data);
+	console.log('instance', vm.$store.state);
 });
 
-ipcRenderer.on('whatsappReady', () => {
-	vm.$instance.whatsappConnected = true;
+ipcRenderer.on('whatsappReady', (event, status) => {
+	vm.$store.commit('setWhatsappConnected', status);
+	console.log('whatsappConnected', status);
 });
 
 ipcRenderer.on('navigate', (event, url) => {
@@ -48,3 +64,5 @@ ipcRenderer.on('navigate', (event, url) => {
 ipcRenderer.on('darkTheme', (event, status) => {
 	vm.$vuetify.theme.dark = status;
 });
+
+window.vm = vm;
