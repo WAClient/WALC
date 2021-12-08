@@ -22,7 +22,8 @@ export default {
         {
           title: 'Tools',
           icon: mdiTools,
-          to: '/tools'
+          to: '/tools',
+          disabled: () => !this.$instance.whatsappConnected,
         }, {
           title: 'Settings',
           icon: mdiCog,

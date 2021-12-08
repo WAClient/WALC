@@ -5,6 +5,7 @@
         v-for="(item, i) in listItems"
         :key="i"
         v-show="typeof item.visible === 'function' ? item.visible(item) : item.visible !== false"
+        :disabled="typeof item.disabled === 'function' ? item.disabled(item) : item.disabled"
         :to="item.to"
         :two-line="!!item.description"
         @click="typeof item.onclick === 'function' ? item.onclick(item) : null"

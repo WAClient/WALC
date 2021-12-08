@@ -18,6 +18,7 @@ Vue.prototype.$instance = {
 	id: null,
 	isSnap: false,
 	isAppImage: false,
+	whatsappConnected: false,
 	exec: (key, ...args) => {
 		return ipcRenderer.invoke(`instance.${key}`, vm.$instance.id, ...args);
 	},
@@ -34,6 +35,10 @@ ipcRenderer.on('setID', (event, { id, isSnap, isAppImage }) => {
 	vm.$instance.isSnap = isSnap;
 	vm.$instance.isAppImage = isAppImage;
 	console.log(vm.$instance);
+});
+
+ipcRenderer.on('whatsappReady', () => {
+	vm.$instance.whatsappConnected = true;
 });
 
 ipcRenderer.on('navigate', (event, url) => {

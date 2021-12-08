@@ -34,6 +34,8 @@ export default class Route {
 	 * @param {string} conf.prefix
 	 * @param {string} conf.as
 	 * @param {string} conf.namespace
+	 * @param {string} conf.layout
+	 * @param {Object} conf.layoutProps
 	 * @param {Route[]|function(): Route[]} group
 	 */
 	static group(conf, group) {
@@ -64,18 +66,20 @@ export default class Route {
 
 	_get() {
 		const { prefix = '', as = '', namespace = '' } = this._group;
-		let path = `${prefix}/${this._path}`;
-		path = path.replace(/\/\//g, '/');
+
+		const path = `${prefix}/${this._path}`.replace(/\/\//g, '/');
 		const name = `${as}${this._name}`;
-		let page = `${namespace}/${this._page}`;
-		page = page.replace(/^\//, '');
+		const page = `${namespace}/${this._page}`.replace(/^\//, '');
+		const layout = (!this._layout ? this._group.layout : null) || this._layout;
+		const layoutProps = (!this._layoutProps ? this._group.layoutProps : null) || this._layoutProps;
+		
 		return {
 			path,
 			component: () => import(`@/Pages/${page}`),
 			name,
 			meta: {
-				layout: this._layout,
-				layoutProps: this._layoutProps,
+				layout,
+				layoutProps,
 				...this._meta,
 			}
 		};
