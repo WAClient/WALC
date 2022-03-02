@@ -40,12 +40,14 @@ const schema = {
 			name: 'Offline Notification',
 			description: 'Notify when whatsapp is disconnected',
 			type: 'checkbox',
+			depends: 'enabled',
 		},
 		newStatus: {
 			default: false,
 			name: 'New Status Updates',
 			description: 'Display Notification when someone updates their status.',
 			type: 'checkbox',
+			depends: 'enabled',
 		},
 	},
 	trayIcon: {
@@ -59,18 +61,51 @@ const schema = {
 			name: 'Close to Tray',
 			description: 'If enabled, WALC will be hidden everytime you want to close it.',
 			type: 'checkbox',
+			depends: 'enabled',
 		},
 		startHidden: {
 			default: false,
 			name: 'Start Hidden',
 			description: 'Hide WALC on startup',
 			type: 'checkbox',
+			depends: 'enabled',
 		},
 		countMuted: {
 			default: true,
 			name: 'Include Muted Chats',
 			description: 'Count muted chats in the badge counter',
 			type: 'checkbox',
+			depends: 'enabled',
+		},
+	},
+	appLock: {
+		enabled: {
+			default: false,
+			name: 'Enable app lock',
+			description: 'Lock WALC after some time',
+			type: 'switch',
+		},
+		password: {
+			default: '',
+			name: 'Password',
+			type: 'button',
+			text: 'Change Password',
+			depends: 'enabled',
+		},
+		timeout: {
+			default: 300, // in seconds
+			name: 'Lock after',
+			type: 'select',
+			props: {
+				items: [
+					{ value: 60, text: '1 minute' },
+					{ value: 300, text: '5 minutes' },
+					{ value: 900, text: '15 minutes' },
+					{ value: 1800, text: '30 minutes' },
+					{ value: 3600, text: '1 hour' },
+				],
+			},
+			depends: 'enabled',
 		},
 	},
 	advanced: {

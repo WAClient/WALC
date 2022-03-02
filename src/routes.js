@@ -20,6 +20,7 @@ const routes = Route.create([
 	}, [
 		route('/general', 'General').name('general'),
 		route('/notification', 'Notification').name('notification'),
+		route('/app-lock', 'AppLock').name('app-lock'),
 		route('/tray-icon', 'TrayIcon').name('tray-icon'),
 		route('/advanced', 'Advanced').name('advanced'),
 	]),

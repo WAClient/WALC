@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { mdiBell, mdiCog, mdiTrayFull, mdiTune } from '@mdi/js';
+import { mdiBell, mdiCog, mdiLock, mdiTrayFull, mdiTune } from '@mdi/js';
 
 export default {
   data() {
@@ -36,6 +36,10 @@ export default {
           text: 'Tray Icon',
           icon: mdiTrayFull,
           to: '/settings/tray-icon',
+        }, {
+          text: 'App Lock',
+          icon: mdiLock,
+          to: '/settings/app-lock',
         }, {
           text: 'Advanced',
           icon: mdiTune,
