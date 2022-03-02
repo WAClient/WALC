@@ -1,4 +1,5 @@
 const { ipcRenderer } = require('electron');
+const Settings = require('./Settings');
 
 class Instance {
 	id = null;

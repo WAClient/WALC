@@ -1,8 +1,11 @@
 {
-	"paths": {
-		"@/*": ["./src/*"],
-		"@layouts/*": ["./src/Layouts/*"],
-		"@mixins/*": ["./src/Mixins/*"],
+	"compilerOptions": {
+        "baseUrl": ".",
+		"paths": {
+			"@/*": ["./src/*"],
+			"@layouts/*": ["./src/Layouts/*"],
+			"@mixins/*": ["./src/Mixins/*"],
+		},
 	},
-	"exclude": ["node_modules", ".git", "dist"]
+	"exclude": ["node_modules", "dist", "public", ".git"]
 }
