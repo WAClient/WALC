@@ -5,12 +5,19 @@ import Route, { route } from './Main/Route';
 Vue.use(VueRouter);
 
 const routes = Route.create([
-	route('/', 'Dashboard').name('dashboard'),
+	route('/', 'Dashboard').name('dashboard')
+		.title('WALC')
+		.layoutProps({ hideBackButton: true }),
 	route('/tools', 'Tools').name('tools'),
 	route('/settings', 'Settings').name('settings'),
 	route('/help', 'Help').name('help'),
 	route('/offline', 'Offline').name('offline'),
-	Route.group({ prefix: '/settings', as: 'settings.', namespace: 'Settings' }, [
+	Route.group({
+		prefix: '/settings',
+		as: 'settings.',
+		namespace: 'Settings',
+		layoutProps: { title: 'Settings' },
+	}, [
 		route('/general', 'General').name('general'),
 		route('/notification', 'Notification').name('notification'),
 		route('/tray-icon', 'TrayIcon').name('tray-icon'),

@@ -1,17 +1,13 @@
 <template>
-  <app-layout title="Settings">
-    <base-renderer title="General" :settings="settings"></base-renderer>
-  </app-layout>
+  <base-renderer title="General" :settings="settings"></base-renderer>
 </template>
 
 <script>
-import AppLayout from '@layouts/AppLayout';
 import SettingsMixin from '@mixins/SettingsMixin';
 import BaseRenderer from './BaseRenderer';
 
 export default {
   components: {
-    AppLayout,
     BaseRenderer,
   },
 

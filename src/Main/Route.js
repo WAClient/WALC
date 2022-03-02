@@ -53,9 +53,22 @@ export default class Route {
 		return this;
 	}
 
+	title(title) {
+		this._title = title;
+		return this;
+	}
+
 	layout(layout, props) {
 		this._layout = layout;
 		this._layoutProps = props;
+		return this;
+	}
+
+	layoutProps(props) {
+		this._layoutProps = {
+			...this._layoutProps,
+			...props,
+		};
 		return this;
 	}
 
@@ -64,15 +77,26 @@ export default class Route {
 		return this;
 	}
 
+	_generateTitle() {
+		if(this._name) {
+			return this._name
+				.toLowerCase()
+				.replace('-', ' ')
+				.replace(/(^|\s)\S/g, function(t) { return t.toUpperCase() });
+		}
+		return 'WALC';
+	}
+
 	_get() {
 		const { prefix = '', as = '', namespace = '' } = this._group;
 
 		const path = `${prefix}/${this._path}`.replace(/\/\//g, '/');
 		const name = `${as}${this._name}`;
 		const page = `${namespace}/${this._page}`.replace(/^\//, '');
-		const layout = (!this._layout ? this._group.layout : null) || this._layout;
-		const layoutProps = (!this._layoutProps ? this._group.layoutProps : null) || this._layoutProps;
-		
+		const layout = this._layout ?? this._group.layout;
+		const layoutProps = this._layoutProps ?? this._group.layoutProps ?? {};
+		layoutProps.title = layoutProps.title ?? this._title ?? this._generateTitle();
+
 		return {
 			path,
 			component: () => import(`@/Pages/${page}`),

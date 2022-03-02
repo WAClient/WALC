@@ -1,17 +1,13 @@
 <template>
-  <app-layout title="Tools">
-    <sheet-list :list-items="listItems"></sheet-list>
-  </app-layout>
+  <sheet-list :list-items="listItems"></sheet-list>
 </template>
 
 <script>
-import AppLayout from '@layouts/AppLayout';
 import SheetList from '@layouts/SheetList';
 import { mdiArchive, mdiCheckAll, mdiMonitor } from '@mdi/js';
 
 export default {
   components: {
-    AppLayout,
     SheetList,
   },
   data() {

@@ -1,5 +1,5 @@
 <template>
-  <app-layout title="Help">
+  <div>
     <v-sheet class="overflow-hidden mx-auto mt-4 d-flex align-center" :elevation="8" rounded="lg" max-width="500px">
       <div class="pl-4">
         <v-img src="icons/logo360x360.png" width="100px" height="100px"></v-img>
@@ -20,18 +20,16 @@
     </v-sheet>
 
     <sheet-list :list-items="listItems"></sheet-list>
-  </app-layout>
+  </div>
 </template>
 
 <script>
-import AppLayout from '@layouts/AppLayout';
 import SheetList from '@layouts/SheetList';
 import { mdiBug, mdiHelpCircle, mdiStar } from '@mdi/js';
 // const walcinfo = window.require('../../package.json');
 
 export default {
   components: {
-    AppLayout,
     SheetList,
   },
   created() {

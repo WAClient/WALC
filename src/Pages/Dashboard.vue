@@ -1,18 +1,14 @@
 <template>
-  <app-layout hide-back-button>
-    <sheet-list :list-items="listItems"></sheet-list>
-  </app-layout>
+  <sheet-list :list-items="listItems"></sheet-list>
 </template>
 
 <script>
-import AppLayout from '@layouts/AppLayout';
 import SheetList from '@layouts/SheetList';
 import { mdiCog, mdiHelpCircle, mdiPower, mdiTools } from '@mdi/js';
 const { ipcRenderer } = window.require('electron');
 
 export default {
   components: {
-    AppLayout,
     SheetList,
   },
 
