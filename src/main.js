@@ -29,7 +29,6 @@ const homedir = require('os').homedir();
 const walcinfo = require('../package.json');
 const lsbRelease = require('lsb-release');
 const axios = require('axios');
-// const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
 const TrayManager = require('./Main/TrayManager');
 const InstanceManager = require('./Main/InstanceManager');
 
@@ -154,11 +153,13 @@ ipcMain.handle('quit', (event, id) => {
 
 function createWindow() {
 	const instance = instanceManager.newInstance('walc', 'WALC');
-	win = instance.main
-    trayManager.init(win);
-    instanceManager.on('hide', () => {
-        trayManager.setContextMenu(false);
-    });
+	win = instance.main;
+    setTimeout(() => {
+        trayManager.init(win);
+        instanceManager.on('hide', () => {
+            trayManager.setContextMenu(false);
+        });
+    }, 3000);
 
     if (process.env.APPIMAGE !== undefined && !fs.existsSync(path.join(shortcutDir, "WALC.desktop"))) {
         //Desktop Integration of AppImage
@@ -189,17 +190,11 @@ if(!gotTheLock) {
     // initialization and is ready to create browser windows.
     // Some APIs can only be used after this event occurs.
     app.on('ready', () => {
-        if (process.env.NODE_ENV !== 'production') {
-            // FIXME: properly load Vue.js devtools
-            // installExtension(VUEJS_DEVTOOLS, { loadExtensionOptions: {allowFileAccess: true} })
-            //     .then((name) => console.log(`Added Extension:  ${name}`))
-            //     .catch((err) => console.log('An error occurred: ', err));
-            // const vueDevToolsPath = path.join(
-            //     os.homedir(),
-            //     `.config/google-chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/5.3.4_0`
-            // );
-            // session.defaultSession.loadExtension(vueDevToolsPath, { allowFileAccess: true })
-            //     .then(() => console.log('Vue extension loaded'));
+        if(!app.isPackaged) {
+            const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
+            installExtension(VUEJS_DEVTOOLS, { loadExtensionOptions: {allowFileAccess: true} })
+                .then((name) => console.log(`Added Extension:  ${name}`))
+                .catch((err) => console.log('An error occurred: ', err));
         }
         createWindow();
     });

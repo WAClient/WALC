@@ -6,6 +6,7 @@ const MainWindow = require('./MainWindow');
 const DashboardWindow = require('./DashboardWindow');
 const MainMenu = require('./MainMenu');
 const DashboardMenu = require('./DashboardMenu');
+const AppLock = require('./AppLock');
 const settings = require('./settings');
 
 /**
@@ -58,6 +59,12 @@ module.exports = class InstanceManager {
 			settings.set('theme.dark.value', darkTheme);
 		});
 
+		['unlock', 'lock', 'setPassword'].forEach((func) => {
+			ipcMain.handle(`instance.appLock.${func}`, (event, ...args) => {
+				return this.instances[id].appLock[func](...args);
+			});
+		});
+
 		[
 			'initWhatsapp',
 			'archiveAllChats',
@@ -80,19 +87,21 @@ module.exports = class InstanceManager {
 		const dashboardWindow = new DashboardWindow(id, name);
 		mainWindow.on('close-confirmed', () => this.handleClose(id));
 		mainWindow.on('hide', () => this.emit('hide', id));
-		mainWindow.on('ready', async () => {
-			const menubar = await MainMenu(id, mainWindow, this);
-			mainWindow.setMenu(
-				Menu.buildFromTemplate(menubar)
-			);
+		mainWindow.on('ready', () => {
+			this.setMainMenu(id);
 			dashboardWindow.whatsappReady(true);
 		});
+
+		const appLock = new AppLock(mainWindow);
+		appLock.on('lock', () => this.setMainMenu(id, true));
+		appLock.on('unlock', () => this.setMainMenu(id));
 
 		const instance = {
 			id,
 			name,
 			main: mainWindow,
 			dashboard: dashboardWindow,
+			appLock,
 		};
 
 		this.instances[id] = instance;
@@ -124,6 +133,16 @@ module.exports = class InstanceManager {
 		this.instances[id].dashboard.open();
 	}
 
+	async setMainMenu(id, disable = false) {
+		const mainWindow = this.instances[id].main;
+		if(disable) {
+			mainWindow.setMenu(null);
+			return;
+		}
+		const menubar = await MainMenu(id, mainWindow, this);
+		mainWindow.setMenu(Menu.buildFromTemplate(menubar));
+	}
+	
 	/**
 	 * Attach an event listener
 	 * @param {string} event Event name

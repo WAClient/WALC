@@ -107,6 +107,14 @@ const schema = {
 			},
 			depends: 'enabled',
 		},
+		// TODO: investigate if this is actually supported
+		// screenLock: {
+		// 	default: false,
+		// 	name: 'Lock on Screen Lock',
+		// 	description: 'Also lock WALC when screen is locked',
+		// 	type: 'checkbox',
+		// 	depends: 'enabled',
+		// },
 	},
 	advanced: {
 		multiInstance: {

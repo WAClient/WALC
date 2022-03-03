@@ -9,8 +9,6 @@ mix.setPublicPath('public')
 		'@mixins': path.resolve(__dirname, 'src/Mixins/'),
 	})
 	.js('src/app.js', 'js')
-	.vuetify('vuetify-loader')
-	.vue({ version: 2 })
 	.js('src/offline.js', 'js')
 	.vuetify('vuetify-loader')
 	.vue({ version: 2 })
