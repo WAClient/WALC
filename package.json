@@ -61,21 +61,21 @@
   "devDependencies": {
     "@mdi/js": "^5.9.55",
     "deepmerge": "^4.2.2",
-    "electron": "^17.1.0",
+    "electron": "^17.4.0",
     "electron-builder": "^22.14.13",
     "electron-devtools-installer": "^3.2.0",
     "electron-rebuild": "^3.2.7",
     "laravel-mix": "^6.0.43",
-    "postcss": "^8.4.7",
+    "postcss": "^8.4.12",
     "sass": "~1.32.13",
     "sass-loader": "^12.6.0",
     "vue": "^2.5.17",
     "vue-loader": "^15.9.8",
     "vue-template-compiler": "^2.6.12",
-    "vuetify": "^2.6.3",
+    "vuetify": "^2.6.4",
     "vuetify-loader": "^1.7.3",
     "vuetifyjs-mix-extension": "0.0.20",
-    "webpack": "^5.69.1"
+    "webpack": "^5.72.0"
   },
   "homepage": "https://cstayyab.com/projects/walc",
   "dependencies": {
@@ -91,10 +91,10 @@
     "is-online": "^9.0.1",
     "lsb-release": "^0.1.0",
     "mime": "^2.6.0",
-    "puppeteer-core": "^10.4.0",
-    "puppeteer-in-electron": "^3.0.3",
+    "puppeteer-core": "^13.5.2",
+    "puppeteer-in-electron": "^3.0.5",
     "vue-router": "^3.5.3",
     "vuex": "^3.6.2",
-    "whatsapp-web-electron.js": "^1.15.8-1"
+    "whatsapp-web-electron.js": "^1.16.5-1"
   }
 }
