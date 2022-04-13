@@ -147,6 +147,15 @@ ipcMain.handle('getIcon', () => {
     return nativeImage.createFromPath(ICON_PATH).toDataURL();
 });
 
+ipcMain.handle('getStyle', () => {
+    return new Promise((resolve) => {
+        const stylePath = path.join(__dirname, 'Renderer/renderer.css');
+        fs.readFile(stylePath, 'utf-8', (err, data) => {
+            resolve(data);
+        });
+    });
+});
+
 ipcMain.handle('quit', (event, id) => {
     instanceManager.close(id);
 });

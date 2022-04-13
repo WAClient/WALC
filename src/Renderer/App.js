@@ -1,6 +1,8 @@
-const { ipcRenderer, contextBridge } = require('electron');
+const { ipcRenderer } = require('electron');
 const Settings = require('./Settings');
 const Instance = require('./Instance');
+const AppLock = require('./AppLock');
+const fs = require('fs');
 
 class App {
 	constructor() {
@@ -10,11 +12,6 @@ class App {
 		ipcRenderer.on('renderTray', () => this.renderTray());
 		ipcRenderer.on('ready', () => this.init());
 		ipcRenderer.on('setFullWidth', (e, status) => this.setFullWidth(status));
-
-		window.WALC = {
-			load: () => Instance.exec('main.initWhatsapp'),
-			renderTray: () => this.renderTray(),
-		};
 	}
 
 	awaitApp() {
@@ -38,13 +35,27 @@ class App {
 		if(this.initialized) return;
 		this.initialized = true;
 
+		const style = document.createElement('style');
+		style.innerHTML = await ipcRenderer.invoke('getStyle');
+		document.head.appendChild(style);
+
 		this.icon = await ipcRenderer.invoke('getIcon');
 		Instance.init(this.icon);
 		this.renderTray();
-		if((window.Store || {}).Chat) {
+		if(window.Store?.Chat) {
 			window.Store.Chat.on('change:unreadCount', () => this.renderTray());
 			window.Store.Chat.on('change:muteExpiration', () => this.renderTray());
 		}
+
+		this.appLock = new AppLock();
+
+		window.WALC = {
+			load: () => Instance.exec('main.initWhatsapp'),
+			renderTray: () => this.renderTray(),
+			lock: () => this.appLock.lock(),
+			appLock: this.appLock,
+		};
+
 		console.log('WALC Initialized');
 	}
 
@@ -59,7 +70,7 @@ class App {
 		let unread = 0;
 		const countMuted = Settings.get('trayIcon.countMuted.value');
 		let allMuted = countMuted;
-		if((window.Store || {}).Chat) {
+		if(window.Store?.Chat) {
 			const chats = window.Store.Chat.getModelsArray();
 			unread = chats.reduce((total, chat) => {
 				// don't count if user disable counter on muted chats

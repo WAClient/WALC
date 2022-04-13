@@ -1,0 +1,51 @@
+.app-lock {
+	position: fixed;
+	z-index: 99999;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: var(--background-default-active);
+	color: var(--primary-strong);
+	display: grid;
+	place-content: center;
+}
+
+.app-lock.unlocked {
+	display: none;
+}
+
+.app-lock-user {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+}
+
+.app-lock-user img {
+	width: 64px;
+	height: 64px;
+	border-radius: 100%;
+}
+
+.app-lock-user h1 {
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.app-lock-input {
+    box-sizing: border-box;
+    width: 400px;
+    min-width: 0;
+    min-height: 20px;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 20px;
+    outline: none;
+    padding: 9px 12px 11px;
+    background-color: var(--compose-input-background);
+    border: 1px solid var(--compose-input-border);
+    border-radius: 8px;
+    color: 1px solid var(--compose-primary);
+	margin-top: 16px;
+}
