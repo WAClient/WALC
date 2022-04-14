@@ -9,23 +9,29 @@ module.exports = class AppLock extends EventEmitter {
 		super();
 		this.mainWindow = mainWindow;
 		this._timeout = null;
+	}
 
-		const appLock = settings.get('appLock');
-		this.settings = Object.keys(appLock)
-			.reduce((settings, key) => {
-				settings[key] = appLock[key].value;
-				return settings;
-			}, {});
+	init() {
+		this.idleTime = 0;
+		setInterval(() => {
+			this.idleTime += 1000;
+		}, 1000);
 
+		this.settings = settings.get('appLock');
 		settings.onDidChange('appLock', () => {
 			this.resetTimer();
+			this.settings = settings.get('appLock');
 		});
 
 		this.resetTimer();
 	}
 
 	get isEnabled() {
-		return !!this.settings.enabled;
+		return !!this.settings.enabled.value;
+	}
+
+	activity() {
+		this.idleTime = 0;
 	}
 
 	lock() {
@@ -36,6 +42,7 @@ module.exports = class AppLock extends EventEmitter {
 
 	async unlock(password) {
 		if(!await this.checkPassword(password)) {
+			await new Promise((r) => setTimeout(r, 1000));
 			return {
 				status: false,
 				message: 'Your password is incorrect',
@@ -48,10 +55,10 @@ module.exports = class AppLock extends EventEmitter {
 	}
 
 	checkPassword(password) {
-		if(!this.settings.password) {
+		if(!this.settings.password.value) {
 			return true;
 		}
-		return bcrypt.compare(password, this.settings.password);
+		return bcrypt.compare(password, this.settings.password.value);
 	}
 
 	async setPassword(password, oldPassword) {
@@ -76,15 +83,14 @@ module.exports = class AppLock extends EventEmitter {
 			return;
 		}
 
-		const idleTime = powerMonitor.getSystemIdleTime();
-		const timeout = this.settings.timeout;
+		const timeout = this.settings.timeout.value * 1000;
 
-		if(idleTime > timeout) {
+		if(this.idleTime > timeout) {
 			this.lock();
 		} else {
 			this._timeout = setTimeout(() => {
 				this.resetTimer();
-			}, timeout - idleTime);
+			}, timeout - this.idleTime);
 		}
 	}
 

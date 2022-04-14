@@ -87,7 +87,7 @@
     "electron-store": "^8.0.1",
     "electron-updater": "^4.6.5",
     "electron-window-state": "^5.0.3",
-    "get-port-sync": "^1.0.0",
+    "get-port-sync": "^1.0.1",
     "is-online": "^9.0.1",
     "lsb-release": "^0.1.0",
     "mime": "^2.6.0",

@@ -2,31 +2,36 @@
   <div>
     <BaseRenderer title="App Lock" :settings="settings" @click:password="passwordDialog = true" />
     <v-dialog v-model="passwordDialog" width="400px">
-      <v-card>
-        <v-card-title>Change Password</v-card-title>
-        <v-card-text>
-          <v-text-field
-            v-if="hasPassword"
-            v-model="oldPassword"
-            label="Old Password"
-            type="password"
-          ></v-text-field>
-          <v-text-field
-            v-model="newPassword"
-            :label="hasPassword ? 'New Password' : 'Password'"
-            type="password"
-          ></v-text-field>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text @click="passwordDialog = false">
-            Cancel
-          </v-btn>
-          <v-btn color="primary" @click="savePassword">
-            Save
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+      <v-form :disabled="loading" @submit.prevent="savePassword">
+        <v-card>
+          <v-card-title>Change Password</v-card-title>
+          <v-card-text>
+            <v-alert v-show="passwordMessage" type="error">
+              {{ passwordMessage }}
+            </v-alert>
+            <v-text-field
+              v-if="hasPassword"
+              v-model="oldPassword"
+              label="Old Password"
+              type="password"
+            ></v-text-field>
+            <v-text-field
+              v-model="newPassword"
+              :label="hasPassword ? 'New Password' : 'Password'"
+              type="password"
+            ></v-text-field>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text @click="passwordDialog = false">
+              Cancel
+            </v-btn>
+            <v-btn color="primary" type="submit">
+              Save
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
     </v-dialog>
   </div>
 </template>
@@ -45,7 +50,9 @@ export default {
   data() {
     return {
       group: 'appLock',
+      loading: false,
       passwordDialog: false,
+      passwordMessage: '',
       oldPassword: null,
       newPassword: null,
     }
@@ -59,8 +66,19 @@ export default {
   },
 
   methods: {
-    savePassword() {
-      //
+    async savePassword() {
+      this.loading = true;
+      try {
+        const result = await this.$exec('appLock.setPassword', this.newPassword, this.oldPassword);
+        if(result.status) {
+          this.passwordDialog = false;
+          this.$set(this.settings.password, 'value', true);
+        } else {
+          this.passwordMessage = result.message;
+        }
+      } finally {
+        this.loading = false;
+      }
     },
   },
 }

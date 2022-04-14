@@ -1,33 +1,87 @@
 const { ipcRenderer } = require('electron');
 const Instance = require('./Instance');
 
+const ActivityChecker = {
+	events: ['mousemove', 'click', 'scroll', 'input'],
+	cooldown: 2000,
+	onCooldown: false,
+
+	init() {
+		this.events.forEach((evt) => {
+			window.addEventListener(evt, this.handler.bind(this));
+		})
+	},
+
+	handler() {
+		if(this.onCooldown) return;
+		Instance.exec('appLock.activity');
+		this.onCooldown = true;
+		setTimeout(() => {
+			this.onCooldown = false;
+		}, this.cooldown);
+	},
+}
 
 class AppLock {
 	constructor() {
-		this.initIPC();
-		this.overlay = document.createElement('div');
-		this.overlay.classList.add('app-lock', 'unlocked');
-		document.body.append(this.overlay);
+		this._initIPC();
+		this._initOverlay();
+		setTimeout(() => this._initWhatsapp(), 3000);
 
-		this.whatsappInitialized = false;
-		this.user = {
-			name: '',
-			img: '',
-		};
+		ActivityChecker.init();
 	}
 
-	async initWhatsapp() {
-		if(this.whatsappInitialized) return;
-		const user = window.Store.User.getMeUser() || {};
-		const meContact = await window.Store.Contact.find(user._serialized);
-		this.user.name = meContact.displayName;
-		this.user.img = meContact.getProfilePicThumb().img;
-		this.whatsappInitialized = true;
-	}
-
-	initIPC() {
+	_initIPC() {
 		ipcRenderer.on('appLock.lock', () => this._lock());
 		ipcRenderer.on('appLock.unlock', () => this._unlock());
+	}
+
+	_initOverlay() {
+		this.overlay = document.createElement('div');
+		this.overlay.classList.add('app-lock', 'unlocked');
+		this.overlay.innerHTML = `
+			<div class="app-lock-container">
+				<div class="app-lock-user">
+					<img src="" />
+					<h1></h1>
+				</div>
+				<input class="app-lock-input" placeholder="Password" type="password" />
+			</div>
+		`;
+		document.body.append(this.overlay);
+
+		const input = this.overlay.querySelector('.app-lock-input');
+		input.addEventListener('keydown', async (event) => {
+			if(event.key === 'Enter') {
+				this._submit(input);
+			}
+		});
+	}
+
+	async _initWhatsapp() {
+		const user = window.Store.User.getMeUser() || {};
+		const myContact = await window.Store.Contact.find(user._serialized);
+		this.overlay.querySelector('.app-lock-user h1').textContent = myContact.displayName;
+		this.overlay.querySelector('.app-lock-user img').src = myContact.getProfilePicThumb().img;
+	}
+
+	/** @param {HTMLInputElement} input */
+	async _submit(input) {
+		input.disabled = true;
+		const result = await this.unlock(input.value);
+		if(result.status) {
+			input.value = '';
+		} else {
+			input.classList.add('error');
+			setTimeout(() => {
+				input.classList.remove('error');
+			}, 3000);
+			setTimeout(() => {
+				input.focus();
+				input.select();
+			}, 100);
+		}
+		input.disabled = false;
 	}
 
 	lock() {
@@ -36,21 +90,17 @@ class AppLock {
 
 	async unlock(password) {
 		const result = await Instance.exec('appLock.unlock', password);
-		if(result) {
+		if(result.status) {
 			this._unlock();
 		}
+		return result;
 	}
 
 	async _lock() {
-		await this.initWhatsapp();
-		this.overlay.innerHTML = `
-			<div class="app-lock-user">
-				<img src="${this.user.img}" />
-				<h1>${this.user.name}</h1>
-			</div>
-			<input class="app-lock-input" placeholder="Password" type="password" />
-		`;
 		this.overlay.classList.remove('unlocked');
+		setTimeout(() => {
+			this.overlay.querySelector('.app-lock-input').focus();
+		});
 	}
 
 	_unlock() {

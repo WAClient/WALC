@@ -5,7 +5,7 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background-color: var(--background-default-active);
+	background-color: var(--background-default);
 	color: var(--primary-strong);
 	display: grid;
 	place-content: center;
@@ -13,6 +13,14 @@
 
 .app-lock.unlocked {
 	display: none;
+}
+
+.app-lock-container {
+	background-color: var(--background-default-hover);
+	padding: 16px;
+	border-radius: 8px;
+	box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+	max-width: 500px;
 }
 
 .app-lock-user {
@@ -35,7 +43,10 @@
 
 .app-lock-input {
     box-sizing: border-box;
-    width: 400px;
+	display: block;
+	margin: 0 auto;
+	margin-top: 16px;
+    width: 350px;
     min-width: 0;
     min-height: 20px;
     font-size: 15px;
@@ -47,5 +58,16 @@
     border: 1px solid var(--compose-input-border);
     border-radius: 8px;
     color: 1px solid var(--compose-primary);
-	margin-top: 16px;
+}
+
+.app-lock-input:focus {
+	outline: 3px solid var(--focus);
+}
+
+.app-lock-input.error {
+	outline: 3px solid var(--danger);
+}
+
+.app-lock-input:disabled {
+	opacity: 0.5;
 }

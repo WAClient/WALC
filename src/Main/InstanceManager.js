@@ -59,8 +59,8 @@ module.exports = class InstanceManager {
 			settings.set('theme.dark.value', darkTheme);
 		});
 
-		['unlock', 'lock', 'setPassword'].forEach((func) => {
-			ipcMain.handle(`instance.appLock.${func}`, (event, ...args) => {
+		['unlock', 'lock', 'setPassword', 'activity'].forEach((func) => {
+			ipcMain.handle(`instance.appLock.${func}`, (event, id, ...args) => {
 				return this.instances[id].appLock[func](...args);
 			});
 		});
@@ -85,16 +85,23 @@ module.exports = class InstanceManager {
 	newInstance(id, name) {
 		const mainWindow = new MainWindow(id, name);
 		const dashboardWindow = new DashboardWindow(id, name);
+		const appLock = new AppLock(mainWindow);
+
 		mainWindow.on('close-confirmed', () => this.handleClose(id));
 		mainWindow.on('hide', () => this.emit('hide', id));
 		mainWindow.on('ready', () => {
 			this.setMainMenu(id);
 			dashboardWindow.whatsappReady(true);
-		});
 
-		const appLock = new AppLock(mainWindow);
-		appLock.on('lock', () => this.setMainMenu(id, true));
-		appLock.on('unlock', () => this.setMainMenu(id));
+			appLock.init();
+			appLock.on('lock', () => {
+				this.setMainMenu(id, true);
+				dashboardWindow.close();
+				mainWindow.webContents.closeDevTools();
+				dashboardWindow.webContents.closeDevTools();
+			});
+			appLock.on('unlock', () => this.setMainMenu(id));	
+		});
 
 		const instance = {
 			id,
