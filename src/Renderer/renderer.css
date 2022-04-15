@@ -73,11 +73,11 @@
 }
 
 .fade-in {
-	animation: fade-in .5s linear forwards;
+	animation: fade-in .2s linear forwards;
 }
 
 .fade-out {
-	animation: fade-out .5s linear forwards;
+	animation: fade-out .2s linear forwards;
 }
 
 @keyframes fade-in {
