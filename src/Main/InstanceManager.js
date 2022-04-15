@@ -61,6 +61,7 @@ module.exports = class InstanceManager {
 
 		['unlock', 'lock', 'setPassword', 'activity'].forEach((func) => {
 			ipcMain.handle(`instance.appLock.${func}`, (event, id, ...args) => {
+				if(!this.instances[id]) return;
 				return this.instances[id].appLock[func](...args);
 			});
 		});

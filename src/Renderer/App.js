@@ -35,6 +35,8 @@ class App {
 		if(this.initialized) return;
 		this.initialized = true;
 
+		this.appLock = new AppLock();
+
 		const style = document.createElement('style');
 		style.innerHTML = await ipcRenderer.invoke('getStyle');
 		document.head.appendChild(style);
@@ -47,13 +49,9 @@ class App {
 			window.Store.Chat.on('change:muteExpiration', () => this.renderTray());
 		}
 
-		this.appLock = new AppLock();
-
 		window.WALC = {
 			load: () => Instance.exec('main.initWhatsapp'),
 			renderTray: () => this.renderTray(),
-			lock: () => this.appLock.lock(),
-			appLock: this.appLock,
 		};
 
 		console.log('WALC Initialized');

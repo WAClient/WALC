@@ -44,6 +44,8 @@ module.exports = class AppLock extends EventEmitter {
 				});
 			}
 		);
+
+		setTimeout(() => this.lock(), 500);
 	}
 
 	get isEnabled() {

@@ -26,7 +26,7 @@ class AppLock {
 	constructor() {
 		this._initIPC();
 		this._initOverlay();
-		setTimeout(() => this._initWhatsapp(), 3000);
+		setTimeout(() => this._initWhatsapp(), 1000);
 
 		ActivityChecker.init();
 	}
