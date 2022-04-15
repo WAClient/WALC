@@ -2,6 +2,7 @@ const { powerMonitor } = require('electron');
 const settings = require('./settings');
 const bcrypt = require('bcrypt');
 const { EventEmitter } = require('events');
+const DBus = require('dbus');
 
 module.exports = class AppLock extends EventEmitter {
 	/** @param {import('./MainWindow')} mainWindow */
@@ -24,10 +25,29 @@ module.exports = class AppLock extends EventEmitter {
 		});
 
 		this.resetTimer();
+
+		this.bus = DBus.getBus('session');
+		this.bus.getInterface(
+			'org.freedesktop.ScreenSaver', 
+			'/ScreenSaver', 
+			'org.freedesktop.ScreenSaver',
+			(err, iface) => {
+				iface.on('ActiveChanged', (active) => {
+					if(this.settings.lockOnScreenLock.value && active === true) {
+						this.lock();
+					}
+				});
+				iface.GetActive((err, active) => {
+					if(this.settings.lockOnScreenLock.value && active === true) {
+						setTimeout(() => this.lock(), 500);
+					}
+				});
+			}
+		);
 	}
 
 	get isEnabled() {
-		return !!this.settings.enabled.value;
+		return (!!this.settings.enabled.value && !!this.settings.password);
 	}
 
 	activity() {
@@ -35,6 +55,9 @@ module.exports = class AppLock extends EventEmitter {
 	}
 
 	lock() {
+		if(!this.isEnabled) {
+			return;
+		}
 		this.clearTimer();
 		this.mainWindow.webContents.send('appLock.lock');
 		this.emit('lock');
