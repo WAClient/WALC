@@ -98,13 +98,17 @@ class AppLock {
 
 	async _lock() {
 		this.overlay.classList.remove('unlocked');
+		this.overlay.classList.remove('fade-out');
+		this.overlay.classList.add('fade-in');
 		setTimeout(() => {
 			this.overlay.querySelector('.app-lock-input').focus();
 		});
 	}
 
 	_unlock() {
-		this.overlay.classList.add('unlocked');
+		this.overlay.classList.remove('fade-in');
+		this.overlay.classList.add('fade-out');
+		setTimeout(() => this.overlay.classList.add('unlocked'), 500);
 	}
 }
 

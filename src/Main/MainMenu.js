@@ -1,4 +1,4 @@
-const { ipcMain } = require('electron');
+const settings = require('./settings');
 
 /**
  * @param {string} id
@@ -11,6 +11,7 @@ module.exports = async function MainMenu(id, window, instanceManager) {
 	window.whatsapp.on('message', async () => {
 		chats = await window.whatsapp.getChats();
 	});
+	const appLock = settings.get('appLock');
 
 	const chatMenu = [];
 	for(let i = 0; i < 9; i++) {
@@ -34,7 +35,15 @@ module.exports = async function MainMenu(id, window, instanceManager) {
 					click: () => {
 						instanceManager.openDashboard(id);
 					},
-				}, {
+				},
+				...(!appLock.enabled.value ? [] : [{
+					label: 'Lock App',
+					accelerator: 'Ctrl+L',
+					click: () => {
+						instanceManager.instances[id].appLock.lock();
+					}
+				}]),
+				{
 					label: 'Quit',
 					accelerator: 'Ctrl+Q',
 					click: () => {
