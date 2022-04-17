@@ -16,6 +16,7 @@ const settings = require('./settings');
  * @property {string} name
  * @property {MainWindow} main
  * @property {DashboardWindow} dashboard
+ * @property {AppLock} appLock
  */
 
 module.exports = class InstanceManager {
@@ -186,6 +187,7 @@ module.exports = class InstanceManager {
 		console.log('Quiting instance: ', id);
 		if(instance) {
 			instance.dashboard.quitWindow();
+			instance.appLock.destroy();
 			delete this.instances[id];
 		}
 		if(!Object.keys(this.instances).length && !this._quiting) {

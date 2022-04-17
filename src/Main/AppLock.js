@@ -32,12 +32,21 @@ module.exports = class AppLock extends EventEmitter {
 			'/ScreenSaver', 
 			'org.freedesktop.ScreenSaver',
 			(err, iface) => {
+				if(err) {
+					console.log('Error when initializing D-Bus interface', err);
+					return;
+				}
+
 				iface.on('ActiveChanged', (active) => {
 					if(this.settings.lockOnScreenLock.value && active === true) {
 						this.lock();
 					}
 				});
 				iface.GetActive((err, active) => {
+					if(err) {
+						console.log('Error when executing D-Bus method', err);
+						active = false;
+					}
 					if(this.settings.lockOnScreenLock.value && active === true) {
 						setTimeout(() => this.lock(), 500);
 					}
@@ -46,6 +55,13 @@ module.exports = class AppLock extends EventEmitter {
 		);
 
 		setTimeout(() => this.lock(), 500);
+	}
+
+	destroy() {
+		if(this.bus) {
+			this.bus.disconnect();
+		}
+		this.clearTimer();
 	}
 
 	get isEnabled() {
