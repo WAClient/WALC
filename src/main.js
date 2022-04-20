@@ -130,15 +130,15 @@ ipcMain.on('focusWindow', (event) => {
 
 ipcMain.on('getSettings', (event, key = null) => {
     if(key) {
-        event.returnValue = settings.get(key);
+        event.returnValue = settings.getMasked(key);
         return;
     }
-    event.returnValue = settings.store;
+    event.returnValue = settings.storeMasked;
 });
 
 ipcMain.on('setSettings', (event, values) => {
     for (const [key, value] of Object.entries(values)) {
-        settings.set(key, value);
+        settings.setMasked(key, value);
     }
     event.returnValue = true;
 });

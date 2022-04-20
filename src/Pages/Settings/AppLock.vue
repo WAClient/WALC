@@ -73,6 +73,9 @@ export default {
         if(result.status) {
           this.passwordDialog = false;
           this.$set(this.settings.password, 'value', true);
+          this.oldPassword = null;
+          this.newPassword = null;
+          this.passwordMessage = '';
         } else {
           this.passwordMessage = result.message;
         }

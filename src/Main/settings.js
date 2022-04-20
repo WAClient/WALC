@@ -91,6 +91,14 @@ const schema = {
 			type: 'button',
 			text: 'Change Password',
 			depends: 'enabled',
+			mask: {
+				get(value) {
+					return !!value;
+				},
+				set(value, oldValue) {
+					return oldValue;
+				},
+			}
 		},
 		timeout: {
 			default: 300, // in seconds
@@ -163,6 +171,34 @@ settings.set = (key, value) => {
 };
 settings.onDidChange = (key, handler) => {
 	return store.onDidChange(key, handler);
+};
+
+const maskedSchema = JSON.parse(JSON.stringify(schema));
+Object.keys(schema).forEach((group) => {
+	Object.keys(schema[group]).forEach((key) => {
+		const mask = schema[group][key].mask || {};
+		Object.defineProperty(maskedSchema[group][key], 'value', {
+			get: () => {
+				if(mask.get) {
+					return mask.get(schema[group][key].value);
+				}
+				return store.get(`${group}.${key}`);
+			},
+			set: (value) => {
+				if(mask.set) {
+					value = mask.set(value, schema[group][key].value);
+				}
+				store.set(`${group}.${key}`, value);
+			},
+			enumerable: true,
+		});
+	});
+});
+
+settings.storeMasked = maskedSchema;
+settings.getMasked = (key) => dotProp.get(maskedSchema, key);
+settings.setMasked = (key, value) => {
+	dotProp.set(maskedSchema, key, value);
 };
 
 module.exports = settings;
