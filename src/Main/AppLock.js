@@ -1,8 +1,7 @@
-const { powerMonitor } = require('electron');
 const settings = require('./settings');
 const bcrypt = require('bcrypt');
 const { EventEmitter } = require('events');
-const DBus = require('dbus');
+const DBus = require('dbus-next');
 
 module.exports = class AppLock extends EventEmitter {
 	/** @param {import('./MainWindow')} mainWindow */
@@ -26,35 +25,24 @@ module.exports = class AppLock extends EventEmitter {
 
 		this.resetTimer();
 
-		this.bus = DBus.getBus('session');
-		this.bus.getInterface(
-			'org.freedesktop.ScreenSaver', 
-			'/ScreenSaver', 
-			'org.freedesktop.ScreenSaver',
-			(err, iface) => {
-				if(err) {
-					console.log('Error when initializing D-Bus interface', err);
-					return;
-				}
-
-				iface.on('ActiveChanged', (active) => {
-					if(this.settings.lockOnScreenLock.value && active === true) {
-						this.lock();
-					}
-				});
-				iface.GetActive((err, active) => {
-					if(err) {
-						console.log('Error when executing D-Bus method', err);
-						active = false;
-					}
-					if(this.settings.lockOnScreenLock.value && active === true) {
-						setTimeout(() => this.lock(), 500);
-					}
-				});
-			}
-		);
+		this.initBus();
 
 		setTimeout(() => this.lock(), 500);
+	}
+
+	async initBus() {
+		try {
+			this.bus = DBus.sessionBus();
+			const busObj = await this.bus.getProxyObject('org.freedesktop.ScreenSaver', '/ScreenSaver');
+			const iface = await busObj.getInterface('org.freedesktop.ScreenSaver');
+
+			iface.on('ActiveChanged', (isLocked) => {
+				this.screenLocked(isLocked);
+			});
+		} catch(err) {
+			console.log('Error when initializing D-Bus', err);
+			return;
+		}
 	}
 
 	destroy() {
@@ -65,7 +53,13 @@ module.exports = class AppLock extends EventEmitter {
 	}
 
 	get isEnabled() {
-		return (!!this.settings.enabled.value && !!this.settings.password);
+		return (!!this.settings.enabled.value && !!this.settings.password.value);
+	}
+
+	screenLocked(isLocked) {
+		if(isLocked === true && this.isEnabled && this.settings.lockOnScreenLock.value) {
+			this.lock();
+		}
 	}
 
 	activity() {

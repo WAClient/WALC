@@ -45,7 +45,6 @@ public/js
 public/mix-manifest.json
 release-builds
 dist
-/package-lock.json
 *.tgz
 
 # VS Code Files
