@@ -270,10 +270,13 @@ module.exports = class MainWindow extends BrowserWindow {
 			(await this.whatsapp.getChatById(tag)).sendSeen();
 		});
 
-		notif.addInlineReply('Reply', async (reply) => {
-			console.log('replied', reply);
-			(await this.whatsapp.getChatById(tag)).sendMessage(reply);
-		});
+		const canReply = await Notify.supportsInlineReply();
+		if(canReply) {
+			notif.addInlineReply('Reply', async (reply) => {
+				console.log('replied', reply);
+				(await this.whatsapp.getChatById(tag)).sendMessage(reply);
+			});
+		}
 
 		notif.show();
 	}
@@ -286,14 +289,11 @@ module.exports = class MainWindow extends BrowserWindow {
 			this.whatsapp = new Client(pieBrowser, this);
 			this.whatsappReady = false;
 
-			this.whatsapp.on('ready', async () => {
+			this.whatsapp.on('ready', () => {
 				console.log('Whatsapp client ready');
 				this.whatsappReady = true;
 				this.webContents.send('ready', this._id);
 				this.emit('ready');
-
-				const chats = await this.whatsapp.getChats();
-				console.log(chats[0].id._serialized);
 			});
 
 			this.whatsapp.on("change_battery", (batteryInfo) => {
