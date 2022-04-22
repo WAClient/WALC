@@ -42,8 +42,8 @@ class App {
 		document.head.appendChild(style);
 
 		// this.icon = await ipcRenderer.invoke('getIcon');
-		this.settings_icon = await ipcRenderer.invoke('getSettingsIcon')
-		Instance.init(this.settings_icon);
+		this.dashboard_icon = await ipcRenderer.invoke('getDashboardIcon')
+		Instance.init(this.dashboard_icon);
 		this.renderTray();
 		if(window.Store?.Chat) {
 			window.Store.Chat.on('change:unreadCount', () => this.renderTray());
