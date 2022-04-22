@@ -145,17 +145,11 @@ ipcMain.on('setSettings', (event, values) => {
     event.returnValue = true;
 });
 
-ipcMain.on('watchSettings', (event, key) => {
-    settings.onDidChange(key, (value) => {
-        event.sender.send('settingsChange', key, value);
-    });
-})
-
 ipcMain.handle('getIcon', () => {
     return nativeImage.createFromPath(ICON_PATH).toDataURL();
 });
 
-ipcMain.handle('getDahsboardIcon', () => {
+ipcMain.handle('getDashboardIcon', () => {
     return nativeImage.createFromPath(DASHBOARD_ICON_PATH).toDataURL();
 });
 
