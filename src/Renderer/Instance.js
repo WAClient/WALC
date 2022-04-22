@@ -1,4 +1,5 @@
 const { ipcRenderer } = require('electron');
+const { LegacyNotification, ServerNotification } = require('./CustomNotification');
 const Settings = require('./Settings');
 
 class Instance {
@@ -20,16 +21,16 @@ class Instance {
 	initNotification() {
 		// override Notification API so it can show the window on click
 		window.oldNotification = Notification;
-		window.Notification = function (title, options) {
-			if(Settings.get('notification.enabled.value')) {
-				const n = new window.oldNotification(title, options);
-				n.addEventListener('click', function () {
-					ipcRenderer.send('focusWindow');
-				});
-				return n;
-			}
-		};
-		Object.assign(window.Notification, window.oldNotification);
+		Settings.onDidChange('notification.legacyType', this.setNotification);
+		this.setNotification();
+	}
+
+	setNotification() {
+		if(Settings.get('notification.legacyType.value')) {
+			window.Notification = LegacyNotification;
+		} else {
+			window.Notification = ServerNotification;
+		}
 	}
 
 	installDashboardIcon(icon) {

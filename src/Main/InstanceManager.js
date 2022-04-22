@@ -72,6 +72,7 @@ module.exports = class InstanceManager {
 			'archiveAllChats',
 			'markAllChatsAsRead',
 			'integrateToDesktop',
+			'chatNotification',
 		].forEach((func) => {
 			ipcMain.handle(`instance.main.${func}`, (event, id, ...args) => {
 				this.instances[id].main[func](...args);
