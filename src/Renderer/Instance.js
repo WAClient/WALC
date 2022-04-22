@@ -11,9 +11,9 @@ class Instance {
 		return ipcRenderer.invoke(`instance.${key}`, this.id, ...args);
 	}
 
-	init(icon) {
+	init(dashboard_icon) {
 		this.initNotification();
-		this.installAppIcon(icon);
+		this.installDashboardIcon(dashboard_icon);
 		this.observeTheme();
 	}
 
@@ -32,7 +32,7 @@ class Instance {
 		Object.assign(window.Notification, window.oldNotification);
 	}
 
-	installAppIcon(icon) {
+	installDashboardIcon(icon) {
 		const container = document.querySelector('#side header div:first-child');
 		const image = new Image();
 		container.style.display = 'flex';

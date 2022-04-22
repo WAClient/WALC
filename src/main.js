@@ -33,6 +33,8 @@ const TrayManager = require('./Main/TrayManager');
 const InstanceManager = require('./Main/InstanceManager');
 
 const ICON_PATH = path.join(__dirname, 'icons/logo360x360.png');
+const DASHBOARD_ICON_PATH = path.join(__dirname, 'icons/dashboard.png');
+
 // Information to be displayed in About Dialog
 var aboutWALC;
 
@@ -145,6 +147,10 @@ ipcMain.on('setSettings', (event, values) => {
 
 ipcMain.handle('getIcon', () => {
     return nativeImage.createFromPath(ICON_PATH).toDataURL();
+});
+
+ipcMain.handle('getDahsboardIcon', () => {
+    return nativeImage.createFromPath(DASHBOARD_ICON_PATH).toDataURL();
 });
 
 ipcMain.handle('getStyle', () => {
