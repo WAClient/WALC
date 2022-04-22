@@ -49,6 +49,13 @@ const schema = {
 			type: 'checkbox',
 			depends: 'enabled',
 		},
+		legacyType: {
+			default: false,
+			name: 'Use old notification method',
+			description: 'Enable this if you have problem with the new notification',
+			type: 'checkbox',
+			depends: 'enabled',
+		},
 	},
 	trayIcon: {
 		enabled: {

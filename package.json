@@ -5,8 +5,8 @@
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
-    "clean": "rm -rf dist",
-    "dist": "npm run prod && npm run clean && npm run rebuild-deps && npm run build",
+    "clean": "rm -rf dist && rm -rf public/js/*",
+    "dist": "npm run clean && npm run prod && npm run rebuild-deps && npm run build",
     "build": "electron-builder",
     "rebuild-deps": "electron-rebuild",
     "dev": "npm run development",
@@ -88,6 +88,7 @@
     "electron-store": "^8.0.1",
     "electron-updater": "^4.6.5",
     "electron-window-state": "^5.0.3",
+    "get-pixels": "^3.3.3",
     "get-port-sync": "^1.0.1",
     "is-online": "^9.0.1",
     "lsb-release": "^0.1.0",
@@ -96,6 +97,6 @@
     "puppeteer-in-electron": "^3.0.5",
     "vue-router": "^3.5.3",
     "vuex": "^3.6.2",
-    "whatsapp-web-electron.js": "^1.16.5-1"
+    "whatsapp-web-electron.js": "^1.16.6-1"
   }
 }

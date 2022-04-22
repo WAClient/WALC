@@ -2,12 +2,14 @@ const path = require('path');
 const fs = require('fs');
 const homedir = require('os').homedir();
 const createDesktopShortcut = require('create-desktop-shortcuts');
-const { app, dialog, BrowserWindow, Notification } = require("electron");
+const { app, dialog, BrowserWindow, Notification, nativeImage } = require("electron");
 const windowStateKeeper = require("electron-window-state");
 const settings = require('./settings');
 const pie = require("puppeteer-in-electron");
 const puppeteer = require("puppeteer-core");
 const { Client } = require('whatsapp-web-electron.js');
+const { Notify } = require('./Notify');
+const getPixels = require("get-pixels");
 // const getPortSync = require('get-port-sync');
 
 const ICON_PATH = path.join(__dirname, '../icons/logo360x360.png');
@@ -219,6 +221,63 @@ module.exports = class MainWindow extends BrowserWindow {
 		});
 	}
 
+	async getImageData(dataUrl) {
+		const iconImage = nativeImage.createFromDataURL(dataUrl);
+		const { width, height } = iconImage.getSize();
+		
+		return new Promise((resolve) => {
+			getPixels(iconImage.toPNG(), 'image/png', (err, pixels) => {
+				const imageData = [];
+				if(err) {
+					console.log("Bad image path", err)
+					resolve(null);
+					return;
+				}
+				for (let y = 0; y < pixels.shape[1]; y++) {
+					for (let x = 0; x < pixels.shape[0]; x++) {
+						[0, 1, 2, 3].forEach((i) => {
+							imageData.push(pixels.get(x, y, i));
+						});
+					}
+				}
+
+				resolve({
+					width,
+					height,
+					hasAlpha: true,
+					data: imageData,
+				});
+			});
+		});
+	}
+
+	async chatNotification(options) {
+		const { title, body, icon, tag } = options;
+		const desktopEntry = path.join(homedir, '.local/share/applications/WALC.desktop');
+		const notif = new Notify({
+			summary: title,
+			body,
+			timeout: 5000,
+			appName: 'WALC',
+			hints: {
+				desktopEntry,
+				imageData: await this.getImageData(icon),
+			},
+		});
+
+		notif.addAction('Mark as read', async() => {
+			console.log('marked as read');
+			(await this.whatsapp.getChatById(tag)).sendSeen();
+		});
+
+		notif.addInlineReply('Reply', async (reply) => {
+			console.log('replied', reply);
+			(await this.whatsapp.getChatById(tag)).sendMessage(reply);
+		});
+
+		notif.show();
+	}
+
 	async initWhatsapp() {
 		this.loadURL('about:blank', { userAgent }).then(async () => {
 			const pieBrowser = await pie.connect(app, puppeteer);
@@ -227,11 +286,14 @@ module.exports = class MainWindow extends BrowserWindow {
 			this.whatsapp = new Client(pieBrowser, this);
 			this.whatsappReady = false;
 
-			this.whatsapp.on('ready', () => {
+			this.whatsapp.on('ready', async () => {
 				console.log('Whatsapp client ready');
 				this.whatsappReady = true;
 				this.webContents.send('ready', this._id);
 				this.emit('ready');
+
+				const chats = await this.whatsapp.getChats();
+				console.log(chats[0].id._serialized);
 			});
 
 			this.whatsapp.on("change_battery", (batteryInfo) => {
