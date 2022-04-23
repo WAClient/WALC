@@ -14,11 +14,6 @@ A WhatsApp Desktop client for linux systems. This is an unofficial client. Use h
 
 <hr/>
 
-# WARNING! This repository is not under *ACTIVE* Development
-> You may not get support for your issues but if you are able to fix any issue, feel free to send a PR and I will merge it after review.
-
-<hr/>
-
 ## Releases
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/walc)
 [![Get it from linux-APPS](https://i.imgur.com/YGU3qMJ.png)](https://www.linux-apps.com/p/1383431/)
