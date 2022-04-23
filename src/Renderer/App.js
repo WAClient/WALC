@@ -41,7 +41,7 @@ class App {
 		style.innerHTML = await ipcRenderer.invoke('getStyle');
 		document.head.appendChild(style);
 
-		// this.icon = await ipcRenderer.invoke('getIcon');
+		this.icon = await ipcRenderer.invoke('getIcon');
 		this.dashboard_icon = await ipcRenderer.invoke('getDashboardIcon')
 		Instance.init(this.dashboard_icon);
 		this.renderTray();
