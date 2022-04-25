@@ -265,6 +265,12 @@ module.exports = class MainWindow extends BrowserWindow {
 			},
 		});
 
+		notif.onClick(() => {
+			this.whatsapp.interface.openChatWindow(tag);
+			if(!this.isVisible()) this.show();
+			this.focus();
+		});
+
 		notif.addAction('Mark as read', async() => {
 			console.log('marked as read');
 			(await this.whatsapp.getChatById(tag)).sendSeen();

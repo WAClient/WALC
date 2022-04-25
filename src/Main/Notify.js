@@ -265,6 +265,13 @@ class Notify extends EventEmitter {
     return this;
   }
 
+  onClick(callback) {
+    const actionKey = 'default';
+    this.#config.actions.push(actionKey, actionKey);
+    this.#actionCallbacks.set(actionKey, callback);
+    return this;
+  }
+
   addInlineReply(actionText, callback) {
     const actionKey = 'inline-reply';
     this.#config.actions.push(actionKey, actionText);
