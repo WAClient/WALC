@@ -71,6 +71,7 @@ module.exports = class MainWindow extends BrowserWindow {
 
 		this._id = id;
 		this._name = name
+		this.recentNotification = {};
 		this.initEvents();
 		this.initWhatsapp();
 	}
@@ -251,11 +252,66 @@ module.exports = class MainWindow extends BrowserWindow {
 		});
 	}
 
+	formatNotification(body) {
+		// escape html
+		const escapeMap = {
+			'&': '&amp;',
+			'<': '&lt;',
+			'>': '&gt;',
+		};
+		body = body.replace(/[&<>]/g, (m) => escapeMap[m]);
+
+		// replace *bold* with <b>bold</b>
+		body = body.replace(/(?:^|\W)\*(.+?)\*(?=\W|$)/g, (match, group) => {
+			const extraSpace = (match.startsWith(' ') ? ' ' : '');
+			return extraSpace + `<b>${group}</b>`;
+		});
+
+		// replace _italic_ with <i>italic</i>
+		body = body.replace(/(?:^|\W)_(.+?)_(?=\W|$)/g, (match, group) => {
+			const extraSpace = (match.startsWith(' ') ? ' ' : '');
+			return extraSpace + `<i>${group}</i>`;
+		});
+
+		// autolink
+		body = body.replace(/(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]{2,}\.[\w/\-&?=%.]{2,}/g, (match) => {
+			return `<a href="${match}">${match}</a>`;
+		});
+		return body;
+	}
+
+	groupNotification({ body, tag }) {
+		if(this.recentNotification[tag]) {
+			this.recentNotification[tag].messages.push(body);
+			clearTimeout(this.recentNotification[tag].timer);
+		} else {
+			this.recentNotification[tag] = {
+				id: Math.floor(Math.random() * 999999) + 1,
+				messages: [body],
+				timer: null,
+			}
+		}
+
+		this.recentNotification[tag].timer = setTimeout(() => {
+			delete this.recentNotification[tag]
+		}, 5000);
+
+		body = this.recentNotification[tag].messages.join("\n");
+
+		return {
+			id: this.recentNotification[tag].id,
+			body: this.formatNotification(body),
+		};
+	}
+
 	async chatNotification(options) {
-		const { title, body, icon, tag } = options;
+		const { title, icon, tag } = options;
 		const desktopEntry = path.join(homedir, '.local/share/applications/WALC.desktop');
+		const { id, body } = this.groupNotification(options)
+
 		const notif = new Notify({
 			summary: title,
+			replacesId: id,
 			body,
 			timeout: 5000,
 			appName: 'WALC',
