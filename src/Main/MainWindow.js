@@ -223,6 +223,8 @@ module.exports = class MainWindow extends BrowserWindow {
 	}
 
 	async getImageData(dataUrl) {
+		if(!dataUrl) return;
+		
 		const iconImage = nativeImage.createFromDataURL(dataUrl);
 		const { width, height } = iconImage.getSize();
 		
@@ -253,6 +255,8 @@ module.exports = class MainWindow extends BrowserWindow {
 	}
 
 	formatNotification(body) {
+		if(!body) return;
+		
 		// escape html
 		const escapeMap = {
 			'&': '&amp;',
@@ -281,6 +285,10 @@ module.exports = class MainWindow extends BrowserWindow {
 	}
 
 	groupNotification({ body, tag }) {
+		if(!tag) {
+			return { id: 0, body };
+		}
+		
 		if(this.recentNotification[tag]) {
 			this.recentNotification[tag].messages.push(body);
 			clearTimeout(this.recentNotification[tag].timer);
@@ -296,48 +304,52 @@ module.exports = class MainWindow extends BrowserWindow {
 			delete this.recentNotification[tag]
 		}, 5000);
 
-		body = this.recentNotification[tag].messages.join("\n");
-
 		return {
 			id: this.recentNotification[tag].id,
-			body: this.formatNotification(body),
+			body: this.recentNotification[tag].messages.join("\n"),
 		};
 	}
 
 	async chatNotification(options) {
 		const { title, icon, tag } = options;
-		const desktopEntry = path.join(homedir, '.local/share/applications/WALC.desktop');
 		const { id, body } = this.groupNotification(options)
+		const desktopEntry = path.join(homedir, '.local/share/applications/WALC.desktop');
+		const imageData = await this.getImageData(icon);
 
 		const notif = new Notify({
 			summary: title,
 			replacesId: id,
-			body,
+			body: this.formatNotification(body),
 			timeout: 5000,
 			appName: 'WALC',
 			hints: {
 				desktopEntry,
-				imageData: await this.getImageData(icon),
+				imageData,
+				imagePath: (!imageData ? ICON_PATH : null),
 			},
 		});
 
 		notif.onClick(() => {
-			this.whatsapp.interface.openChatWindow(tag);
+			if(tag) {
+				this.whatsapp.interface.openChatWindow(tag);
+			}
 			if(!this.isVisible()) this.show();
 			this.focus();
 		});
 
-		notif.addAction('Mark as read', async() => {
-			console.log('marked as read');
-			(await this.whatsapp.getChatById(tag)).sendSeen();
-		});
-
-		const canReply = await Notify.supportsInlineReply();
-		if(canReply) {
-			notif.addInlineReply('Reply', async (reply) => {
-				console.log('replied', reply);
-				(await this.whatsapp.getChatById(tag)).sendMessage(reply);
+		if(tag) {
+			notif.addAction('Mark as read', async() => {
+				console.log('marked as read');
+				(await this.whatsapp.getChatById(tag)).sendSeen();
 			});
+
+			const canReply = await Notify.supportsInlineReply();
+			if(canReply) {
+				notif.addInlineReply('Reply', async (reply) => {
+					console.log('replied', reply);
+					(await this.whatsapp.getChatById(tag)).sendMessage(reply);
+				});
+			}
 		}
 
 		notif.show();
