@@ -13,21 +13,21 @@ A WhatsApp Desktop client for linux systems. This is an unofficial client. Use h
 <hr/>
 
 ## Features
-- Tray icon & background running 🏃  
+- **Tray icon & background running** 🏃  
 Close app to tray, unread message badge (with number!), different tray icon when offline
-- Full width ⬅️➡️  
+- **Full width** ⬅️➡️  
 Make WhatsApp occupy all available space on large screen (enable it first in settings)
-- Chat shortcut ⚡  
+- **Chat shortcut** ⚡  
 Use <kbd>Ctrl</kbd>+<kbd>1</kbd> to <kbd>Ctrl</kbd>+<kbd>9</kbd> to switch between your chat quickly
-- Native notification 💬  
+- **Native notification** 💬  
 Proper formatting of message (bold, italic, link), mark as read button, and for KDE >=5.18, inline/quick reply
-- Notification grouping 🗯  
+- **Notification grouping** 🗯  
 Group multiple rapid notification into one. Notifications now wouldn't cover half your screen when someone's angry 💢
-- Offline notification 📶❌   
+- **Offline notification** 📶❌   
 Notifies you when disconnected to network or phone (if you haven't used MD)
-- Mark all chat as read ☑☑  
+- **Mark all chat as read** ☑☑  
 Have too many unread chats with too little time? You can _"read"_ them all at once!
-- App Lock 🔒  
+- **App Lock** 🔒  
 Secure your chat from prying eyes 👀! _Warning:_ it's not very safe, but it should deter most people away
 
 and many more...
