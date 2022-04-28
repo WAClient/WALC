@@ -325,7 +325,6 @@ module.exports = class MainWindow extends BrowserWindow {
 			hints: {
 				desktopEntry,
 				imageData,
-				imagePath: (!imageData ? ICON_PATH : null),
 			},
 		});
 
