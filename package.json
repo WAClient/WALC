@@ -1,6 +1,6 @@
 {
   "name": "walc",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.",
   "main": "src/main.js",
   "scripts": {
@@ -33,7 +33,7 @@
   "author": "cstayyab <cstayyab@gmail.com> (https://cstayyab.com)",
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/cstayyab/WALC/issues"
+    "url": "https://github.com/WAClient/WALC/issues"
   },
   "build": {
     "appId": "com.cstayyab.linux.unofficial.whatsapp",
@@ -77,7 +77,6 @@
     "vuetifyjs-mix-extension": "0.0.20",
     "webpack": "^5.72.0"
   },
-  "homepage": "https://cstayyab.com/projects/walc",
   "dependencies": {
     "axios": "^0.21.4",
     "bcrypt": "^5.0.1",

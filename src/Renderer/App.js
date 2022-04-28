@@ -47,6 +47,7 @@ class App {
 		if(window.Store?.Chat) {
 			window.Store.Chat.on('change:unreadCount', () => this.renderTray());
 			window.Store.Chat.on('change:muteExpiration', () => this.renderTray());
+			window.Store.AppState?.on('change:state', (...args) => this.appStateChange(...args));
 		}
 
 		window.WALC = {
@@ -114,6 +115,21 @@ class App {
 			ipcRenderer.send('renderTray', canvas.toDataURL());
 		};
 		logo.src = this.icon;
+	}
+
+	appStateChange(event, state) {
+		if (['OPENING', 'DISCONNECTED', 'TIMEOUT'].includes(state)) {
+			setTimeout(() => {
+				if (state === window.Store.AppState.state) {
+					new Notification('WALC disconnected', {
+						body: 'Please check your connection.',
+					});
+				}
+				this.renderTray();
+			}, 5000);
+		} else if (state === 'CONNECTED') {
+			this.renderTray();
+		}
 	}
 
 	setFullWidth(status) {
