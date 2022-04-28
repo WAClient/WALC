@@ -62,7 +62,7 @@ class App {
 		const badge = {
 			x: 180,
 			y: 180,
-			radius: 120,
+			radius: 139,
 			font: 172,
 			fontSmall: 124,
 		};
