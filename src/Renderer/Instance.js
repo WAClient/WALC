@@ -64,11 +64,8 @@ class Instance {
 
 		if (isDark) {
 			this.image.style.webkitFilter = "invert(82%) sepia(8%) saturate(328%) hue-rotate(158deg) brightness(90%) contrast(89%)";
-			console.log("DARK"); 
 		} else {
 			this.image.style.webkitFilter = "invert(38%) sepia(3%) saturate(2487%) hue-rotate(159deg) brightness(95%) contrast(85%)";
-			console.log("LIGHT");
-			
 		}
 	}
 
