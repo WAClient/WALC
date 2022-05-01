@@ -35,12 +35,12 @@ class Instance {
 
 	installDashboardIcon(icon) {
 		const container = document.querySelector('#side header div:first-child');
-		const image = new Image();
+		this.image = new Image();
+		this.image.src = icon;
 		container.style.display = 'flex';
 		container.style.alignItems = 'center';
-		image.src = icon;
-		image.title = 'Open Dashboard';
-		image.style = `
+		this.image.title = 'Open Dashboard';
+		this.image.style = `
 			display: block;
 			margin-left: auto;
 			margin-right: 16px;
@@ -48,27 +48,49 @@ class Instance {
 			height: 30px;
 			cursor: pointer;
 		`;
-		image.addEventListener('click', () => {
+
+		this.image.addEventListener('click', () => {
 			this.exec('openDashboard');
 		});
-		image.addEventListener('contextmenu', () => {
+		this.image.addEventListener('contextmenu', () => {
 			this.exec('dashboard-context-menu');
 		});
-		container.appendChild(image);
+		container.appendChild(this.image);
+	}
+
+
+
+	setDashboardIconTheme(isDark) {
+
+		if (isDark) {
+			this.image.style.webkitFilter = "invert(82%) sepia(8%) saturate(328%) hue-rotate(158deg) brightness(90%) contrast(89%)";
+			console.log("DARK"); 
+		} else {
+			this.image.style.webkitFilter = "invert(38%) sepia(3%) saturate(2487%) hue-rotate(159deg) brightness(95%) contrast(85%)";
+			console.log("LIGHT");
+			
+		}
 	}
 
 	observeTheme() {
-		this.exec('setDarkTheme', document.body.classList.contains('dark'));
-		const observer = new MutationObserver(() => {
-			this.exec('setDarkTheme', document.body.classList.contains('dark'));
+		const isDark = document.body.classList.contains('dark');
+    	this.exec('setDarkTheme', isDark);
+    	this.setDashboardIconTheme(isDark);
+
+    	const observer = new MutationObserver(() => {
+        const isDark = document.body.classList.contains('dark');
+        this.exec('setDarkTheme', isDark);
+        this.setDashboardIconTheme(isDark);
+
 		});
+
+	    observer.observe(document.body, {
+	        attributes: true, 
+	        attributeFilter: ['class'],
+	        childList: false, 
+	        characterData: false
+	    });
 	
-		observer.observe(document.body, {
-			attributes: true, 
-			attributeFilter: ['class'],
-			childList: false, 
-			characterData: false
-		});
 	}
 }
 
