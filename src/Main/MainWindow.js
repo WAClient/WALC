@@ -12,7 +12,7 @@ const { Notify } = require('./Notify');
 const getPixels = require("get-pixels");
 // const getPortSync = require('get-port-sync');
 
-const ICON_PATH = path.join(__dirname, '../icons/logo360x360.png');
+const ICON_PATH = path.join(__dirname, '../icons/logo256x256.png');
 const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36';
 
 // notifications template
@@ -427,7 +427,7 @@ module.exports = class MainWindow extends BrowserWindow {
 		const iconPath = path.join(iconDir, "logo360x360.png");
 		fs.mkdirSync(shortcutDir, { recursive: true });
 		fs.mkdirSync(iconDir, { recursive: true });
-		fs.copyFileSync(path.join(__dirname, "../icons/logo360x360.png"), iconPath);
+		fs.copyFileSync(ICON_PATH, iconPath);
 		const shortcutCreated = createDesktopShortcut({
 			onlyCurrentOS: true,
 			customLogger: (msg, error) => {
