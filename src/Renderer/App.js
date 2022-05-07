@@ -12,6 +12,11 @@ class App {
 		ipcRenderer.on('renderTray', () => this.renderTray());
 		ipcRenderer.on('ready', () => this.init());
 		ipcRenderer.on('setFullWidth', (e, status) => this.setFullWidth(status));
+
+		window.WALC = {
+			load: () => Instance.exec('main.initWhatsapp'),
+			renderTray: () => this.renderTray(),
+		};
 	}
 
 	awaitApp() {
@@ -49,11 +54,6 @@ class App {
 			window.Store.Chat.on('change:muteExpiration', () => this.renderTray());
 			window.Store.AppState?.on('change:state', (...args) => this.appStateChange(...args));
 		}
-
-		window.WALC = {
-			load: () => Instance.exec('main.initWhatsapp'),
-			renderTray: () => this.renderTray(),
-		};
 
 		console.log('WALC Initialized');
 	}
