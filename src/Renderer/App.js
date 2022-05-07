@@ -47,7 +47,8 @@ class App {
 		document.head.appendChild(style);
 
 		this.icon = await ipcRenderer.invoke('getIcon');
-		Instance.init(this.icon);
+		this.dashboard_icon = await ipcRenderer.invoke('getDashboardIcon')
+		Instance.init(this.dashboard_icon);
 		this.renderTray();
 		if(window.Store?.Chat) {
 			window.Store.Chat.on('change:unreadCount', () => this.renderTray());
@@ -62,7 +63,7 @@ class App {
 		const badge = {
 			x: 180,
 			y: 180,
-			radius: 120,
+			radius: 139,
 			font: 172,
 			fontSmall: 124,
 		};
