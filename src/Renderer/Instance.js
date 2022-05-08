@@ -35,8 +35,7 @@ class Instance {
 
 	installDashboardIcon(icon) {
 		const container = document.querySelector('#side header div:first-child');
-		this.image = new Image();
-		this.image.src = icon;
+		this.image = document.createElement('div');
 		container.style.display = 'flex';
 		container.style.alignItems = 'center';
 		this.image.title = 'Open Dashboard';
@@ -47,7 +46,9 @@ class Instance {
 			width: 30px;
 			height: 30px;
 			cursor: pointer;
+			color: var(--panel-header-icon);
 		`;
+		this.image.innerHTML = icon;
 
 		this.image.addEventListener('click', () => {
 			this.exec('openDashboard');
@@ -58,35 +59,21 @@ class Instance {
 		container.appendChild(this.image);
 	}
 
-
-
-	setDashboardIconTheme(isDark) {
-
-		if (isDark) {
-			this.image.style.webkitFilter = "invert(82%) sepia(8%) saturate(328%) hue-rotate(158deg) brightness(90%) contrast(89%)";
-		} else {
-			this.image.style.webkitFilter = "invert(38%) sepia(3%) saturate(2487%) hue-rotate(159deg) brightness(95%) contrast(85%)";
-		}
-	}
-
 	observeTheme() {
 		const isDark = document.body.classList.contains('dark');
-    	this.exec('setDarkTheme', isDark);
-    	this.setDashboardIconTheme(isDark);
+		this.exec('setDarkTheme', isDark);
 
-    	const observer = new MutationObserver(() => {
-        const isDark = document.body.classList.contains('dark');
-        this.exec('setDarkTheme', isDark);
-        this.setDashboardIconTheme(isDark);
-
+		const observer = new MutationObserver(() => {
+			const isDark = document.body.classList.contains('dark');
+			this.exec('setDarkTheme', isDark);
 		});
 
-	    observer.observe(document.body, {
-	        attributes: true, 
-	        attributeFilter: ['class'],
-	        childList: false, 
-	        characterData: false
-	    });
+		observer.observe(document.body, {
+			attributes: true, 
+			attributeFilter: ['class'],
+			childList: false, 
+			characterData: false
+		});
 	
 	}
 }

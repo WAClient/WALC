@@ -12,6 +12,11 @@ class App {
 		ipcRenderer.on('renderTray', () => this.renderTray());
 		ipcRenderer.on('ready', () => this.init());
 		ipcRenderer.on('setFullWidth', (e, status) => this.setFullWidth(status));
+
+		window.WALC = {
+			load: () => Instance.exec('main.initWhatsapp'),
+			renderTray: () => this.renderTray(),
+		};
 	}
 
 	awaitApp() {
@@ -51,11 +56,6 @@ class App {
 			window.Store.AppState?.on('change:state', (...args) => this.appStateChange(...args));
 		}
 
-		window.WALC = {
-			load: () => Instance.exec('main.initWhatsapp'),
-			renderTray: () => this.renderTray(),
-		};
-
 		console.log('WALC Initialized');
 	}
 
@@ -63,7 +63,7 @@ class App {
 		const badge = {
 			x: 180,
 			y: 180,
-			radius: 139,
+			radius: 115,
 			font: 172,
 			fontSmall: 124,
 		};
