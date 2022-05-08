@@ -3,6 +3,8 @@ const { BrowserWindow, Menu } = require("electron");
 const windowStateKeeper = require("electron-window-state");
 const settings = require('./settings');
 
+const ICON_PATH = path.join(__dirname, '../icons/logo256x256.png');
+
 module.exports = class DashboardWindow extends BrowserWindow {
 	constructor(id, name, options = {}) {
 		// Load the previous state with fallback to defaults
@@ -18,7 +20,7 @@ module.exports = class DashboardWindow extends BrowserWindow {
 			width: windowState.width,
 			height: windowState.height,
             title: `${name} Dashboard`,
-            icon: path.join(__dirname, 'icons/logo360x360.png'),
+			icon: ICON_PATH,
             show: false,
             webPreferences: {
                 nodeIntegration: true,

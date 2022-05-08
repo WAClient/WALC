@@ -12,9 +12,9 @@ class Instance {
 		return ipcRenderer.invoke(`instance.${key}`, this.id, ...args);
 	}
 
-	init(icon) {
+	init(dashboard_icon) {
 		this.initNotification();
-		this.installAppIcon(icon);
+		this.installDashboardIcon(dashboard_icon);
 		this.observeTheme();
 	}
 
@@ -33,42 +33,48 @@ class Instance {
 		}
 	}
 
-	installAppIcon(icon) {
+	installDashboardIcon(icon) {
 		const container = document.querySelector('#side header div:first-child');
-		const image = new Image();
+		this.image = document.createElement('div');
 		container.style.display = 'flex';
 		container.style.alignItems = 'center';
-		image.src = icon;
-		image.title = 'Open Dashboard';
-		image.style = `
+		this.image.title = 'Open Dashboard';
+		this.image.style = `
 			display: block;
 			margin-left: auto;
 			margin-right: 16px;
 			width: 30px;
 			height: 30px;
 			cursor: pointer;
+			color: var(--panel-header-icon);
 		`;
-		image.addEventListener('click', () => {
+		this.image.innerHTML = icon;
+
+		this.image.addEventListener('click', () => {
 			this.exec('openDashboard');
 		});
-		image.addEventListener('contextmenu', () => {
+		this.image.addEventListener('contextmenu', () => {
 			this.exec('dashboard-context-menu');
 		});
-		container.appendChild(image);
+		container.appendChild(this.image);
 	}
 
 	observeTheme() {
-		this.exec('setDarkTheme', document.body.classList.contains('dark'));
+		const isDark = document.body.classList.contains('dark');
+		this.exec('setDarkTheme', isDark);
+
 		const observer = new MutationObserver(() => {
-			this.exec('setDarkTheme', document.body.classList.contains('dark'));
+			const isDark = document.body.classList.contains('dark');
+			this.exec('setDarkTheme', isDark);
 		});
-	
+
 		observer.observe(document.body, {
 			attributes: true, 
 			attributeFilter: ['class'],
 			childList: false, 
 			characterData: false
 		});
+	
 	}
 }
 
