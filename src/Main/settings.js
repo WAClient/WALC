@@ -64,7 +64,7 @@ const schema = {
 			type: 'switch',
 		},
 		closeToTray: {
-			default: false,
+			default: true,
 			name: 'Close to Tray',
 			description: 'If enabled, WALC will be hidden everytime you want to close it.',
 			type: 'checkbox',

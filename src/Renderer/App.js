@@ -50,6 +50,8 @@ class App {
 		this.dashboard_icon = await ipcRenderer.invoke('getDashboardIcon')
 		Instance.init(this.dashboard_icon);
 		this.renderTray();
+		this.setFullWidth(Settings.get('general.fullWidth.value'));
+
 		if(window.Store?.Chat) {
 			window.Store.Chat.on('change:unreadCount', () => this.renderTray());
 			window.Store.Chat.on('change:muteExpiration', () => this.renderTray());
