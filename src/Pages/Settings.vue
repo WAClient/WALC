@@ -40,10 +40,6 @@ export default {
           text: 'App Lock',
           icon: mdiLock,
           to: '/settings/app-lock',
-        }, {
-          text: 'Advanced',
-          icon: mdiTune,
-          to: '/settings/advanced',
         },
       ],
     }
