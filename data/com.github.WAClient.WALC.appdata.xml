@@ -48,8 +48,10 @@
     </ul>
   </description>
 
-  <url type="bugtracker">https://github.com/WAClient/WALC/issues</url>
+  <launchable type="desktop-id">com.github.WAClient.WALC.desktop</launchable>
+
   <url type="homepage">https://github.com/WAClient/WALC</url>
+  <url type="bugtracker">https://github.com/WAClient/WALC/issues</url>
 
   <releases>
     <release version="1.0" date="2022-05-28" />
@@ -74,7 +76,10 @@
 
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/WAClient/WALC/main/data/screenshots/screenshot-1.png</image>
+      <image>https://raw.githubusercontent.com/WAClient/WALC/master/data/screenshots/screenshot-1.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/WAClient/WALC/master/data/screenshots/screenshot-2.png</image>
     </screenshot>
   </screenshots>
 

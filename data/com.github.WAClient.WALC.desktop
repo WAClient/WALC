@@ -5,7 +5,6 @@ Terminal=false
 Type=Application
 Icon=com.github.WAClient.WALC
 Comment=An unofficial WhatsApp desktop client for Linux
-GenericName=WhatsApp
 Categories=Network;Chat;InstantMessaging;
 StartupWMClass=walc
 StartupNotify=true
