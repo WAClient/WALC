@@ -50,6 +50,8 @@ class App {
 		this.dashboard_icon = await ipcRenderer.invoke('getDashboardIcon')
 		Instance.init(this.dashboard_icon);
 		this.renderTray();
+		this.setFullWidth(Settings.get('general.fullWidth.value'));
+
 		if(window.Store?.Chat) {
 			window.Store.Chat.on('change:unreadCount', () => this.renderTray());
 			window.Store.Chat.on('change:muteExpiration', () => this.renderTray());
@@ -61,11 +63,11 @@ class App {
 
 	renderTray() {
 		const badge = {
-			x: 180,
-			y: 180,
-			radius: 115,
-			font: 172,
-			fontSmall: 124,
+			x: 128,
+			y: 128,
+			radius: 80,
+			font: 160,
+			fontSmall: 112,
 		};
 		let unread = 0;
 		const countMuted = Settings.get('trayIcon.countMuted.value');

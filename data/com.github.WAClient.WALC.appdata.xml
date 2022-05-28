@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>com.github.WAClient.WALC</id>
+  <name>WALC</name>
+  <summary>WhatsApp Linux Client (unofficial)</summary>
+
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>GPL-3.0+</project_license>
+
+  <description>
+    <p>
+      A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.
+    </p>
+    <p>Features</p>
+    <ul>
+      <li>
+        Tray icon &amp; background running 🏃
+        Close app to tray, unread message badge (with number!), different tray icon when offline
+      </li>
+      <li>
+        Full width ⬅️➡️
+        Make WhatsApp occupy all available space on large screen (enable it first in settings)
+      </li>
+      <li>
+        Chat shortcut ⚡
+        Use Ctrl + 1 to Ctrl + 9 to switch between your chat quickly
+      </li>
+      <li>
+        Native notification 💬
+        Proper formatting of message (bold, italic, link), mark as read button, and for KDE >=5.18, inline/quick reply
+      </li>
+      <li>
+        Notification grouping 🗯
+        Group multiple rapid notification into one. Notifications now wouldn't cover half your screen when someone's angry 💢
+      </li>
+      <li>
+        Offline notification 📶❌
+        Notifies you when disconnected to network or phone (if you haven't used MD)
+      </li>
+      <li>
+        Mark all chat as read ☑☑
+        Have too many unread chats with too little time? You can "read" them all at once!
+      </li>
+      <li>
+        App Lock 🔒
+        Secure your chat from prying eyes 👀! Warning: it's not very safe, but it should deter most people away
+      </li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">com.github.WAClient.WALC.desktop</launchable>
+
+  <url type="homepage">https://github.com/WAClient/WALC</url>
+  <url type="bugtracker">https://github.com/WAClient/WALC/issues</url>
+
+  <releases>
+    <release version="1.0" date="2022-05-28" />
+  </releases>
+
+  <requires>
+    <display_length compare="ge">medium</display_length>
+  </requires>
+
+  <recommends>
+    <control>keyboard</control>
+    <control>pointing</control>
+    <control>touch</control>
+  </recommends>
+
+  <content_rating type="oars-1.1">
+    <content_attribute id="social-chat">intense</content_attribute>
+    <content_attribute id="social-info">intense</content_attribute>
+    <content_attribute id="social-audio">intense</content_attribute>
+    <content_attribute id="social-contacts">intense</content_attribute>
+  </content_rating>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/WAClient/WALC/master/data/screenshots/screenshot-1.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/WAClient/WALC/master/data/screenshots/screenshot-2.png</image>
+    </screenshot>
+  </screenshots>
+
+  <developer_name>WALC Team</developer_name>
+</component>
