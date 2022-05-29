@@ -35,6 +35,8 @@ and many more...
 ## Releases
 [![Get it from linux-APPS](https://i.imgur.com/YGU3qMJ.png)](https://www.linux-apps.com/p/1383431/)
 
+[![Get it from The AUR](https://i.imgur.com/YGU3qMJ.png)](http://aur.archlinux.org/packages/walc)
+
 To download an AppImage, please goto [Latest Release](https://github.com/WAClient/WALC/releases/latest) Page
 
 ## Using  WALC - Prebuilt AppImage 
@@ -43,9 +45,14 @@ To download an AppImage, please goto [Latest Release](https://github.com/WAClien
 * When you open it first time, you will be asked for integration, click 'Yes' to add it to Applications menu.
 
 ## Manual Compilation and Usage
-If you want to get the version which is not yet released, follow the following steps 
+
+If you want to compile the code from its source (applies to the AUR version), you will need the following dependencies:
+
+- Nodejs **<= v16** - later versions such as (17 and 18) crash in the install process, this version is an LTS (called `nodejs-lts-gallium`)
+- npm
+- git (you **do not need** `git` when installing WALC form the AUR)
+
 ```bash
-# You must have git, npm and node installed
 
 # clone the repo
 git clone https://github.com/WAClient/WALC.git
