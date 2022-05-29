@@ -75,10 +75,10 @@ npm start
 ```
 
 ## Feature Requests
-To suggest any new feature, please start a new discussion in the [Feature Requests](https://github.com/WAClient/WALC/discussions?discussions_q=category%3A%22Feature+Requests%22) section of [WALC Discusions](https://github.com/WAClient/WALC/discussions) 
+To suggest any new feature, please start a new discussion in the [Feature Requests](https://github.com/WAClient/WALC/discussions?discussions_q=category%3A%22Feature+Requests%22) section of [WALC Discussions](https://github.com/WAClient/WALC/discussions) 
 
 ## Troubleshooting
-If you are having any problems relating to the usage, building or deploying of WALC please reach out to our community in [Troubleshoting](https://github.com/WAClient/WALC/discussions?discussions_q=category%3ATroubleshooting) section of [WALC Discusions](https://github.com/WAClient/WALC/discussions). Before starting a new discussion, please please check the previously created posts as other people might be having the same problem as yours or someone might have already addressed and answered the problem you are facing.
+If you are having any problems relating to the usage, building or deploying of WALC please reach out to our community in [Troubleshoting](https://github.com/WAClient/WALC/discussions?discussions_q=category%3ATroubleshooting) section of [WALC Discussions](https://github.com/WAClient/WALC/discussions). Before starting a new discussion, please please check the previously created posts as other people might be having the same problem as yours or someone might have already addressed and answered the problem you are facing.
 
 ## Contributions
 * You can refer to the Issues section to troubleshoot a problem and submit a PR.
