@@ -33,9 +33,10 @@ Secure your chat from prying eyes 👀! _Warning:_ it's not very safe, but it sh
 and many more...
 
 ## Releases
-[![Get it from linux-APPS](https://i.imgur.com/YGU3qMJ.png)](https://www.linux-apps.com/p/1383431/)
+[![Get it from linux-APPS](https://i.imgur.com/YGU3qMJ.png)](https://www.linux-apps.com/p/1383431/) 
+[![Get it from The AUR](https://user-images.githubusercontent.com/79008923/170872594-afc72d2d-1a20-4793-9e1a-48b79dfe730d.png)](http://aur.archlinux.org/packages/walc)
 
-[![Get it from The AUR](https://i.imgur.com/YGU3qMJ.png)](http://aur.archlinux.org/packages/walc)
+
 
 To download an AppImage, please goto [Latest Release](https://github.com/WAClient/WALC/releases/latest) Page
 
