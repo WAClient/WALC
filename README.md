@@ -34,11 +34,9 @@ and many more...
 
 ## Releases
 [![Get it from linux-APPS](https://i.imgur.com/YGU3qMJ.png)](https://www.linux-apps.com/p/1383431/) 
-[![Get it from The AUR](https://user-images.githubusercontent.com/79008923/170872594-afc72d2d-1a20-4793-9e1a-48b79dfe730d.png =182x56)](http://aur.archlinux.org/packages/walc)
+[![Get it from The AUR](https://user-images.githubusercontent.com/79008923/170873436-821df1d3-b45f-441b-b756-d81c6ac8d474.png)](http://aur.archlinux.org/packages/walc)
 
-
-
-To download an AppImage, please goto [Latest Release](https://github.com/WAClient/WALC/releases/latest) Page
+To download an AppImage or a DEB installer file, please goto [Latest Release](https://github.com/WAClient/WALC/releases/latest) Page
 
 ## Using  WALC - Prebuilt AppImage 
 * Download the latest AppImage in ~/.local/bin which is a recommended location for AppImages
@@ -53,24 +51,26 @@ If you want to compile the code from its source (applies to the AUR version), yo
 - npm
 - git (you **do not need** `git` when installing WALC form the AUR)
 
+After that you must:
+
 ```bash
 
-# clone the repo
+# Clone the repo
 git clone https://github.com/WAClient/WALC.git
 
-#Move to WALC directory
+# Move to WALC directory
 cd WALC
 
-# install dependencies
+# Install the dependencies
 npm install
 
-# build assets
+# Build the assets
 npm run dev
 
-# or alternatively to watch for changes
+# Or alternatively to watch for changes
 npm run watch
 
-# start the app
+# And to start the app
 npm start
 ```
 
