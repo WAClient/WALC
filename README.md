@@ -14,7 +14,7 @@ A WhatsApp Desktop client for linux systems. This is an unofficial client. Use h
 
 ## Features
 - **WhatsApp Multi Device** 📱🖥️  
-Use whatsApp in multiple device
+Full support for the new WhatsApp Multi Device feature!
 - **Tray icon & background running** 🏃  
 Close app to tray, unread message badge (with number!), different tray icon when offline
 - **Full width** ⬅️➡️  
