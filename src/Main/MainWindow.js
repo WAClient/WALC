@@ -311,14 +311,15 @@ module.exports = class MainWindow extends BrowserWindow {
 	}
 
 	async chatNotification(options) {
-		const { title, icon, tag } = options;
-		const { id, body } = this.groupNotification(options)
+		// FIXME: group notification is disabled cause it could send multiple reply when notification is grouped
+		const { title, icon, tag, body } = options;
+		// const { id, body } = this.groupNotification(options)
 		const desktopEntry = path.join(homedir, '.local/share/applications/WALC.desktop');
 		const imageData = await this.getImageData(icon);
 
 		const notif = new Notify({
 			summary: title,
-			replacesId: id,
+			// replacesId: id,
 			body: this.formatNotification(body),
 			timeout: 5000,
 			appName: 'WALC',
