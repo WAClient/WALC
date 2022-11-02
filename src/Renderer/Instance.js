@@ -34,7 +34,7 @@ class Instance {
 	}
 
 	installDashboardIcon(icon) {
-		const container = document.querySelector('#side header div:first-child');
+		const container = document.querySelector('[data-testid=chatlist-header] div:first-child');
 		this.image = document.createElement('div');
 		container.style.display = 'flex';
 		container.style.alignItems = 'center';
