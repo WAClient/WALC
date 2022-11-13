@@ -256,7 +256,16 @@ module.exports = class MainWindow extends BrowserWindow {
 
 	formatNotification(body) {
 		if(!body) return;
-		
+
+		// store link before formatting it later
+		// to prevent & from getting replaced
+		const links = [];
+		body = body.replace(/(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]{2,}\.[\w/\-&?=%.]{2,}/g, (match) => {
+			const str = `%{{links.${links.length}}}%`;
+			links.push(match);
+			return str;
+		});
+
 		// escape html
 		const escapeMap = {
 			'&': '&amp;',
@@ -277,10 +286,12 @@ module.exports = class MainWindow extends BrowserWindow {
 			return extraSpace + `<i>${group}</i>`;
 		});
 
-		// autolink
-		body = body.replace(/(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]{2,}\.[\w/\-&?=%.]{2,}/g, (match) => {
-			return `<a href="${match}">${match}</a>`;
-		});
+		// put link back
+		body = body.replace(/%{{links\.(\d)}}%/g, (match, group) => {
+			const link = links[group];
+			return `<a href="${link}">${link.replace('&', '&amp;')}</a>`;
+		})
+
 		return body;
 	}
 
@@ -288,7 +299,7 @@ module.exports = class MainWindow extends BrowserWindow {
 		if(!tag) {
 			return { id: 0, body };
 		}
-		
+
 		if(this.recentNotification[tag]) {
 			this.recentNotification[tag].messages.push(body);
 			clearTimeout(this.recentNotification[tag].timer);
@@ -297,6 +308,11 @@ module.exports = class MainWindow extends BrowserWindow {
 				id: Math.floor(Math.random() * 999999) + 1,
 				messages: [body],
 				timer: null,
+				triggeredActions: {
+					click: false,
+					read: false,
+					reply: false,
+				},
 			}
 		}
 
@@ -310,16 +326,23 @@ module.exports = class MainWindow extends BrowserWindow {
 		};
 	}
 
+	shouldTriggerAction(tag, action) {
+		if (!tag) return true;
+		const { triggeredActions } = this.recentNotification[tag];
+		const triggered = triggeredActions[action];
+		triggeredActions[action] = true;
+		return !triggered;
+	}
+
 	async chatNotification(options) {
-		// FIXME: group notification is disabled cause it could send multiple reply when notification is grouped
-		const { title, icon, tag, body } = options;
-		// const { id, body } = this.groupNotification(options)
+		const { title, icon, tag } = options;
+		const { id, body } = this.groupNotification(options)
 		const desktopEntry = path.join(homedir, '.local/share/applications/WALC.desktop');
 		const imageData = await this.getImageData(icon);
 
 		const notif = new Notify({
 			summary: title,
-			// replacesId: id,
+			replacesId: id,
 			body: this.formatNotification(body),
 			timeout: 5000,
 			appName: 'WALC',
@@ -329,7 +352,9 @@ module.exports = class MainWindow extends BrowserWindow {
 			},
 		});
 
-		notif.onClick(() => {
+		notif.setDefaultAction(() => {
+			if (!this.shouldTriggerAction(tag, 'click')) return;
+			// console.log('notification clicked');
 			if(tag) {
 				this.whatsapp.interface.openChatWindow(tag);
 			}
@@ -339,14 +364,17 @@ module.exports = class MainWindow extends BrowserWindow {
 
 		if(tag) {
 			notif.addAction('Mark as read', async() => {
-				console.log('marked as read');
+				if (!this.shouldTriggerAction(tag, 'read')) return;
+				// console.log('marked as read');
 				(await this.whatsapp.getChatById(tag)).sendSeen();
 			});
 
-			const canReply = await Notify.supportsInlineReply();
+			const capabilities = await Notify.supportedCapabilities();
+			const canReply = capabilities.includes('inline-reply');
 			if(canReply) {
-				notif.addInlineReply('Reply', async (reply) => {
-					console.log('replied', reply);
+				notif.addAction('Reply', 'inline-reply', async (reply) => {
+					if (!this.shouldTriggerAction(tag, 'reply')) return;
+					// console.log('replied', reply);
 					(await this.whatsapp.getChatById(tag)).sendMessage(reply);
 				});
 			}
@@ -370,11 +398,11 @@ module.exports = class MainWindow extends BrowserWindow {
 				this.emit('ready');
 			});
 
-			this.whatsapp.on("change_battery", (batteryInfo) => {
-				if (batteryInfo.battery <= 15 && batteryInfo.battery % 5 == 0 && batteryInfo.plugged == false) {
-					this.notify('lowBattery');
-				}
-			});
+			// this.whatsapp.on("change_battery", (batteryInfo) => {
+			// 	if (batteryInfo.battery <= 15 && batteryInfo.battery % 5 == 0 && batteryInfo.plugged == false) {
+			// 		this.notify('lowBattery');
+			// 	}
+			// });
 
 			this.whatsapp.on("message", async (msg) => {
 				if (settings.get("notification.newStatus.value")) {
