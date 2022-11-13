@@ -21,7 +21,7 @@ class App {
 
 	awaitApp() {
 		const observer = new MutationObserver(() => {
-			const sidebar = document.querySelector('#app [data-testid=chatlist-header] header');
+			const sidebar = document.querySelector('#app [data-testid=chatlist-header]');
 			if(sidebar) {
 				setTimeout(() => this.init(), 1000);
 				observer.disconnect();
