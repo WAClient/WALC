@@ -1,11 +1,21 @@
 const EventEmitter = require('events');
 const { sessionBus: SessionBus, Variant } = require('dbus-next');
+const checkTypes = require('./utils/checkTypes');
+
+const ActionInvokedSymbol = Symbol('actionInvoked');
+const ActionEvents = Object.freeze({
+  ActionInvoked: 'ActionInvoked',
+  NotificationClosed: 'NotificationClosed',
+  NotificationReplied: 'NotificationReplied',
+});
+const ActionKeys = Object.freeze({
+  DEFAULT: 'default',
+});
 
 let externalSessionBus;
 let selfSessionBus;
 let Notifications;
 let getInterfaceStat = false;
-let supportsInlineReply;
 const notificationCounter = [];
 
 const Config = {
@@ -29,27 +39,23 @@ const disconnectSessionBus = function disconnectSessionBus() {
 };
 
 const actionInvoked = function actionInvoked(id, actionKey) {
-  notifierEmitter.emit(`ActionInvoked:${id}`, actionKey);
+  notifierEmitter.emit(`${ActionEvents.ActionInvoked}:${id}`, actionKey);
 };
 
 const notificationClosed = function notificationClosed(id, reason) {
-  notifierEmitter.emit(`NotificationClosed:${id}`, reason);
+  notifierEmitter.emit(`${ActionEvents.NotificationClosed}:${id}`, reason);
 };
 
-const notificationReplied = function notificationReplied(id, reply) {
-  notifierEmitter.emit(`NotificationReplied:${id}`, reply);
+const notificationReplied = function notificationReplied(id, message) {
+  notifierEmitter.emit(`${ActionEvents.NotificationReplied}:${id}`, message);
 };
 
 const bindNotifications = function bindNotifications(notificationInterface) {
   // Since the NotificationClosed event will fire when any notification is closed
   // using ID to trigger the event here allows us to use once() elsewhere without binding too many events.
-  notificationInterface.on('ActionInvoked', actionInvoked);
-  notificationInterface.on('NotificationClosed', notificationClosed);
-  Notify.supportsInlineReply().then((supported) => {
-    if(supported) {
-      notificationInterface.on('NotificationReplied', notificationReplied);
-    }
-  });
+  notificationInterface.on(ActionEvents.ActionInvoked, actionInvoked);
+  notificationInterface.on(ActionEvents.NotificationClosed, notificationClosed);
+  notificationInterface.on(ActionEvents.NotificationReplied, notificationReplied);
   Notifications = notificationInterface;
   return Notifications;
 };
@@ -58,9 +64,9 @@ const unsetNotifications = function unsetNotifications() {
   if (!Notifications) {
     return;
   }
-  Notifications.off('ActionInvoked', actionInvoked);
-  Notifications.off('NotificationClosed', notificationClosed);
-  Notifications.off('NotificationReplied', notificationReplied);
+  Notifications.off(ActionEvents.ActionInvoked, actionInvoked);
+  Notifications.off(ActionEvents.NotificationClosed, notificationClosed);
+  Notifications.off(ActionEvents.NotificationReplied, notificationReplied);
   Notifications = undefined;
 };
 
@@ -69,7 +75,7 @@ const getSessionBus = function getSessionBus() {
     return externalSessionBus;
   }
   if (!selfSessionBus) {
-    selfSessionBus = SessionBus();
+    selfSessionBus = SessionBus({ busAddress: process.env.DBUS_SESSION_BUS_ADDRESS });
   }
   return selfSessionBus;
 };
@@ -145,40 +151,21 @@ notifierEmitter.on('pop', () => {
   }
 });
 
-const actionInvokedSymbol = Symbol('actionInvoked');
-
 class Notify extends EventEmitter {
   #id = 0;
 
   #status = 0;
 
-  #actionCallbacks = new Map();
+  #actions = new Map();
 
   #config = {};
 
-  [actionInvokedSymbol](actionKey) {
-    const callback = this.#actionCallbacks.get(actionKey);
-    if (callback) {
-      callback();
+  // NodeJS 12 private method not supported
+  [ActionInvokedSymbol](key, ...args) {
+    const action = this.#actions.get(key);
+    if (typeof action.callback === 'function') {
+      action.callback(...args);
     }
-  }
-
-  static supportsInlineReply() {
-    return new Promise((resolve, reject) => {
-      if(typeof supportsInlineReply !== 'undefined') {
-        return resolve(supportsInlineReply);
-      }
-      getInterface()
-        .then((i) => {
-          i.GetCapabilities()
-            .then((capabilities) => {
-              supportsInlineReply = capabilities.includes('inline-reply');
-              resolve(supportsInlineReply);
-            })
-            .catch(reject);
-        })
-        .catch(reject);
-    });
   }
 
   get id() {
@@ -191,31 +178,46 @@ class Notify extends EventEmitter {
 
   constructor(config) {
     super();
+
     this.#config = {
       appName: config.appName || '',
       replacesId: config.replacesId || 0,
       appIcon: config.appIcon || '',
       summary: config.summary || '',
       body: config.body || '',
-      actions: [],
-      hints: {},
+      hints: config.hints || {},
       timeout: config.timeout || 0,
     };
-    const hints = config.hints || {};
-    if (typeof hints.actionIcons === 'boolean') {
+
+    checkTypes.string(this.#config.appName, 'appName is not string.');
+    checkTypes.integer(this.#config.replacesId, 'replacesId is not integer.');
+    checkTypes.string(this.#config.appIcon, 'appIcon is not string.');
+    checkTypes.string(this.#config.summary, 'summary is not string.');
+    checkTypes.string(this.#config.body, 'body is not string.');
+    checkTypes.object(this.#config.hints, 'hints is not object.');
+    checkTypes.integer(this.#config.timeout, 'timeout is not integer.');
+
+    const { hints } = this.#config;
+    this.#config.hints = {};
+
+    if ('actionIcons' in hints && checkTypes.boolean(hints.actionIcons, 'hints.actionIcons is not boolean.')) {
       this.#config.hints['action-icons'] = new Variant('b', hints.actionIcons);
     }
-    if (typeof hints.category === 'string') {
+
+    if ('category' in hints && checkTypes.string(hints.category, 'hints.category is not string.')) {
       // eslint-disable-next-line dot-notation
       this.#config.hints['category'] = new Variant('s', hints.category);
     }
-    if (typeof hints.desktopEntry === 'string') {
+
+    if ('desktopEntry' in hints && checkTypes.string(hints.desktopEntry, 'hints.desktopEntry is not string.')) {
       this.#config.hints['desktop-entry'] = new Variant('s', hints.desktopEntry);
     }
-    if (typeof hints.imagePath === 'string') {
+
+    if ('imagePath' in hints && checkTypes.string(hints.imagePath, 'hints.imagePath is not string.')) {
       this.#config.hints['image-path'] = new Variant('s', hints.imagePath);
     }
-    if (typeof hints.imageData === 'object' && hints.imageData) {
+
+    if ('imageData' in hints && checkTypes.object(hints.imageData, 'hints.imagePath is not object.') && hints.imageData) {
       const channel = (hints.imageData.hasAlpha ? 4 : 3);
       this.#config.hints['image-data'] = new Variant('(iiibiiay)', [
         hints.imageData.width,
@@ -227,56 +229,67 @@ class Notify extends EventEmitter {
         hints.imageData.data,
       ]);
     }
-    if (typeof hints.resident === 'boolean') {
+
+    if ('resident' in hints && checkTypes.boolean(hints.resident, 'hints.resident is not boolean.')) {
       // eslint-disable-next-line dot-notation
       this.#config.hints['resident'] = new Variant('b', hints.resident);
     }
-    if (typeof hints.soundFile === 'string') {
+
+    if ('soundFile' in hints && checkTypes.string(hints.soundFile, 'hints.soundFile is not string.')) {
       this.#config.hints['sound-file'] = new Variant('s', hints.soundFile);
     }
-    if (typeof hints.soundName === 'string') {
+
+    if ('soundName' in hints && checkTypes.string(hints.soundName, 'hints.soundName is not string.')) {
       this.#config.hints['sound-name'] = new Variant('s', hints.soundName);
     }
-    if (typeof hints.suppressSound === 'boolean') {
+
+    if ('suppressSound' in hints && checkTypes.boolean(hints.suppressSound, 'hints.suppressSound is not boolean.')) {
       this.#config.hints['suppress-sound'] = new Variant('b', hints.suppressSound);
     }
-    if (typeof hints.transient === 'boolean') {
+
+    if ('transient' in hints && checkTypes.boolean(hints.transient, 'hints.transient is not boolean.')) {
       // eslint-disable-next-line dot-notation
       this.#config.hints['transient'] = new Variant('b', hints.transient);
     }
-    if (typeof hints.x === 'number') {
+
+    if ('value' in hints && checkTypes.integer(hints.value, 'hints.value is not integer.')) {
+      // eslint-disable-next-line dot-notation
+      this.#config.hints['value'] = new Variant('i', hints.value);
+    }
+
+    if ('x' in hints && checkTypes.integer(hints.x, 'hints.x is not integer.')) {
       // eslint-disable-next-line dot-notation
       this.#config.hints['x'] = new Variant('i', hints.x);
     }
-    if (typeof hints.y === 'number') {
+
+    if ('y' in hints && checkTypes.integer(hints.y, 'hints.y is not integer.')) {
       // eslint-disable-next-line dot-notation
       this.#config.hints['y'] = new Variant('i', hints.y);
     }
-    if (typeof hints.urgency === 'number') {
+
+    if ('urgency' in hints && checkTypes.integer(hints.urgency, 'hints.urgency is not integer.')) {
       // eslint-disable-next-line dot-notation
       this.#config.hints['urgency'] = new Variant('y', hints.urgency);
     }
   }
 
-  addAction(actionText, callback) {
-    const actionKey = `__action_key__::${identifier.next().value}`;
-    this.#config.actions.push(actionKey, actionText);
-    this.#actionCallbacks.set(actionKey, callback);
-    return this;
-  }
+  addAction(text, key, callback) {
+    const actionCallback = callback === undefined ? key : callback;
+    const actionKey = callback === undefined ? `__action_key__::${identifier.next().value}` : key;
 
-  onClick(callback) {
-    const actionKey = 'default';
-    this.#config.actions.push(actionKey, actionKey);
-    this.#actionCallbacks.set(actionKey, callback);
-    return this;
-  }
+    checkTypes.string(text, 'text is not string.');
+    checkTypes.string(actionKey, 'key is not string.');
+    checkTypes.function(actionCallback, 'callback is not function.');
 
-  addInlineReply(actionText, callback) {
-    const actionKey = 'inline-reply';
-    this.#config.actions.push(actionKey, actionText);
-    this.#actionCallbacks.set(actionKey, callback);
-    return this;
+    if (this.#actions.has(actionKey)) {
+      throw new Error(`'${actionKey}' action already exists.`);
+    }
+
+    this.#actions.set(actionKey, {
+      text,
+      callback: actionCallback,
+    });
+    return actionKey;
   }
 
   close() {
@@ -286,22 +299,31 @@ class Notify extends EventEmitter {
     return Promise.resolve();
   }
 
-  removeAction(actionText) {
-    const x = this.#config.actions.indexOf(actionText);
-    if (x !== -1) {
-      this.#config.actions.splice(x - 1, 2);
-    }
-    return this;
+  removeAction(key) {
+    checkTypes.string(key, 'key is not string.');
+    return this.#actions.delete(key);
+  }
+
+  removeDefaultAction() {
+    return this.removeAction(ActionKeys.DEFAULT);
+  }
+
+  setDefaultAction(callback) {
+    this.addAction('', ActionKeys.DEFAULT, callback);
   }
 
   show() {
+    const actions = [];
+    this.#actions.forEach((item, key) => {
+      actions.push(key, item.text);
+    });
     const params = [
       this.#config.appName,
       this.#config.replacesId,
       this.#config.appIcon,
       this.#config.summary,
       this.#config.body,
-      this.#config.actions,
+      actions,
       this.#config.hints,
       this.#config.timeout,
     ];
@@ -310,21 +332,14 @@ class Notify extends EventEmitter {
         .then((i) => {
           i.Notify(...params)
             .then((id) => {
-              const invoked = this[actionInvokedSymbol].bind(this);
-              const replied = (reply) => {
-                const callback = this.#actionCallbacks.get('inline-reply');
-                if (callback) {
-                  callback(reply);
-                }
-              };
-
-              notifierEmitter.on(`ActionInvoked:${id}`, invoked);
-              notifierEmitter.on(`NotificationReplied:${id}`, replied);
-
-              notifierEmitter.once(`NotificationClosed:${id}`, (reason) => {
+              const invoked = this[ActionInvokedSymbol].bind(this);
+              const inlineReplyInvoked = this[ActionInvokedSymbol].bind(this, 'inline-reply');
+              notifierEmitter.on(`${ActionEvents.ActionInvoked}:${id}`, invoked);
+              notifierEmitter.on(`${ActionEvents.NotificationReplied}:${id}`, inlineReplyInvoked);
+              notifierEmitter.once(`${ActionEvents.NotificationClosed}:${id}`, (reason) => {
                 this.#status = 2;
-                notifierEmitter.off(`ActionInvoked:${id}`, invoked);
-                notifierEmitter.off(`NotificationReplied:${id}`, replied);
+                notifierEmitter.off(`${ActionEvents.ActionInvoked}:${id}`, invoked);
+                notifierEmitter.off(`${ActionEvents.NotificationReplied}:${id}`, inlineReplyInvoked);
                 notifierEmitter.emit('pop');
                 const result = {
                   id,
@@ -337,6 +352,20 @@ class Notify extends EventEmitter {
               this.#status = 1;
               notifierEmitter.emit('push');
               this.emit('show', id);
+            })
+            .catch(reject);
+        })
+        .catch(reject);
+    });
+  }
+
+  static supportedCapabilities() {
+    return new Promise((resolve, reject) => {
+      getInterface()
+        .then((i) => {
+          i.GetCapabilities()
+            .then((caps) => {
+              resolve(caps);
             })
             .catch(reject);
         })
