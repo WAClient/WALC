@@ -308,11 +308,6 @@ module.exports = class MainWindow extends BrowserWindow {
 				id: Math.floor(Math.random() * 999999) + 1,
 				messages: [body],
 				timer: null,
-				triggeredActions: {
-					click: false,
-					read: false,
-					reply: false,
-				},
 			}
 		}
 
@@ -326,12 +321,13 @@ module.exports = class MainWindow extends BrowserWindow {
 		};
 	}
 
-	shouldTriggerAction(tag, action) {
+	shouldTriggerNotification(tag) {
 		if (!tag) return true;
-		const { triggeredActions } = this.recentNotification[tag];
-		const triggered = triggeredActions[action];
-		triggeredActions[action] = true;
-		return !triggered;
+		if (this.recentNotification[tag]) {
+			delete this.recentNotification[tag];
+			return true;
+		}
+		return false;
 	}
 
 	async chatNotification(options) {
@@ -353,7 +349,7 @@ module.exports = class MainWindow extends BrowserWindow {
 		});
 
 		notif.setDefaultAction(() => {
-			if (!this.shouldTriggerAction(tag, 'click')) return;
+			if (!this.shouldTriggerNotification(tag)) return;
 			// console.log('notification clicked');
 			if(tag) {
 				this.whatsapp.interface.openChatWindow(tag);
@@ -364,7 +360,7 @@ module.exports = class MainWindow extends BrowserWindow {
 
 		if(tag) {
 			notif.addAction('Mark as read', async() => {
-				if (!this.shouldTriggerAction(tag, 'read')) return;
+				if (!this.shouldTriggerNotification(tag)) return;
 				// console.log('marked as read');
 				(await this.whatsapp.getChatById(tag)).sendSeen();
 			});
@@ -373,7 +369,7 @@ module.exports = class MainWindow extends BrowserWindow {
 			const canReply = capabilities.includes('inline-reply');
 			if(canReply) {
 				notif.addAction('Reply', 'inline-reply', async (reply) => {
-					if (!this.shouldTriggerAction(tag, 'reply')) return;
+					if (!this.shouldTriggerNotification(tag)) return;
 					// console.log('replied', reply);
 					(await this.whatsapp.getChatById(tag)).sendMessage(reply);
 				});
