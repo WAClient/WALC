@@ -8,12 +8,14 @@ const settings = require('./settings');
 const pie = require("puppeteer-in-electron");
 const puppeteer = require("puppeteer-core");
 const { Client } = require('whatsapp-web-electron.js');
-const { Notify } = require('./Notify');
+const { Notify, Config: NotifyConfig } = require('./Notify');
 const getPixels = require("get-pixels");
 // const getPortSync = require('get-port-sync');
 
 const ICON_PATH = path.join(__dirname, '../icons/logo256x256.png');
-const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36';
+const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36';
+
+NotifyConfig.closeReplacedNotify = true;
 
 // notifications template
 const notifications = {
@@ -302,32 +304,17 @@ module.exports = class MainWindow extends BrowserWindow {
 
 		if(this.recentNotification[tag]) {
 			this.recentNotification[tag].messages.push(body);
-			clearTimeout(this.recentNotification[tag].timer);
 		} else {
 			this.recentNotification[tag] = {
 				id: Math.floor(Math.random() * 999999) + 1,
 				messages: [body],
-				timer: null,
 			}
 		}
-
-		this.recentNotification[tag].timer = setTimeout(() => {
-			delete this.recentNotification[tag]
-		}, 5000);
 
 		return {
 			id: this.recentNotification[tag].id,
 			body: this.recentNotification[tag].messages.join("\n"),
 		};
-	}
-
-	shouldTriggerNotification(tag) {
-		if (!tag) return true;
-		if (this.recentNotification[tag]) {
-			delete this.recentNotification[tag];
-			return true;
-		}
-		return false;
 	}
 
 	async chatNotification(options) {
@@ -349,7 +336,6 @@ module.exports = class MainWindow extends BrowserWindow {
 		});
 
 		notif.setDefaultAction(() => {
-			if (!this.shouldTriggerNotification(tag)) return;
 			// console.log('notification clicked');
 			if(tag) {
 				this.whatsapp.interface.openChatWindow(tag);
@@ -359,8 +345,12 @@ module.exports = class MainWindow extends BrowserWindow {
 		});
 
 		if(tag) {
+			notif.on('close', ({ reason }) => {
+				if (reason === 101) return; // replaced notification
+				delete this.recentNotification[tag];
+			});
+	
 			notif.addAction('Mark as read', async() => {
-				if (!this.shouldTriggerNotification(tag)) return;
 				// console.log('marked as read');
 				(await this.whatsapp.getChatById(tag)).sendSeen();
 			});
@@ -369,7 +359,6 @@ module.exports = class MainWindow extends BrowserWindow {
 			const canReply = capabilities.includes('inline-reply');
 			if(canReply) {
 				notif.addAction('Reply', 'inline-reply', async (reply) => {
-					if (!this.shouldTriggerNotification(tag)) return;
 					// console.log('replied', reply);
 					(await this.whatsapp.getChatById(tag)).sendMessage(reply);
 				});
