@@ -3,13 +3,14 @@ const { sessionBus: SessionBus, Variant } = require('dbus-next');
 const checkTypes = require('./utils/checkTypes');
 
 const ActionInvokedSymbol = Symbol('actionInvoked');
-const ActionEvents = Object.freeze({
+const ActionKeys = Object.freeze({
+  default: 'default',
+  inlineReply: 'inline-reply',
+});
+const DbusEvents = Object.freeze({
   ActionInvoked: 'ActionInvoked',
   NotificationClosed: 'NotificationClosed',
   NotificationReplied: 'NotificationReplied',
-});
-const ActionKeys = Object.freeze({
-  DEFAULT: 'default',
 });
 
 let externalSessionBus;
@@ -20,6 +21,7 @@ const notificationCounter = [];
 
 const Config = {
   autoDisconnectSessionBus: true,
+  closeReplacedNotify: false,
 };
 
 const notifierEmitter = new EventEmitter();
@@ -39,23 +41,23 @@ const disconnectSessionBus = function disconnectSessionBus() {
 };
 
 const actionInvoked = function actionInvoked(id, actionKey) {
-  notifierEmitter.emit(`${ActionEvents.ActionInvoked}:${id}`, actionKey);
+  notifierEmitter.emit(`${DbusEvents.ActionInvoked}:${id}`, actionKey);
 };
 
 const notificationClosed = function notificationClosed(id, reason) {
-  notifierEmitter.emit(`${ActionEvents.NotificationClosed}:${id}`, reason);
+  notifierEmitter.emit(`${DbusEvents.NotificationClosed}:${id}`, reason);
 };
 
 const notificationReplied = function notificationReplied(id, message) {
-  notifierEmitter.emit(`${ActionEvents.NotificationReplied}:${id}`, message);
+  notifierEmitter.emit(`${DbusEvents.NotificationReplied}:${id}`, message);
 };
 
 const bindNotifications = function bindNotifications(notificationInterface) {
   // Since the NotificationClosed event will fire when any notification is closed
   // using ID to trigger the event here allows us to use once() elsewhere without binding too many events.
-  notificationInterface.on(ActionEvents.ActionInvoked, actionInvoked);
-  notificationInterface.on(ActionEvents.NotificationClosed, notificationClosed);
-  notificationInterface.on(ActionEvents.NotificationReplied, notificationReplied);
+  notificationInterface.on(DbusEvents.ActionInvoked, actionInvoked);
+  notificationInterface.on(DbusEvents.NotificationClosed, notificationClosed);
+  notificationInterface.on(DbusEvents.NotificationReplied, notificationReplied);
   Notifications = notificationInterface;
   return Notifications;
 };
@@ -64,9 +66,9 @@ const unsetNotifications = function unsetNotifications() {
   if (!Notifications) {
     return;
   }
-  Notifications.off(ActionEvents.ActionInvoked, actionInvoked);
-  Notifications.off(ActionEvents.NotificationClosed, notificationClosed);
-  Notifications.off(ActionEvents.NotificationReplied, notificationReplied);
+  Notifications.off(DbusEvents.ActionInvoked, actionInvoked);
+  Notifications.off(DbusEvents.NotificationClosed, notificationClosed);
+  Notifications.off(DbusEvents.NotificationReplied, notificationReplied);
   Notifications = undefined;
 };
 
@@ -75,7 +77,7 @@ const getSessionBus = function getSessionBus() {
     return externalSessionBus;
   }
   if (!selfSessionBus) {
-    selfSessionBus = SessionBus({ busAddress: process.env.DBUS_SESSION_BUS_ADDRESS });
+    selfSessionBus = SessionBus();
   }
   return selfSessionBus;
 };
@@ -217,7 +219,7 @@ class Notify extends EventEmitter {
       this.#config.hints['image-path'] = new Variant('s', hints.imagePath);
     }
 
-    if ('imageData' in hints && checkTypes.object(hints.imageData, 'hints.imagePath is not object.') && hints.imageData) {
+    if ('imageData' in hints && checkTypes.object(hints.imageData, 'hints.imagePath is not object.')) {
       const channel = (hints.imageData.hasAlpha ? 4 : 3);
       this.#config.hints['image-data'] = new Variant('(iiibiiay)', [
         hints.imageData.width,
@@ -294,7 +296,8 @@ class Notify extends EventEmitter {
 
   close() {
     if (this.#id !== 0) {
-      return getInterface().CloseNotification(this.#id);
+      return getInterface()
+        .then((i) => i.CloseNotification(this.#id));
     }
     return Promise.resolve();
   }
@@ -305,11 +308,11 @@ class Notify extends EventEmitter {
   }
 
   removeDefaultAction() {
-    return this.removeAction(ActionKeys.DEFAULT);
+    return this.removeAction(ActionKeys.default);
   }
 
   setDefaultAction(callback) {
-    this.addAction('', ActionKeys.DEFAULT, callback);
+    this.addAction('', ActionKeys.default, callback);
   }
 
   show() {
@@ -332,14 +335,22 @@ class Notify extends EventEmitter {
         .then((i) => {
           i.Notify(...params)
             .then((id) => {
+              this.#id = id;
+              this.#status = 1;
+              notifierEmitter.emit('push');
+              this.emit('show', id);
+
+              if (this.#config.replacesId === id && Config.closeReplacedNotify) {
+                notifierEmitter.emit(`${DbusEvents.NotificationClosed}:${id}`, 101);
+              }
               const invoked = this[ActionInvokedSymbol].bind(this);
-              const inlineReplyInvoked = this[ActionInvokedSymbol].bind(this, 'inline-reply');
-              notifierEmitter.on(`${ActionEvents.ActionInvoked}:${id}`, invoked);
-              notifierEmitter.on(`${ActionEvents.NotificationReplied}:${id}`, inlineReplyInvoked);
-              notifierEmitter.once(`${ActionEvents.NotificationClosed}:${id}`, (reason) => {
+              const inlineReplyInvoked = this[ActionInvokedSymbol].bind(this, ActionKeys.inlineReply);
+              notifierEmitter.on(`${DbusEvents.ActionInvoked}:${id}`, invoked);
+              notifierEmitter.on(`${DbusEvents.NotificationReplied}:${id}`, inlineReplyInvoked);
+              notifierEmitter.once(`${DbusEvents.NotificationClosed}:${id}`, (reason) => {
                 this.#status = 2;
-                notifierEmitter.off(`${ActionEvents.ActionInvoked}:${id}`, invoked);
-                notifierEmitter.off(`${ActionEvents.NotificationReplied}:${id}`, inlineReplyInvoked);
+                notifierEmitter.off(`${DbusEvents.ActionInvoked}:${id}`, invoked);
+                notifierEmitter.off(`${DbusEvents.NotificationReplied}:${id}`, inlineReplyInvoked);
                 notifierEmitter.emit('pop');
                 const result = {
                   id,
@@ -348,10 +359,6 @@ class Notify extends EventEmitter {
                 this.emit('close', result);
                 resolve(result);
               });
-              this.#id = id;
-              this.#status = 1;
-              notifierEmitter.emit('push');
-              this.emit('show', id);
             })
             .catch(reject);
         })
@@ -360,17 +367,8 @@ class Notify extends EventEmitter {
   }
 
   static supportedCapabilities() {
-    return new Promise((resolve, reject) => {
-      getInterface()
-        .then((i) => {
-          i.GetCapabilities()
-            .then((caps) => {
-              resolve(caps);
-            })
-            .catch(reject);
-        })
-        .catch(reject);
-    });
+    return getInterface()
+      .then((i) => i.GetCapabilities());
   }
 }
 
