@@ -63,6 +63,19 @@ const schema = {
 			name: 'Enable tray icon',
 			type: 'switch',
 		},
+		iconType: {
+			default: 'Colored',
+			name: 'Icon Type (requires restart to take effect)',
+			type: 'select',
+			props: {
+				items: [
+					{ value: 'c', text: 'Colored' },
+					{ value: 'md', text: 'Monochrome (for dark themes)' },
+					{ value: 'ml', text: 'Monochrome (for light themes)' },
+				],
+			},
+			depends: 'enabled',
+		},
 		closeToTray: {
 			default: true,
 			name: 'Close to Tray',

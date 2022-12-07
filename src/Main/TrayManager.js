@@ -37,7 +37,13 @@ module.exports = class TrayManager {
 			this.win = mainWindow;
 		}
 		if(settings.get('trayIcon.enabled.value')) {
-			this.tray = new Tray(path.join(__dirname, '../icons/logo360x360.png'));
+			if(settings.get('trayIcon.iconType.value') == 'c') {
+				this.tray = new Tray(path.join(__dirname, '../icons/logo512x512.png'));	
+			} else if (settings.get('trayIcon.iconType.value') == 'md') {
+				this.tray = new Tray(path.join(__dirname, '../icons/mono_logo_light512x512.png')); 
+			} else {
+				this.tray = new Tray(path.join(__dirname, '../icons/mono_logo512x512.png'));
+			}
 			this.tray.setTitle('WALC');
 			this.tray.setToolTip('WALC');
 			this.setContextMenu();
