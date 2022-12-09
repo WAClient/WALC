@@ -46,8 +46,9 @@ class App {
 		style.innerHTML = await ipcRenderer.invoke('getStyle');
 		document.head.appendChild(style);
 
-		this.icon = await ipcRenderer.invoke('getIcon');
+		this.icon = await ipcRenderer.invoke('getTrayIcon');
 		this.dashboard_icon = await ipcRenderer.invoke('getDashboardIcon')
+        this.tray = await ipcRenderer.invoke('getTrayIcon'); 
 		Instance.init(this.dashboard_icon);
 		this.renderTray();
 		this.setFullWidth(Settings.get('general.fullWidth.value'));
