@@ -82,8 +82,6 @@
     "bcrypt": "^5.0.1",
     "create-desktop-shortcuts": "^1.6.0",
     "dbus-next": "^0.10.2",
-    "dialog": "^0.3.1",
-    "dialogs": "^2.0.1",
     "dot-prop": "^6.0.1",
     "electron-context-menu": "^3.1.2",
     "electron-prompt": "^1.7.0",
