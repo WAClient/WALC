@@ -10,6 +10,14 @@ const AppLock = require('./AppLock');
 const settings = require('./settings');
 const prompt = require('electron-prompt')
 
+const openChat = phone => {
+  const link = document.createElement("a");
+  link.setAttribute("href", `whatsapp://send?phone=${phone}`);
+  document.body.append(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
 
 /**
  * @typedef Instance
@@ -160,7 +168,7 @@ module.exports = class InstanceManager {
 		        console.log('user cancelled');
 		    } else {
 		        console.log('result: ', number);
-		        // Open chat
+		        openChat(number);
 		    }
 		})
 		.catch(console.error);
