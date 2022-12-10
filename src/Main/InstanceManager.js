@@ -8,6 +8,8 @@ const MainMenu = require('./MainMenu');
 const DashboardMenu = require('./DashboardMenu');
 const AppLock = require('./AppLock');
 const settings = require('./settings');
+const prompt = require('electron-prompt')
+
 
 /**
  * @typedef Instance
@@ -141,6 +143,27 @@ module.exports = class InstanceManager {
 
 	openDashboard(id) {
 		this.instances[id].dashboard.open();
+	}
+
+	newChat(id) {
+		prompt({
+		    title: 'New Chat',
+		    label: 'Enter a phone number:',
+		    value: '0123456789',
+		    inputAttrs: {
+		        type: 'string'
+		    },
+		    type: 'input'
+		})
+		.then((number) => {
+		    if(number === null) {
+		        console.log('user cancelled');
+		    } else {
+		        console.log('result: ', number);
+		        // Open chat
+		    }
+		})
+		.catch(console.error);
 	}
 
 	async setMainMenu(id, disable = false) {

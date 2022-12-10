@@ -14,6 +14,15 @@ module.exports = async function MainMenu(id, window, instanceManager) {
 	const appLock = settings.get('appLock');
 
 	const chatMenu = [];
+
+	chatMenu.push({
+		label: 'New Chat',
+		accelerator: 'Ctrl+N',
+		click: () => {
+			instanceManager.newChat(id);
+		},
+	})
+
 	for(let i = 0; i < 9; i++) {
 		const num = i + 1;
 		chatMenu.push({
@@ -66,7 +75,6 @@ module.exports = async function MainMenu(id, window, instanceManager) {
 			],
 		}, {
 			label: 'Chats',
-			submenu: chatMenu,
-		}
-	];
+			submenu: chatMenu
+		}];
 }
