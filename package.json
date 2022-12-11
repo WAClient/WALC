@@ -87,6 +87,7 @@
     "electron-store": "^8.0.1",
     "electron-updater": "^4.6.5",
     "electron-window-state": "^5.0.3",
+    "electron-prompt": "^1.7.0",
     "get-pixels": "^3.3.3",
     "get-port-sync": "^1.0.1",
     "is-online": "^9.0.1",

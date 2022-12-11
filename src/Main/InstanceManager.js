@@ -8,6 +8,15 @@ const MainMenu = require('./MainMenu');
 const DashboardMenu = require('./DashboardMenu');
 const AppLock = require('./AppLock');
 const settings = require('./settings');
+const prompt = require('electron-prompt')
+
+const openChat = number => {
+	const link = document.createElement("a");
+	link.setAttribute("href", `whatsapp://send?phone=${number}`);
+	document.body.append(link);
+	link.click();
+	document.body.removeChild(link);
+};
 
 /**
  * @typedef Instance
@@ -151,6 +160,29 @@ module.exports = class InstanceManager {
 		}
 		const menubar = await MainMenu(id, mainWindow, this);
 		mainWindow.setMenu(Menu.buildFromTemplate(menubar));
+	}
+
+	newChat() {
+		prompt({
+		    title: 'New Chat',
+		    label: 'Enter a phone number:',
+		    value: '',
+		    inputAttrs: {
+		        type: 'string'
+		    },
+		    type: 'input'
+		})
+		.then((number) => {
+		    if(number === null) {
+		        console.log('Cancelled');
+		    } else {
+		        console.log('Phone number: ', number);
+		        
+				// Open chat
+				openChat(number);
+		    }
+		})
+		.catch(console.error);
 	}
 	
 	/**
