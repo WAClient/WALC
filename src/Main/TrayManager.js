@@ -41,9 +41,9 @@ module.exports = class TrayManager {
 			this.win.webContents.send('renderTray');
 		});
 
-		// settings.onDidChange('trayIcon.iconType', () => {
-		// 	this.win.webContents.send('renderTray');
-		// });
+		settings.onDidChange('trayIcon.iconType', () => {
+			this.win.webContents.send('renderTray');
+		});
 	}
 
 	/**
