@@ -1,23 +1,33 @@
 const path = require('path');
-const { app, Tray, Menu, ipcMain, nativeImage } = require('electron');
+const { Tray, Menu, ipcMain, nativeImage, nativeTheme } = require('electron');
 const settings = require('./settings');
 
-const C_ICON_PATH = path.join(__dirname, 'icons/logo512x512.png');
-const MD_ICON_PATH = path.join(__dirname, 'icons/mono_logo512x512.png');
-const ML_ICON_PATH = path.join(__dirname, 'icons/mono_logo_light512x512.png');
-
-ipcMain.handle('getTrayIcon', () => {
-	if(settings.get('trayIcon.iconType.value') == 'c') {
-		return nativeImage.createFromPath(C_ICON_PATH).toDataURL();	
-	} else if (settings.get('trayIcon.iconType.value') == 'md') {
-		return nativeImage.createFromPath(MD_ICON_PATH).toDataURL(); 
-	} else {
-		return nativeImage.createFromPath(ML_ICON_PATH).toDataURL();
-	}
-    
-});
-
 module.exports = class TrayManager {
+	static get ICON_TYPES() {
+		const monoLight = path.join(__dirname, '../icons/mono_logo_light512x512.png');
+		const monoDark = path.join(__dirname, '../icons/mono_logo512x512.png');
+		const monoAuto = (nativeTheme.shouldUseDarkColors ? monoLight : monoDark);
+
+		return {
+			COLORFUL: {
+				key: 'COLORFUL',
+				path: path.join(__dirname, '../icons/logo512x512.png'),
+			},
+			MONO_AUTO: {
+				key: 'MONO_AUTO',
+				path: monoAuto,
+			},
+			MONO_LIGHT: {
+				key: 'MONO_LIGHT',
+				path: monoLight,
+			},
+			MONO_DARK: {
+				key: 'MONO_DARK',
+				path: monoDark,
+			},
+		};
+	}
+	
 	constructor() {
 		this.tray = null;
 
@@ -26,6 +36,10 @@ module.exports = class TrayManager {
 				const img = nativeImage.createFromDataURL(data);
 				this.tray.setImage(img);
 			}
+		});
+
+		ipcMain.handle('getTrayIcon', () => {
+			return nativeImage.createFromPath(this.CURRENT_ICON_TYPE.path).toDataURL();
 		});
 
 		settings.onDidChange('trayIcon.enabled', (value) => {
@@ -40,10 +54,6 @@ module.exports = class TrayManager {
 		settings.onDidChange('trayIcon.countMuted', () => {
 			this.win.webContents.send('renderTray');
 		});
-
-		settings.onDidChange('trayIcon.iconType', () => {
-			this.win.webContents.send('renderTray');
-		});
 	}
 
 	/**
@@ -56,13 +66,7 @@ module.exports = class TrayManager {
 			this.win = mainWindow;
 		}
 		if(settings.get('trayIcon.enabled.value')) {
-			if(settings.get('trayIcon.iconType.value') == 'c') {
-				this.tray = new Tray(path.join(__dirname, '../icons/logo512x512.png'));	
-			} else if (settings.get('trayIcon.iconType.value') == 'md') {
-				this.tray = new Tray(path.join(__dirname, '../icons/mono_logo_light512x512.png')); 
-			} else {
-				this.tray = new Tray(path.join(__dirname, '../icons/mono_logo512x512.png'));
-			}
+			this.tray = new Tray(this.CURRENT_ICON_TYPE.path);
 			this.tray.setTitle('WALC');
 			this.tray.setToolTip('WALC');
 			this.setContextMenu();
@@ -70,6 +74,18 @@ module.exports = class TrayManager {
 				this.win.webContents.send('renderTray');
 			}
 		}
+	}
+
+	/** @returns {{ key: string, path: string }} */
+	get CURRENT_ICON_TYPE() {
+		let iconType = settings.get('trayIcon.iconType.value');
+		if (!TrayManager.ICON_TYPES[iconType]) { // set default icon type if invalid type
+			console.log(`invalid icon type "${iconType}", resetting to default icon`);
+			const defaultType = settings.get('trayIcon.iconType.default');
+			// settings.set('trayIcon.iconType.value', defaultType);
+			iconType = defaultType;
+		}
+		return TrayManager.ICON_TYPES[iconType];
 	}
 
 	setContextMenu(state = null) {

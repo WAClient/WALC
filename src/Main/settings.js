@@ -64,14 +64,15 @@ const schema = {
 			type: 'switch',
 		},
 		iconType: {
-			default: 'Colorful',
-			name: 'Icon Type (requires restart)',
+			default: 'COLORFUL',
+			name: 'Icon Type',
 			type: 'select',
 			props: {
 				items: [
-					{ value: 'c', text: 'Colorful' },
-					{ value: 'md', text: 'Monochrome (light)' },
-					{ value: 'ml', text: 'Monochrome (dark)' },
+					{ value: 'COLORFUL', text: 'Colorful' },
+					{ value: 'MONO_AUTO', text: 'Monochrome (auto)' },
+					{ value: 'MONO_LIGHT', text: 'Monochrome (light)' },
+					{ value: 'MONO_DARK', text: 'Monochrome (dark)' },
 				],
 			},
 			depends: 'enabled',
