@@ -58,6 +58,11 @@ class App {
 			window.Store.AppState?.on('change:state', (...args) => this.appStateChange(...args));
 		}
 
+		// Settings.onDidChange('trayIcon.iconType', async () => {
+		// 	this.icon = await ipcRenderer.invoke('getTrayIcon');
+		// 	this.renderTray();
+		// });
+
 		console.log('WALC Initialized');
 	}
 

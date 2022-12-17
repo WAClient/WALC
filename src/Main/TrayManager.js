@@ -40,6 +40,10 @@ module.exports = class TrayManager {
 		settings.onDidChange('trayIcon.countMuted', () => {
 			this.win.webContents.send('renderTray');
 		});
+
+		// settings.onDidChange('trayIcon.iconType', () => {
+		// 	this.win.webContents.send('renderTray');
+		// });
 	}
 
 	/**
