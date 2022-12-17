@@ -68,11 +68,11 @@ class App {
 
 	renderTray() {
 		const badge = {
-			x: 128,
-			y: 128,
-			radius: 80,
-			font: 160,
-			fontSmall: 112,
+			x: 256,
+			y: 256,
+			radius: 170,
+			font: 250,
+			fontSmall: 220,
 		};
 		let unread = 0;
 		const countMuted = Settings.get('trayIcon.countMuted.value');
