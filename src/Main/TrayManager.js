@@ -2,6 +2,21 @@ const path = require('path');
 const { app, Tray, Menu, ipcMain, nativeImage } = require('electron');
 const settings = require('./settings');
 
+const C_ICON_PATH = path.join(__dirname, 'icons/logo512x512.png');
+const MD_ICON_PATH = path.join(__dirname, 'icons/mono_logo512x512.png');
+const ML_ICON_PATH = path.join(__dirname, 'icons/mono_logo_light512x512.png');
+
+ipcMain.handle('getTrayIcon', () => {
+	if(settings.get('trayIcon.iconType.value') == 'c') {
+		return nativeImage.createFromPath(C_ICON_PATH).toDataURL();	
+	} else if (settings.get('trayIcon.iconType.value') == 'md') {
+		return nativeImage.createFromPath(MD_ICON_PATH).toDataURL(); 
+	} else {
+		return nativeImage.createFromPath(ML_ICON_PATH).toDataURL();
+	}
+    
+});
+
 module.exports = class TrayManager {
 	constructor() {
 		this.tray = null;
@@ -25,6 +40,10 @@ module.exports = class TrayManager {
 		settings.onDidChange('trayIcon.countMuted', () => {
 			this.win.webContents.send('renderTray');
 		});
+
+		settings.onDidChange('trayIcon.iconType', () => {
+			this.win.webContents.send('renderTray');
+		});
 	}
 
 	/**
@@ -37,7 +56,13 @@ module.exports = class TrayManager {
 			this.win = mainWindow;
 		}
 		if(settings.get('trayIcon.enabled.value')) {
-			this.tray = new Tray(path.join(__dirname, '../icons/logo360x360.png'));
+			if(settings.get('trayIcon.iconType.value') == 'c') {
+				this.tray = new Tray(path.join(__dirname, '../icons/logo512x512.png'));	
+			} else if (settings.get('trayIcon.iconType.value') == 'md') {
+				this.tray = new Tray(path.join(__dirname, '../icons/mono_logo_light512x512.png')); 
+			} else {
+				this.tray = new Tray(path.join(__dirname, '../icons/mono_logo512x512.png'));
+			}
 			this.tray.setTitle('WALC');
 			this.tray.setToolTip('WALC');
 			this.setContextMenu();
