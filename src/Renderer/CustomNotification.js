@@ -24,7 +24,19 @@ class ServerNotification {
 	async __serverNotif(title, options) {
 		if(options.tag) {
 			try {
-				await window.Store?.Contact?.find(options.tag);
+				/**
+				 * parse encoded tag, format (without square brackets):
+				 * 
+				 * [boolean]_[user-serialized-id]_[alphanumeric]
+				 * 
+				 * NOTE: what the boolean and alphanumeric value is for is currently unknown
+				 * FIXME: parsing should be done server side, the other data could be useful
+				 */
+				const match = options.tag.match(/\w+_(\d+@c.us)_/);
+				if (match && match.length && match[1]) {
+					await window.Store?.Contact?.find(match[1]);
+					options.tag = match[1];
+				}
 			} catch(err) {
 				delete options.tag;
 			}
