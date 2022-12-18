@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import Vuetify from 'vuetify/lib';
+import VueTelInputVuetify from 'vue-tel-input-vuetify/lib';
 import router from './routes';
 import App from './Pages/App';
 
@@ -33,6 +34,8 @@ const vuetify = new Vuetify({
 		iconfont: 'mdiSvg',
 	},
 });
+
+Vue.use(VueTelInputVuetify, { vuetify });
 
 const app = document.getElementById('app');
 

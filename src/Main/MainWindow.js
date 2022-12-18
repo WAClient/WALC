@@ -435,6 +435,23 @@ module.exports = class MainWindow extends BrowserWindow {
 		});
 	}
 
+	async openChat(phoneNumber) {
+		phoneNumber = phoneNumber.replace(/\D/g, '');
+		try {
+			await this.whatsapp.interface.openChatWindow(`${phoneNumber}@c.us`);
+			return {
+				success: true,
+				message: '',
+			};
+		} catch(err) {
+			console.error(`Error when opening number "${phoneNumber}"`, err);
+			return {
+				success: false,
+				message: 'Failed to open phone number',
+			};
+		}
+	}
+
 	integrateToDesktop() {
 		const shortcutDir = path.join(homedir, ".local/share/applications");
 		const iconDir = path.join(homedir, ".local/share/WALC");

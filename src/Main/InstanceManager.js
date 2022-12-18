@@ -52,6 +52,10 @@ module.exports = class InstanceManager {
 			this.openDashboard(id);
 		});
 
+		ipcMain.handle('instance.closeDashboard', (event, id) => {
+			this.instances[id].dashboard.close();
+		});
+
 		ipcMain.handle('instance.about', (event, id) => {
 			return this.aboutInfo;
 		});
@@ -73,9 +77,10 @@ module.exports = class InstanceManager {
 			'markAllChatsAsRead',
 			'integrateToDesktop',
 			'chatNotification',
+			'openChat',
 		].forEach((func) => {
 			ipcMain.handle(`instance.main.${func}`, (event, id, ...args) => {
-				this.instances[id].main[func](...args);
+				return this.instances[id].main[func](...args);
 			});
 		});
 
