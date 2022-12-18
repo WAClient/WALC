@@ -61,7 +61,7 @@
   "devDependencies": {
     "@mdi/js": "^5.9.55",
     "deepmerge": "^4.2.2",
-    "electron": "^17.4.0",
+    "electron": "^18.3.7",
     "electron-builder": "^22.14.13",
     "electron-devtools-installer": "^3.2.0",
     "electron-rebuild": "^3.2.7",
