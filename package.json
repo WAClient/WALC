@@ -72,7 +72,7 @@
     "vue": "^2.5.17",
     "vue-loader": "^15.9.8",
     "vue-template-compiler": "^2.6.12",
-    "vuetify": "^2.6.4",
+    "vuetify": "^2.6.10",
     "vuetify-loader": "^1.7.3",
     "vuetifyjs-mix-extension": "0.0.20",
     "webpack": "^5.72.0"
