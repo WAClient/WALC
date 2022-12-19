@@ -2,7 +2,6 @@ const { ipcRenderer } = require('electron');
 const Settings = require('./Settings');
 const Instance = require('./Instance');
 const AppLock = require('./AppLock');
-const fs = require('fs');
 const { whatsappReady } = require('./whatsapp-inject');
 
 class App {

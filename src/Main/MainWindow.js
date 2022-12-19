@@ -55,9 +55,10 @@ module.exports = class MainWindow extends BrowserWindow {
 			icon: ICON_PATH,
 			webPreferences: {
 				enableRemoteModule: false,
-				preload: path.join(__dirname, '../Renderer/App.js'),
+				preload: path.join(__dirname, '../Renderer/preload.js'),
 				spellcheck: settings.get('general.spellcheck.value'),
 				contextIsolation: false,
+				nodeIntegration: true,
 			},
 			show: !shouldHide,
 			// show: true,
