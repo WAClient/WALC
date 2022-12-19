@@ -13,7 +13,7 @@ const getPixels = require("get-pixels");
 // const getPortSync = require('get-port-sync');
 
 const ICON_PATH = path.join(__dirname, '../icons/logo256x256.png');
-const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36';
+const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Chrome/107.0.5304.141 Safari/605.1.15';
 
 NotifyConfig.closeReplacedNotify = true;
 
@@ -195,24 +195,6 @@ module.exports = class MainWindow extends BrowserWindow {
 			this.loadFile('public/offline.html', { hash: (darkTheme ? 'dark' : '') });
 			this.webContents.send('renderTray');
 			this.notify('offline');
-		});
-
-		let findID;
-		this.webContents.on('found-in-page', (evt, result) => {
-			if (result.requestId == findID) {
-				if (result.matches > 0) {
-					this.webContents.session.clearStorageData({ storages: ["serviceWorkers"] }).then(() => {
-						this.webContents.reload();
-					}).catch((err) => {
-						console.log(err);
-					});
-	
-				}
-			}
-		});
-
-		this.webContents.on('did-finish-load', (evt) => {
-			findID = this.webContents.findInPage('Update Google Chrome');
 		});
 
 		settings.onDidChange('general.alwaysOnTop', (value) => {

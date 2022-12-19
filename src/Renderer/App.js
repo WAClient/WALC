@@ -3,6 +3,7 @@ const Settings = require('./Settings');
 const Instance = require('./Instance');
 const AppLock = require('./AppLock');
 const fs = require('fs');
+const { whatsappReady } = require('./whatsapp-inject');
 
 class App {
 	constructor() {
@@ -63,6 +64,7 @@ class App {
 			this.renderTray();
 		});
 
+		whatsappReady();
 		console.log('WALC Initialized');
 	}
 
