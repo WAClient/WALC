@@ -16,16 +16,16 @@ A WhatsApp Desktop client for linux systems. This is an unofficial client. Use h
 <hr/>
 
 ## Features
-- **Tray icon & background running** 🏃  
-Close app to tray, unread message badge (with number!), different tray icon when offline
+- **Tray icon (with monochrome) & background running** 🏃  
+Close app to tray, unread message count, icon tray has a monochrome option which auto detects system theme
 - **Full width** ⬅️➡️  
-Make WhatsApp occupy all available space on large screen (enable it first in settings)
+Make WhatsApp occupy all the available space on large screen (enable it first in settings)
 - **Chat shortcut** ⚡  
 Use <kbd>Ctrl</kbd>+<kbd>1</kbd> to <kbd>Ctrl</kbd>+<kbd>9</kbd> to switch between your chat quickly
 - **Native notification** 💬  
 Proper formatting of message (bold, italic, link), mark as read button, and for KDE >=5.18, inline/quick reply
 - **Notification grouping** 🗯  
-Group multiple rapid notification into one. Notifications now wouldn't cover half your screen when someone's angry 💢
+Group multiple rapid notifications into one. Notifications now wouldn't cover half your screen when someone's angry 💢
 - **Offline notification** 📶❌   
 Notifies you when disconnected to network or phone (if you haven't used MD)
 - **Mark all chat as read** ☑☑  
@@ -33,7 +33,7 @@ Have too many unread chats with too little time? You can _"read"_ them all at on
 - **App Lock** 🔒  
 Secure your chat from prying eyes 👀! _Warning:_ it's not very safe, but it should deter most people
 - **Chat with an unknown number** 🗣️
-<br>Chat with other people without saving their number
+<br>Chat with other people without saving their number, go to `Dashboard > Tools > Open Chat`
 
 and many more...
 
@@ -45,7 +45,8 @@ and many more...
     <img align="center" alt="Get it from the Snap Store" src="https://i.imgur.com/YGU3qMJ.png" width="150">
 </a>
 <br><br>
-To download the pre-built AppImage, please goto the [Latest Release](https://github.com/WAClient/WALC/releases/latest) Page
+
+To download the pre-built AppImage, go to the [Latest Release](https://github.com/WAClient/WALC/releases/latest) page
 
 ## Installing WALC - Prebuilt AppImage 
 * Download the latest AppImage in ~/.local/bin which is a recommended location for AppImages
