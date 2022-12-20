@@ -1,8 +1,10 @@
 <p align="center">
-<img src="https://socialify.git.ci/WAClient/WALC/image?description=1&font=Bitter&forks=1&logo=https%3A%2F%2Fgithub.com%2FWAClient%2FWALC%2Fraw%2Fmaster%2Fsrc%2Ficons%2Flogo360x360.png&pattern=Floating%20Cogs&stargazers=1&theme=Dark" alt="WALC" width="640" height="320" />
-</p>
-<h1 align="center">WALC - WhatsApp Linux Client (unofficial)</h1>
-<p align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/YoungFellow-le/my-code/main/Images/WALC/dark-banner.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/YoungFellow-le/my-code/main/Images/WALC/light-banner.png">
+  <img alt="Shows a black logo in light color mode and a white one in dark color mode." src="https://user-images.githubusercontent.com/25423296/163456779-a8556205-d0a5-45e2-ac17-42d089e3c3f8.png">
+</picture>
 
 ![Contributors List](https://img.shields.io/badge/dynamic/json?label=Contributors&query=%24..login&url=https%3A%2F%2Fapi.github.com%2Frepos%2FWAClient%2FWALC%2Fcontributors) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/WAClient/WALC?color=%2325D366&label=Latest%20Release) ![GitHub Releases (by Release)](https://img.shields.io/github/downloads/WAClient/WALC/latest/total?color=%2325D366&label=Latest%20Version%20AppImage%20Downloads&logo=Linux&logoColor=%23FFFFFF) [![GitHub issues](https://img.shields.io/github/issues/WAClient/WALC.svg)](https://github.com/WAClient/WALC/issues) [![GitHub forks](https://img.shields.io/github/forks/WAClient/WALC.svg)](https://github.com/WAClient/WALC/network) [![GitHub stars](https://img.shields.io/github/stars/WAClient/WALC.svg)](https://github.com/WAClient/WALC/stargazers) [![GitHub license](https://img.shields.io/github/license/WAClient/WALC.svg)](https://github.com/WAClient/WALC/blob/master/LICENSE) [![Twitter](https://img.shields.io/twitter/url/https/github.com/WAClient/WALC.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2FWAClient%2FWALC) [![walc](https://snapcraft.io//walc/badge.svg)](https://snapcraft.io/walc) 
 
