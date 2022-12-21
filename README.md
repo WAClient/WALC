@@ -38,7 +38,7 @@ Secure your chat from prying eyes 👀! _Warning:_ it's not very safe, but it sh
 and many more...
 
 ## Releases
-<a href="http://aur.archlinux.org/packages/walc">
+<a href="https://aur.archlinux.org/packages/walc">
     <img align="center" alt="Get it from the AUR" src="https://archlinux.org/static/logos/archlinux-logo-dark-scalable.518881f04ca9.svg" width="150">
 </a>
 <a href="https://www.linux-apps.com/p/1383431/">
