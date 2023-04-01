@@ -67,7 +67,7 @@
     "@mdi/js": "^7.0.96",
     "deepmerge": "^4.2.2",
     "electron": "^20.3.8",
-    "electron-builder": "^23.6.0",
+    "electron-builder": "^24.1.2",
     "electron-devtools-installer": "^3.2.0",
     "electron-rebuild": "^3.2.9",
     "laravel-mix": "^6.0.49",
