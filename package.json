@@ -80,7 +80,7 @@
     "vuetify": "^2.6.10",
     "vuetify-loader": "^1.9.2",
     "vuetifyjs-mix-extension": "0.0.20",
-    "webpack": "^5.74.0"
+    "webpack": "^5.76.0"
   },
   "dependencies": {
     "axios": "^1.2.1",
