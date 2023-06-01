@@ -1,6 +1,6 @@
 {
   "name": "walc",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A WhatsApp Desktop client for linux systems. This is an unofficial client. Use https://web.whatsapp.com for official web client as official desktop client for linux does not exist.",
   "main": "src/main.js",
   "scripts": {
@@ -102,6 +102,6 @@
     "vue-router": "^3.5.3",
     "vue-tel-input-vuetify": "^1.5.3",
     "vuex": "^3.6.2",
-    "whatsapp-web-electron.js": "v1.19.5-1"
+    "whatsapp-web-electron.js": "v1.21.0-1"
   }
 }
