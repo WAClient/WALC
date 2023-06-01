@@ -5,7 +5,7 @@ class LegacyNotification extends Notification {
 	constructor(title, options) {
 		if(Settings.get('notification.enabled.value')) {
 			const { tag, renotify, ...filteredOptions } = options;
-			// console.log('notify', options);
+			// console.log('notify legacy', options);
 
 			super(title, filteredOptions);
 			this.addEventListener('click', function () {
@@ -17,35 +17,34 @@ class LegacyNotification extends Notification {
 
 class ServerNotification {
 	constructor(title, options = {}) {
-		// console.log('notify', options);
+		// console.log('notify server', options);
 		this.__serverNotif(title, options);
 	}
 
 	async __serverNotif(title, options) {
 		if(options.tag) {
 			try {
-				/**
-				 * parse encoded tag, format (without square brackets):
-				 * 
-				 * [boolean]_[user-serialized-id]_[alphanumeric]
-				 * 
-				 * NOTE: what the boolean and alphanumeric value is for is currently unknown
-				 * FIXME: parsing should be done server side, the other data could be useful
-				 */
-				const match = options.tag.match(/\w+_(\d+@c.us)_/);
+				const match = options.tag.match(/(\d+@c.us)/);
 				if (match && match.length && match[1]) {
 					await window.Store?.Contact?.find(match[1]);
 					options.tag = match[1];
+				} else {
+					delete options.tag;
 				}
 			} catch(err) {
 				delete options.tag;
 			}
 		}
-		const serverNotif = {
+		/**
+		 * NOTE: Sending non-standard JavaScript types such as DOM objects or special Electron objects will throw an exception.
+		 * The options object potentially contains function
+		 * @see https://www.electronjs.org/docs/latest/api/ipc-renderer#ipcrenderersendchannel-args
+		 */
+		const serverNotif = JSON.parse(JSON.stringify({
 			...options,
 			title,
 			icon: await this.__getIcon(options.icon),
-		};
+		}));
 		ipcRenderer.invoke('instance.main.chatNotification', 'walc', serverNotif);
 	}
 

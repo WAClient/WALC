@@ -13,7 +13,7 @@ const getPixels = require("get-pixels");
 // const getPortSync = require('get-port-sync');
 
 const ICON_PATH = path.join(__dirname, '../icons/logo256x256.png');
-const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Chrome/107.0.5304.141 Safari/605.1.15';
+const userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36';
 
 NotifyConfig.closeReplacedNotify = true;
 
@@ -291,6 +291,7 @@ module.exports = class MainWindow extends BrowserWindow {
 			this.recentNotification[tag] = {
 				id: Math.floor(Math.random() * 999999) + 1,
 				messages: [body],
+				timeout: null,
 			}
 		}
 
@@ -301,6 +302,7 @@ module.exports = class MainWindow extends BrowserWindow {
 	}
 
 	async chatNotification(options) {
+		const TIMEOUT = 5000;
 		const { title, icon, tag } = options;
 		const { id, body } = this.groupNotification(options)
 		const desktopEntry = path.join(homedir, '.local/share/applications/WALC.desktop');
@@ -310,7 +312,7 @@ module.exports = class MainWindow extends BrowserWindow {
 			summary: title,
 			replacesId: id,
 			body: this.formatNotification(body),
-			timeout: 5000,
+			timeout: TIMEOUT,
 			appName: 'WALC',
 			hints: {
 				desktopEntry,
@@ -356,7 +358,7 @@ module.exports = class MainWindow extends BrowserWindow {
 			const pieBrowser = await pie.connect(app, puppeteer);
 
 			console.log('Creating whatsapp client');
-			this.whatsapp = new Client(pieBrowser, this);
+			this.whatsapp = new Client(pieBrowser, this, { userAgent });
 			this.whatsappReady = false;
 
 			this.whatsapp.on('ready', () => {
