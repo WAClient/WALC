@@ -26,8 +26,10 @@ export default {
   data() {
     return {
       timeouts: [3, 5, 10, 30, 60],
+      timer: null,
       timeIdx: 0,
       timeLeft: 0,
+      timerLeft: null,
       checking: false,
     }
   },
@@ -45,24 +47,31 @@ export default {
   methods: {
     async onlineCheck() {
       this.checking = true;
-      const online = await isOnline();
-      if(online) {
-        this.retry();
-        return;
-      }
+      try {
+        clearTimeout(this.timer);
+        const online = await isOnline();
+        if(online) {
+          this.retry();
+          return;
+        }
 
-      const timeout = this.timeouts[this.timeIdx];
-      setTimeout(() => this.onlineCheck(), timeout * 1000);
-      this.setTimeLeft(timeout);
-      if(this.timeIdx < this.timeouts.length - 1) {
-        this.timeIdx += 1;
+        const timeout = this.timeouts[this.timeIdx];
+        this.timer = setTimeout(() => this.onlineCheck(), timeout * 1000);
+        this.setTimeLeft(timeout);
+        if(this.timeIdx < this.timeouts.length - 1) {
+          this.timeIdx += 1;
+        }
+      } catch (error) {
+        console.error('Failed online check', error);
+      } finally {
+        this.checking = false;
       }
-      this.checking = false;
     },
     setTimeLeft(number) {
+      clearTimeout(this.timerLeft);
       this.timeLeft = number;
       if(this.timeLeft > 0) {
-        setTimeout(() => this.setTimeLeft(number - 1), 1000);
+        this.timerLeft = setTimeout(() => this.setTimeLeft(number - 1), 1000);
       }
     },
     retry() {
