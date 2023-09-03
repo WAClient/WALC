@@ -3,6 +3,7 @@ const Settings = require('./Settings');
 const Instance = require('./Instance');
 const AppLock = require('./AppLock');
 const { whatsappReady } = require('./whatsapp-inject');
+const Deferred = require('./Deferred');
 
 class App {
 	constructor() {
@@ -10,7 +11,6 @@ class App {
 		this.initialized = false;
 		this.awaitApp();
 		ipcRenderer.on('renderTray', () => this.renderTray());
-		ipcRenderer.on('ready', () => this.init());
 		ipcRenderer.on('setFullWidth', (e, status) => this.setFullWidth(status));
 
 		window.WALC = {
@@ -19,12 +19,12 @@ class App {
 		};
 	}
 
-	awaitApp() {
+	async awaitApp() {
+		const pageReady = new Deferred();
 		const observer = new MutationObserver(() => {
-			const sidebar = document.querySelector('#app [data-testid=chatlist-header]');
-			if(sidebar) {
-				setTimeout(() => this.init(), 1000);
-				observer.disconnect();
+			const isReady = document.querySelector('#app [data-icon=\'chat\']');
+			if(isReady) {
+				setTimeout(() => pageReady.resolve(), 2000);
 			}
 		});
 
@@ -34,6 +34,15 @@ class App {
 				subtree: true,
 			});
 		}, 2000);
+
+		await Promise.race([
+			pageReady.promise,
+			new Promise((resolve) => {
+				ipcRenderer.once('ready', () => resolve());
+			}),
+		]);
+		this.init();
+		observer.disconnect();
 	}
 
 	async init() {

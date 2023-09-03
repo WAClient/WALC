@@ -34,7 +34,8 @@ class Instance {
 	}
 
 	installDashboardIcon(icon) {
-		const container = document.querySelector('[data-testid=chatlist-header] div:first-child');
+		const profilePhoto = document.querySelector('[aria-label="profile photo"]');
+		const container = profilePhoto.parentElement;
 		this.image = document.createElement('div');
 		container.style.display = 'flex';
 		container.style.alignItems = 'center';

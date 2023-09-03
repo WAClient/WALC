@@ -59,6 +59,9 @@ class AppLock {
 	}
 
 	async _initWhatsapp() {
+		if (!window.Store) {
+			return;
+		}
 		const user = window.Store.User.getMeUser() || {};
 		const myContact = await window.Store.Contact.find(user._serialized);
 		this.overlay.querySelector('.app-lock-user h1').textContent = myContact.displayName;
