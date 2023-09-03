@@ -102,6 +102,6 @@
     "vue-router": "^3.5.3",
     "vue-tel-input-vuetify": "^1.5.3",
     "vuex": "^3.6.2",
-    "whatsapp-web-electron.js": "v1.21.0-1"
+    "whatsapp-web-electron.js": "v1.22.1-2"
   }
 }
